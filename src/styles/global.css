@@ -1,0 +1,262 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---------- Brand color palette ---------- */
+  /* Six-color system from the Open Invite × Blockprint brand book (p14). */
+  --color-paper: #fbf5ee;          /* cream — primary background */
+  --color-paper-deep: #e9d8c6;     /* warm beige — secondary surface */
+  --color-ink: #151515;            /* near-black — body text & ink-dominant tiles */
+  --color-bp-pink: #ff2e76;        /* hot pink — primary accent */
+  --color-bp-pink-deep: #d61a5e;   /* pressed/hover state for pink */
+  --color-bp-cyan: #00f1cf;        /* cyan — tickets section, accent */
+  --color-bp-navy: #2d326f;        /* deep navy — lineup section, sold-out states */
+
+  /* ---------- Typography ---------- */
+  /* Display: New Edge 666 (custom). Outfit is a free fallback with similar
+     geometric construction. Drop a New Edge 666 webfont into /public/fonts and
+     register it via @font-face above @theme to upgrade automatically. */
+  --font-display: "New Edge 666", "Outfit", "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+
+  /* Body: Helvetica per brand book. System stack — no webfont load needed. */
+  --font-body: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+
+  /* Accent serif: Averia Serif Libre (Google Fonts). Tape labels & dates. */
+  --font-accent: "Averia Serif Libre", Georgia, "Times New Roman", serif;
+
+  /* Legacy aliases — retained so existing components keep working.
+     `--font-tape` was Permanent Marker; now points to the real accent serif. */
+  --font-tape: var(--font-accent);
+  --font-mono: var(--font-body);
+}
+
+/* ---------- Base ---------- */
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-paper);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Paper grain — subtle SVG noise overlay across the whole page. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 0.30  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+}
+
+main { position: relative; z-index: 2; }
+
+/* ---------- Block-print typography treatment ----------
+   The flyer's stamped lettering = clean modern type + ink-bleed filter +
+   slight rotation/offset + chromatic ghost. Apply to display headlines.
+   This is the design-system primitive that the rest of the site uses. */
+.block-print {
+  position: relative;
+  display: inline-block;
+  filter: url(#ink-bleed);
+  letter-spacing: -0.01em;
+}
+.block-print--soft { filter: url(#ink-bleed-soft); }
+
+/* Color modifiers — the four ink colors from the announcement tile system (p19). */
+.block-print[data-ink="pink"]  { color: var(--color-bp-pink); }
+.block-print[data-ink="cyan"]  { color: var(--color-bp-cyan); }
+.block-print[data-ink="navy"]  { color: var(--color-bp-navy); }
+.block-print[data-ink="ink"]   { color: var(--color-ink); }
+.block-print[data-ink="cream"] { color: var(--color-paper); }
+
+/* Ghost shadow — chromatic misregistration. Defaults to cyan (the flyer
+   pattern), but override per section by setting --ghost on a parent. */
+.block-print[data-ghost] {
+  text-shadow:
+    -3px 3px 0 var(--ghost, var(--color-bp-cyan)),
+    -3px 3px 0 var(--ghost, var(--color-bp-cyan));
+}
+
+/* ---------- Legacy alias ----------
+   Existing components reference .ink-stamp / .ink-stamp-soft. Keep them
+   working as pink-on-cyan presets so we don't have to refactor every file. */
+.ink-stamp {
+  position: relative;
+  display: inline-block;
+  color: var(--color-bp-pink);
+  filter: url(#ink-bleed);
+  text-shadow:
+    -3px 3px 0 var(--color-bp-cyan),
+    -3px 3px 0 var(--color-bp-cyan);
+  letter-spacing: -0.01em;
+}
+.ink-stamp-soft { filter: url(#ink-bleed-soft); }
+
+/* ---------- Tape label ----------
+   Small rotated badge with ink-bleed, set in the accent serif (Averia Serif
+   Libre per p14). Used for "AUG 22", "PRESENTED BY", support-act lockups. */
+.tape-label {
+  display: inline-block;
+  background: var(--color-bp-pink);
+  color: var(--color-paper);
+  padding: 0.15em 0.55em;
+  font-family: var(--font-accent);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transform: rotate(-1.2deg);
+  filter: url(#ink-bleed-soft);
+  box-shadow: -2px 2px 0 var(--color-bp-cyan);
+}
+.tape-label--cyan { background: var(--color-bp-cyan); color: var(--color-ink); box-shadow: -2px 2px 0 var(--color-bp-pink); }
+.tape-label--navy { background: var(--color-bp-navy); color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-cyan); }
+.tape-label--ink  { background: var(--color-ink);     color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-pink); }
+
+/* ---------- Section markers ----------
+   Tracked-out Helvetica caps per the brand book's small label treatment. */
+.section-marker {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-bp-pink);
+  opacity: 0.85;
+}
+.section-marker--cyan { color: var(--color-bp-cyan); }
+.section-marker--navy { color: var(--color-bp-navy); }
+.section-marker--ink  { color: var(--color-ink); }
+
+/* ---------- Announcement tile ----------
+   The reusable design-system primitive from p19: a colored square with
+   stamped block-print type centered inside. Drives hero callouts, ticket
+   CTAs, countdown modules, sold-out states, and social-style cards. */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.tile--bg-cream { background: var(--color-paper); }
+.tile--bg-cyan  { background: var(--color-bp-cyan); }
+.tile--bg-pink  { background: var(--color-bp-pink); }
+.tile--bg-navy  { background: var(--color-bp-navy); }
+.tile--bg-ink   { background: var(--color-ink); }
+
+/* When a tile is the parent, its children's --ghost defaults to a contrasting
+   ink so .block-print[data-ghost] picks up the right offset color. */
+.tile--bg-cyan  { --ghost: var(--color-bp-pink); }
+.tile--bg-pink  { --ghost: var(--color-paper); }
+.tile--bg-navy  { --ghost: var(--color-bp-cyan); }
+.tile--bg-cream { --ghost: var(--color-bp-cyan); }
+.tile--bg-ink   { --ghost: var(--color-bp-pink); }
+
+/* ---------- Nav scroll state ----------
+   At the top of the page the nav is fully transparent. Once the user
+   scrolls past a small threshold, JS adds .nav-scrolled and the bar
+   gains a frosted cream background with backdrop blur — keeps menu
+   items legible over any section beneath. (No CSS transition — Lenis's
+   per-frame transform updates were resetting it; the scroll-driven
+   class toggle already feels smooth without one.) */
+[data-nav].nav-scrolled {
+  background-color: rgba(251, 245, 238, 0.72);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom-color: rgba(21, 21, 21, 0.08);
+}
+
+/* ---------- Mobile menu overlay ----------
+   Hidden by default. Visible when JS sets [data-open] on it.
+   Forced hidden at md+ regardless of state — desktop uses inline links. */
+.mobile-menu-overlay {
+  display: none;
+}
+.mobile-menu-overlay[data-open] {
+  display: flex;
+}
+@media (min-width: 768px) {
+  .mobile-menu-overlay,
+  .mobile-menu-overlay[data-open] {
+    display: none !important;
+  }
+}
+
+/* Selection */
+::selection {
+  background: var(--color-bp-pink);
+  color: var(--color-paper);
+}
+
+/* Reduce-motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Hero entrance: pure CSS so RAF throttling can't strand it ---------- */
+@keyframes stamp-press {
+  0%   { opacity: 0; transform: translateY(-20px) rotate(-1.2deg) scale(1.15); }
+  60%  { opacity: 1; transform: translateY(2px) rotate(0.3deg) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
+}
+@keyframes stamp-line {
+  0%   { opacity: 0; transform: translateY(20px) rotate(0.6deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0); }
+}
+@keyframes stamp-tape {
+  0%   { opacity: 0; transform: translateY(14px) rotate(-3deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(-1.2deg); }
+}
+@keyframes hero-print {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-tag-in {
+  /* Pure opacity fade — preserves the tag's tailwind rotate utility. */
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes hero-bird-drift-l {
+  0%, 100% { transform: translate(0, var(--bird-y, 0px)); }
+  50%      { transform: translate(10px, calc(var(--bird-y, 0px) - 8px)); }
+}
+@keyframes hero-bird-drift-r {
+  0%, 100% { transform: translate(0, var(--bird-y, 0px)); }
+  50%      { transform: translate(-12px, calc(var(--bird-y, 0px) + 6px)); }
+}
+
+.hero-stamp { animation: stamp-press 0.85s cubic-bezier(.2,.7,.2,1) both; }
+.hero-line  { animation: stamp-line  0.55s cubic-bezier(.2,.7,.2,1) both; opacity: 0; }
+.hero-tape  { animation: stamp-tape  0.5s  cubic-bezier(.2,.7,.2,1) both; opacity: 0; }
+.hero-print { animation: hero-print  0.55s cubic-bezier(.2,.7,.2,1) both; opacity: 0; }
+.hero-tag   { animation: hero-tag-in 0.45s cubic-bezier(.2,.7,.2,1) both; opacity: 0; }
+
+/* Two separate drifts at slightly different periods so the birds never sync. */
+.hero-bird-l { animation: hero-bird-drift-l 6s ease-in-out infinite; }
+.hero-bird-r { animation: hero-bird-drift-r 7.5s ease-in-out infinite; }
+
+/* ---------- Generic scroll reveal ---------- */
+[data-reveal][data-reveal-armed] {
+  opacity: 0;
+  transform: translateY(30px) rotate(-0.4deg);
+}
+[data-reveal][data-reveal-armed].is-in {
+  opacity: 1;
+  transform: translateY(0) rotate(0);
+  transition: opacity 0.7s cubic-bezier(.2,.7,.2,1),
+              transform 0.7s cubic-bezier(.2,.7,.2,1);
+}

@@ -1,0 +1,53 @@
+---
+// Announcement tile — the reusable design-system primitive from the brand
+// book's announcement system (p19). A square colored field with stamped
+// block-print type centered inside, with an optional tape label.
+//
+// Examples:
+//   <Tile bg="cyan" ink="cream" label="On Sale Now">Tickets</Tile>
+//   <Tile bg="pink" ink="cream">7 Days</Tile>
+//   <Tile bg="cream" ink="navy">90% Sold Out</Tile>
+
+type Color = "cyan" | "pink" | "navy" | "cream" | "ink";
+
+interface Props {
+  bg: Color;
+  ink: Color;
+  label?: string;
+  /** Tile rotation in degrees. Small offsets read as hand-pulled prints. */
+  rotate?: number;
+  /** Square size class. Layout decides whether the tile is sm/md/lg. */
+  size?: "sm" | "md" | "lg";
+  /** Optional class on the wrapping element. */
+  class?: string;
+}
+
+const { bg, ink, label, rotate = 0, size = "md", class: className = "" } = Astro.props;
+
+const sizeClasses: Record<NonNullable<Props["size"]>, string> = {
+  sm: "text-3xl md:text-4xl p-6 md:p-8",
+  md: "text-5xl md:text-7xl p-8 md:p-12",
+  lg: "text-7xl md:text-[10rem] p-10 md:p-16",
+};
+
+const rotateStyle = rotate ? `transform: rotate(${rotate}deg);` : "";
+---
+
+<div
+  class={`tile tile--bg-${bg} ${sizeClasses[size]} ${className}`}
+  style={rotateStyle}
+>
+  <span
+    class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] tracking-[-0.01em]"
+    data-ink={ink}
+    data-ghost
+  >
+    <slot />
+  </span>
+
+  {label && (
+    <span class="tape-label tape-label--ink mt-6 text-xs md:text-sm">
+      {label}
+    </span>
+  )}
+</div>

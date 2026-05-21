@@ -1,0 +1,51 @@
+---
+import { sponsors } from "../data/site";
+
+const presenting = sponsors.filter((s) => s.tier === "presenting");
+const supporting = sponsors.filter((s) => s.tier === "supporting");
+---
+
+<section id="sponsors" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper-deep">
+  <div class="max-w-6xl mx-auto">
+    <p class="section-marker section-marker--ink mb-4">Brought to You By</p>
+    <h2
+      class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-12"
+      data-ink="ink"
+      data-ghost
+      style="--ghost: var(--color-bp-pink);"
+    >
+      Partners
+    </h2>
+
+    <div class="mb-10">
+      <p class="text-xs uppercase tracking-[0.3em] opacity-70 mb-4">Presenting</p>
+      <div class="flex flex-wrap items-center gap-8 md:gap-14">
+        {presenting.map((s) => (
+          <div
+            class="block-print block-print--soft font-[var(--font-display)] text-3xl md:text-5xl uppercase font-black tracking-tight"
+            data-ink="ink"
+            data-ghost
+            style="--ghost: var(--color-bp-cyan);"
+          >
+            {s.name}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] opacity-70 mb-4">Supporting</p>
+      <div class="flex flex-wrap items-center gap-8 md:gap-12">
+        {supporting.map((s) => (
+          <div class="font-[var(--font-display)] text-2xl md:text-3xl uppercase font-bold tracking-tight opacity-90">
+            {s.name}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <p class="mt-12 text-xs uppercase tracking-[0.3em] opacity-60">
+      Logo lockups will replace placeholder text once vector assets are uploaded.
+    </p>
+  </div>
+</section>

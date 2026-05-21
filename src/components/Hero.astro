@@ -1,0 +1,187 @@
+---
+import { site } from "../data/site";
+---
+
+<section
+  id="top"
+  class="hero relative min-h-[100svh] flex flex-col items-center px-5 md:px-10 pt-24 md:pt-32 pb-16 overflow-hidden"
+>
+  <!-- Marginalia: pink seagulls drifting in opposite margins of the hero.
+       Source PNG was split into two single-bird files so each can sit at
+       its own viewport-edge anchor and drift with its own rhythm. -->
+  <!-- Anchored at fixed pixel distances from viewport center, not from the
+       edges. As the window narrows the centerline moves toward each bird's
+       absolute position, eventually pushing them past the viewport edge —
+       so they naturally fly out of frame on smaller screens, clipped by
+       the section's overflow-hidden. No breakpoint hide needed. -->
+  <img
+    src="/brand/bird-left.png"
+    alt=""
+    width="156"
+    height="74"
+    class="hero-bird-l pointer-events-none select-none absolute top-[32%] left-[calc(50%-770px)] w-[150px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/bird-right.png"
+    alt=""
+    width="185"
+    height="81"
+    class="hero-bird-r pointer-events-none select-none absolute top-[46%] right-[calc(50%-770px)] w-[180px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/BIRDS - ALT.png"
+    alt=""
+    width="189"
+    height="129"
+    class="hero-bird-l pointer-events-none select-none absolute top-[18%] right-[calc(50%-720px)] w-[120px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/BIRDS - ALT 3.png"
+    alt=""
+    width="255"
+    height="51"
+    class="hero-bird-r pointer-events-none select-none absolute top-[62%] left-[calc(50%-700px)] w-[90px] z-0 opacity-80 will-change-transform"
+    aria-hidden="true"
+  />
+
+  <!-- Hero wordmark — the BLOCKPRINT logotype, custom-cut letterforms -->
+  <h1 class="sr-only">Blockprint</h1>
+  <img
+    src="/brand/wordmark.png"
+    alt=""
+    width="1010"
+    height="152"
+    class="hero-stamp relative z-10 w-full max-w-[920px]"
+    aria-hidden="true"
+  />
+
+  <!-- "PRESENTED BY MUDWATR" — sits directly below the wordmark -->
+  <img
+    src="/brand/presented-by.png"
+    alt={`Presented by ${site.tagline.replace(/^Presented by /i, "")}`}
+    width="245"
+    height="44"
+    class="hero-print relative z-10 w-[132px] md:w-[192px] mt-3 md:mt-5"
+    style="animation-delay: 0.25s;"
+  />
+
+  <!-- "A — Z" tracker — sits directly above the headliners -->
+  <img
+    src="/brand/a-z.png"
+    alt=""
+    width="90"
+    height="12"
+    class="hero-print relative z-10 w-[60px] md:w-[88px] mt-10 md:mt-14 mb-1 md:mb-2"
+    style="animation-delay: 0.4s;"
+    aria-hidden="true"
+  />
+
+  <!-- Headliners block (venue + date now live in their own row below). -->
+  <img
+    src="/brand/headliners.png"
+    alt="Franc Moody (DJ Set), Nimino, Vandelux (DJ Set)"
+    width="892"
+    height="389"
+    class="hero-line relative z-10 w-full max-w-[820px]"
+    style="animation-delay: 0.35s;"
+  />
+
+  <!-- Openers / support-act row -->
+  <img
+    src="/brand/openers.png"
+    alt="Coco & Breezy, Never Dull"
+    width="722"
+    height="97"
+    class="hero-print relative z-10 w-full max-w-[560px] mt-5 md:mt-8"
+    style="animation-delay: 0.85s;"
+  />
+
+  <!-- Venue + Date lockup, centered between the openers and the collage.
+       Pulled out of the headliners block so they're no longer wrapping
+       the lineup; given a flex row with light rotation for character. -->
+  <div
+    class="hero-print relative z-20 flex items-center justify-center gap-20 md:gap-36 mt-5 md:mt-7"
+    style="animation-delay: 0.95s;"
+  >
+    <img
+      src="/brand/venue.png"
+      alt="Abbot Kinney Blvd"
+      width="116"
+      height="101"
+      class="w-[104px] md:w-[175px] -rotate-[6deg]"
+    />
+    <img
+      src="/brand/date-aug-22.png"
+      alt="August 22"
+      width="68"
+      height="60"
+      class="w-[88px] md:w-[143px] rotate-[6deg]"
+    />
+  </div>
+
+  <!-- Date / venue / age (text-only, sr-only — image alts cover the visual) -->
+  <p class="sr-only">{site.date} · {site.venue}, {site.city} · {site.agePolicy}</p>
+
+  <!-- Venue collage — full-bleed. Negative margins cancel the section's
+       horizontal padding so the illustration stretches edge-to-edge with
+       the viewport at any window size. The source PNG is 1008×439; on
+       wider monitors it upscales, which actually plays to the halftone
+       screen-print aesthetic rather than against it. -->
+  <img
+    src="/brand/collage.png"
+    alt=""
+    width="1008"
+    height="439"
+    class="hero-print relative z-10 block -mt-3 md:-mt-20 w-screen max-w-none -mx-5 md:-mx-10"
+    style="animation-delay: 1s;"
+    aria-hidden="true"
+  />
+
+  <!-- CTA -->
+  <div class="hero-print relative z-10 mt-10 md:mt-12" style="animation-delay: 1.15s;">
+    <a
+      href={site.ticketUrl}
+      class="group inline-flex items-center gap-3 bg-bp-pink text-paper px-8 py-4 text-sm md:text-base uppercase tracking-[0.25em] font-bold"
+      style="filter: url(#ink-bleed-soft); box-shadow: -4px 4px 0 var(--color-bp-cyan);"
+    >
+      Buy Tickets
+      <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+    </a>
+    <p class="mt-4 text-xs uppercase tracking-[0.3em] text-center opacity-75">
+      {site.agePolicy} · {site.city}
+    </p>
+  </div>
+</section>
+
+<!--
+  Pure-CSS entrance animations live in global.css:
+    .hero-stamp  (stamp-press)  — wordmark dramatic entrance
+    .hero-line   (stamp-line)   — headliners slide-up
+    .hero-tag    (fade-in, preserves rotation)  — date / venue tags
+    .hero-print  (fade-up)      — generic stamped element
+    .hero-birds  (gull-drift)   — continuous loop
+-->
+
+<script>
+  // Parallax lift for the hero birds. Lenis smooth scroll suppresses native
+  // `scroll` events, but `window.scrollY` updates each Lenis frame — so an
+  // rAF poll picks up changes (mirrors the Nav.astro pattern). The value is
+  // written to --bird-y on :root and consumed by the bird drift keyframes,
+  // so the parallax composes with the existing drift instead of overriding
+  // its transform.
+  const BIRD_FACTOR = 0.3;
+  const root = document.documentElement;
+  let lastY = -1;
+  const tick = () => {
+    const y = window.scrollY;
+    if (y !== lastY) {
+      root.style.setProperty("--bird-y", `${-y * BIRD_FACTOR}px`);
+      lastY = y;
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+</script>

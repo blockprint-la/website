@@ -1,0 +1,607 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BpMark from "../components/BpMark.astro";
+
+// IG profile mock — 12 tile feed, 3-col grid, brand-book profile chrome.
+// 5 of the 12 are the film+pink+circle treatment. The remaining 7 are
+// designed placeholders that show what each tile *type* will be when
+// produced, so the rhythm reads even before the real assets exist.
+
+type FilmTile = {
+  kind: "film";
+  src: string;
+  alt: string;
+};
+
+type FlyerTile = { kind: "flyer"; src: string; alt: string };
+type LetterTile = { kind: "letter" };
+type SaveDateTile = { kind: "save-date" };
+type PortraitTile = { kind: "portrait"; index: number };
+type CraftTile = { kind: "craft"; label: string; sublabel: string };
+type TeaseTile = { kind: "tease"; title: string; subtitle: string };
+
+type Tile =
+  | FilmTile
+  | FlyerTile
+  | LetterTile
+  | SaveDateTile
+  | PortraitTile
+  | CraftTile
+  | TeaseTile;
+
+// Asset filenames as the user dropped them.
+// v3 batch: 3 films across the full brand palette (pink/navy/cyan).
+const FILM_CHEVY = "/feed-mock/Concepts v3 - 1.png";   // pink Chevy at Burro
+const FILM_SKATE = "/feed-mock/Concepts v3 - 2.1.png"; // navy skatepark
+const FILM_PALM  = "/feed-mock/Concepts v3 - 3.png";   // cyan palm street + couple
+const FLYER      = "/feed-mock/Concepts v2 - 6.jpg";   // BLOCKPRINT lineup flyer
+
+const tiles: Tile[] = [
+  // Row 1 — PINNED IDENTITY: who, what, when.
+  { kind: "letter" },
+  { kind: "flyer", src: FLYER, alt: "Blockprint lineup poster — Franc Moody, Nimino, Vandelux, Coco & Breezy, Never Dull. Abbot Kinney Blvd, Aug 22." },
+  { kind: "save-date" },
+  // Row 2 — ANALOG SIGNATURE: 3 v3 film tiles in a row, full brand palette.
+  { kind: "film", src: FILM_CHEVY, alt: "Venice — vintage Chevy on Abbot Kinney (pink)" },
+  { kind: "film", src: FILM_PALM,  alt: "Venice — palm-lined street with couple (cyan)" },
+  { kind: "film", src: FILM_SKATE, alt: "Venice skatepark (navy)" },
+  // Row 3 — COMMUNITY: portrait series.
+  { kind: "portrait", index: 1 },
+  { kind: "portrait", index: 2 },
+  { kind: "portrait", index: 3 },
+  // Row 4 — CRAFT only. Lineup/Vendors tease tiles cut per Jake's request.
+  // 10-tile grid renders as 3 full rows + 1 lone tile, mirroring how a real
+  // early-launch IG profile looks before the bottom row fills in.
+  { kind: "craft", label: "BLOCK + INK", sublabel: "PROCESS / 01" },
+];
+---
+
+<Layout title="Blockprint — IG feed mock">
+  <div class="ig-page">
+    <div class="ig-frame">
+      {/* Profile header — mirrors brand book p25 */}
+      <header class="ig-header">
+        <div class="ig-avatar" aria-hidden="true">
+          <BpMark class="w-[68%] h-[68%]" />
+        </div>
+
+        <div class="ig-meta">
+          <div class="ig-handle-row">
+            <span class="ig-handle">blockprint</span>
+            <button class="ig-btn ig-btn--following" type="button">Following</button>
+            <button class="ig-btn" type="button">Message</button>
+            <button class="ig-btn" type="button">Email</button>
+          </div>
+
+          <div class="ig-stats">
+            <span><strong>10</strong> posts</span>
+            <span><strong>24K</strong> followers</span>
+            <span><strong>6</strong> following</span>
+          </div>
+
+          <div class="ig-bio">
+            <div class="ig-bio-name">Blockprint</div>
+            <div class="ig-bio-cat">Live Event · Venice, CA</div>
+            <div class="ig-bio-line">Open Invite × Blockprint — a different kind of music-going experience.</div>
+            <a class="ig-bio-link" href="https://blockprint.com" target="_blank" rel="noreferrer">www.blockprint.com</a>
+          </div>
+
+          <nav class="ig-tabs" aria-label="Profile navigation">
+            <button type="button"><span>Tickets</span></button>
+            <button type="button"><span>FAQ</span></button>
+            <button type="button"><span>Lineup</span></button>
+            <button type="button"><span>Vendors</span></button>
+          </nav>
+        </div>
+      </header>
+
+      {/* 12-tile grid */}
+      <section class="ig-grid" aria-label="Feed mock">
+        {tiles.map((tile, i) => (
+          <article class="ig-tile" data-pos={i + 1}>
+            {tile.kind === "film" && (
+              <img src={tile.src} alt={tile.alt} class="ig-film-img" loading="lazy" />
+            )}
+
+            {tile.kind === "flyer" && (
+              <div class="tile-flyer">
+                <img src={tile.src} alt={tile.alt} class="tile-flyer-img" loading="lazy" />
+              </div>
+            )}
+
+            {tile.kind === "letter" && (
+              <div class="tile-letter">
+                <div class="tile-letter-hd">
+                  <span>FROM THE OFFICE OF</span>
+                  <span>OPEN INVITE × BLOCKPRINT</span>
+                  <span>VENICE, CA · 2026</span>
+                </div>
+                <h3 class="tile-letter-title">An Open<br />Invitation.</h3>
+                <p class="tile-letter-body">
+                  Offering a different kind of music-going experience —
+                  bringing together local vendors and artists who define
+                  just as much of the experience as the musicians and
+                  bands.
+                </p>
+                <div class="tile-letter-sig">
+                  <span>— The Block</span>
+                  <span class="tile-letter-stamp">AUG 22 · 2026</span>
+                </div>
+              </div>
+            )}
+
+            {tile.kind === "save-date" && (
+              <div class="tile-savedate">
+                <div class="tile-savedate-hd">OPEN INVITE × BLOCKPRINT</div>
+                <div class="tile-savedate-date">AUG<br />22</div>
+                <div class="tile-savedate-loc">VENICE · 2026</div>
+                <div class="tile-savedate-foot">SAVE THE DATE</div>
+              </div>
+            )}
+
+            {tile.kind === "portrait" && (
+              <div class="tile-portrait">
+                <div class="tile-portrait-perfs tile-portrait-perfs--top" aria-hidden="true"></div>
+                <div class="tile-portrait-body">
+                  <div class="tile-portrait-num">{String(tile.index).padStart(2, "0")}</div>
+                  <div class="tile-portrait-label">PORTRAIT</div>
+                  <div class="tile-portrait-sub">FILM · TBD</div>
+                  <div class="tile-portrait-byline">VENDORS · ARTISTS · MAKERS</div>
+                </div>
+                <div class="tile-portrait-perfs tile-portrait-perfs--bot" aria-hidden="true"></div>
+              </div>
+            )}
+
+            {tile.kind === "craft" && (
+              <div class="tile-craft">
+                <div class="tile-craft-block" aria-hidden="true">
+                  <div class="tile-craft-block-cut"></div>
+                </div>
+                <div class="tile-craft-meta">
+                  <span class="tile-craft-sub">{tile.sublabel}</span>
+                  <span class="tile-craft-label">{tile.label}</span>
+                </div>
+              </div>
+            )}
+
+            {tile.kind === "tease" && (
+              <div class="tile-tease">
+                <div class="tile-tease-hd">— BLOCKPRINT —</div>
+                <div class="tile-tease-title">{tile.title}</div>
+                <div class="tile-tease-sub">{tile.subtitle}</div>
+              </div>
+            )}
+          </article>
+        ))}
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* ---------- Page chrome ---------- */
+  .ig-page {
+    min-height: 100vh;
+    padding: 48px 24px 96px;
+    display: flex;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at top, rgba(255, 46, 118, 0.05), transparent 60%),
+      var(--color-paper);
+  }
+
+  .ig-frame {
+    /* IG's profile content max-width is ~935px on desktop web. */
+    width: 100%;
+    max-width: 935px;
+    background: #ffffff;
+    border: 1px solid rgba(21, 21, 21, 0.08);
+    border-radius: 6px;
+    box-shadow: 0 8px 40px rgba(21, 21, 21, 0.08);
+    overflow: hidden;
+  }
+
+  /* ---------- Profile header ---------- */
+  .ig-header {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    padding: 36px 32px 28px;
+    align-items: start;
+  }
+  @media (max-width: 700px) {
+    .ig-header { grid-template-columns: 90px 1fr; gap: 20px; padding: 20px; }
+  }
+
+  .ig-avatar {
+    aspect-ratio: 1 / 1;
+    border-radius: 999px;
+    background: var(--color-paper);
+    border: 1px solid rgba(21, 21, 21, 0.08);
+    display: grid;
+    place-items: center;
+    width: 168px;
+    margin: 0 auto;
+  }
+  @media (max-width: 700px) {
+    .ig-avatar { width: 86px; }
+  }
+
+  .ig-meta { display: flex; flex-direction: column; gap: 14px; }
+
+  .ig-handle-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .ig-handle {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--color-ink);
+    margin-right: 8px;
+  }
+  .ig-btn {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(21, 21, 21, 0.12);
+    background: rgba(21, 21, 21, 0.05);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .ig-btn--following { background: rgba(21, 21, 21, 0.05); }
+  .ig-btn:hover { background: rgba(21, 21, 21, 0.1); }
+
+  .ig-stats {
+    display: flex;
+    gap: 28px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+  .ig-stats strong { font-weight: 600; }
+
+  .ig-bio {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--color-ink);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ig-bio-name { font-weight: 600; }
+  .ig-bio-cat { color: rgba(21, 21, 21, 0.6); font-size: 13px; }
+  .ig-bio-line { margin-top: 4px; max-width: 50ch; }
+  .ig-bio-link {
+    color: var(--color-bp-navy);
+    font-weight: 600;
+    margin-top: 4px;
+    text-decoration: none;
+  }
+  .ig-bio-link:hover { text-decoration: underline; }
+
+  .ig-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+    max-width: 520px;
+  }
+  .ig-tabs button {
+    border: 1px solid rgba(21, 21, 21, 0.1);
+    background: var(--color-paper);
+    border-radius: 8px;
+    padding: 9px 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .ig-tabs button:hover { background: var(--color-paper-deep); }
+
+  /* ---------- Grid ----------
+     Mirror Instagram's current profile grid: 3 columns, 4:5 portrait
+     tiles, ~3px white gutter. Square sources are center-cropped to
+     fit 4:5 — same behavior IG applies on upload. */
+  .ig-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: #ffffff;
+    border-top: 1px solid rgba(21, 21, 21, 0.08);
+  }
+
+  .ig-tile {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--color-paper);
+    overflow: hidden;
+  }
+
+  /* ---------- Film tile ---------- */
+  .ig-film-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Fallback when image not yet on disk */
+  .ig-film-img:not([src]),
+  .ig-film-img[src=""] { display: none; }
+  /* Empty-state hint for missing film images — handled via CSS attr selectors
+     would be unreliable, so we leave a paper-textured tile behind that still
+     reads as a film slot until the file lands. */
+
+  /* ---------- Letter tile ---------- */
+  .tile-letter {
+    width: 100%;
+    height: 100%;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 22px,
+        rgba(21, 21, 21, 0.04) 23px
+      ),
+      var(--color-paper);
+    padding: 8% 9%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--color-ink);
+  }
+  .tile-letter-hd {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: rgba(21, 21, 21, 0.55);
+  }
+  .tile-letter-title {
+    font-family: var(--font-accent);
+    font-weight: 700;
+    font-size: clamp(22px, 4.2vw, 38px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .tile-letter-body {
+    font-family: var(--font-body);
+    font-size: clamp(10px, 1.3vw, 12px);
+    line-height: 1.45;
+    margin: 0;
+    max-width: 28ch;
+  }
+  .tile-letter-sig {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: 12px;
+  }
+  .tile-letter-stamp {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--color-bp-pink);
+    border: 1.5px solid var(--color-bp-pink);
+    padding: 4px 8px;
+    transform: rotate(-3deg);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* ---------- Save the Date tile ---------- */
+  .tile-savedate {
+    width: 100%; height: 100%;
+    background: var(--color-bp-pink);
+    color: var(--color-paper);
+    padding: 8% 8% 6%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+  .tile-savedate-hd {
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .tile-savedate-date {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: clamp(72px, 14vw, 132px);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+  }
+  .tile-savedate-loc {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: clamp(14px, 2vw, 18px);
+  }
+  .tile-savedate-foot {
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+  }
+
+  /* ---------- Flyer tile ----------
+     The flyer is ~4:5 portrait. Letterbox inside the 1:1 cell against
+     cream so the flyer's own cream margins blend into the tile bg.
+     Absolute-position the img so its intrinsic ratio doesn't drive
+     the parent grid cell's height. */
+  .tile-flyer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--color-paper);
+  }
+  .tile-flyer-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ---------- Portrait placeholder tile ---------- */
+  .tile-portrait {
+    width: 100%; height: 100%;
+    background: var(--color-bp-navy);
+    color: var(--color-paper);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .tile-portrait-perfs {
+    height: 14px;
+    background-image:
+      linear-gradient(to right,
+        var(--color-paper) 0,
+        var(--color-paper) 7px,
+        transparent 7px,
+        transparent 18px);
+    background-size: 18px 14px;
+    background-repeat: repeat-x;
+    background-position: 0 50%;
+    opacity: 0.85;
+  }
+  .tile-portrait-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    padding: 0 16px;
+  }
+  .tile-portrait-num {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: clamp(48px, 9vw, 80px);
+    line-height: 0.9;
+    color: var(--color-bp-cyan);
+    letter-spacing: -0.03em;
+  }
+  .tile-portrait-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    font-weight: 700;
+  }
+  .tile-portrait-sub {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--color-bp-cyan);
+  }
+  .tile-portrait-byline {
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    opacity: 0.7;
+    margin-top: 8px;
+  }
+
+  /* ---------- Craft tile ---------- */
+  .tile-craft {
+    width: 100%; height: 100%;
+    background: var(--color-paper-deep);
+    color: var(--color-ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    padding: 12%;
+    position: relative;
+  }
+  .tile-craft-block {
+    width: 46%;
+    aspect-ratio: 1 / 1;
+    background: var(--color-ink);
+    position: relative;
+    transform: rotate(-3deg);
+    box-shadow:
+      8px 8px 0 var(--color-bp-pink),
+      8px 8px 0 1px var(--color-ink);
+  }
+  .tile-craft-block-cut {
+    position: absolute;
+    inset: 16% 16% 32% 16%;
+    background: var(--color-paper);
+    border-radius: 50% 50% 6% 6%;
+  }
+  .tile-craft-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+  }
+  .tile-craft-sub {
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    color: rgba(21, 21, 21, 0.5);
+  }
+  .tile-craft-label {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(18px, 3vw, 26px);
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- Tease tile ----------
+     Type-only utility tile for "lineup soon" / "vendors soon" — anything
+     that's a teaser anchored to the action tabs at the top of the profile.
+     Cream background keeps it quiet next to the colorful film row above. */
+  .tile-tease {
+    width: 100%; height: 100%;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    padding: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+  .tile-tease-hd {
+    font-family: var(--font-body);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--color-bp-pink);
+    font-weight: 700;
+  }
+  .tile-tease-title {
+    font-family: var(--font-display);
+    font-weight: 200;
+    /* Capped at 56px so "VENDORS" (7 chars) fits the ~259px usable tile width
+       at desktop. Going larger clipped the right edge. */
+    font-size: clamp(32px, 6.2vw, 56px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .tile-tease-sub {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(21, 21, 21, 0.55);
+  }
+</style>

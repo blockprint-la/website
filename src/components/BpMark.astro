@@ -1,0 +1,50 @@
+---
+// Blockprint "bp" mark — vectorized from the brand book mark.
+//
+// Construction: each letter is a single colored shape with a circle cut
+// out of it (evenodd fill rule), plus a half-circle attached to the right
+// extending the bowl. The "cream" rectangles from the original brand
+// canvas are gone — wherever they were, the SVG is now fully transparent
+// so the page background (or frosted nav bg) shows through cleanly.
+//
+// All fills come from brand color tokens so the mark themes cleanly.
+
+interface Props {
+  class?: string;
+  /** Accessible label. Falls back to "Blockprint". */
+  ariaLabel?: string;
+}
+
+const { class: className = "", ariaLabel = "Blockprint" } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 200 100"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={ariaLabel}
+  class={className}
+>
+  <!-- "b": pink left-half rect, full circle cut out (evenodd), then a
+       right half-circle reattached to extend the bowl. -->
+  <path
+    d="M 0 0 H 50 V 100 H 0 Z M 50 35 A 30 30 0 1 0 50 95 A 30 30 0 1 0 50 35 Z"
+    fill="var(--color-bp-pink)"
+    fill-rule="evenodd"
+  />
+  <path
+    d="M 50 35 A 30 30 0 0 1 50 95 Z"
+    fill="var(--color-bp-pink)"
+  />
+
+  <!-- "p": navy left-half rect, circle cut higher (bowl up). -->
+  <path
+    d="M 100 0 H 150 V 100 H 100 Z M 150 5 A 30 30 0 1 0 150 65 A 30 30 0 1 0 150 5 Z"
+    fill="var(--color-bp-navy)"
+    fill-rule="evenodd"
+  />
+  <path
+    d="M 150 5 A 30 30 0 0 1 150 65 Z"
+    fill="var(--color-bp-navy)"
+  />
+</svg>

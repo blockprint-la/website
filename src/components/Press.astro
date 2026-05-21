@@ -1,0 +1,33 @@
+---
+import { site, pressQuotes } from "../data/site";
+---
+
+<section id="press" class="relative px-5 md:px-10 py-24 md:py-32">
+  <div class="max-w-5xl mx-auto">
+    <p class="section-marker mb-4">Press</p>
+    <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] ink-stamp mb-10">
+      In the Press
+    </h2>
+
+    {pressQuotes.length === 0 ? (
+      <div class="border-[3px] border-ink p-8 md:p-10 max-w-2xl"
+           style="box-shadow: -6px 6px 0 var(--color-bp-cyan);">
+        <p class="text-base md:text-lg leading-relaxed">
+          Press hits will land here as coverage rolls in. Outlets and writers — reach out to
+          <a href={`mailto:${site.pressEmail}`} class="underline text-bp-pink font-semibold">{site.pressEmail}</a>
+          for assets, interview windows, and on-site photo passes.
+        </p>
+      </div>
+    ) : (
+      <ul class="grid md:grid-cols-2 gap-6">
+        {pressQuotes.map((p) => (
+          <li class="border-[3px] border-ink p-6"
+              style="box-shadow: -4px 4px 0 var(--color-bp-cyan);">
+            <p class="text-base md:text-lg leading-relaxed">"{p.quote}"</p>
+            <p class="mt-4 text-xs uppercase tracking-[0.3em] opacity-70">— {p.source}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>

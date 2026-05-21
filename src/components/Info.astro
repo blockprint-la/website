@@ -1,0 +1,70 @@
+---
+import { site } from "../data/site";
+
+const mapsEmbed = `https://www.google.com/maps?q=${encodeURIComponent(site.mapsQuery)}&output=embed`;
+const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.mapsQuery)}`;
+---
+
+<section id="info" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper-deep">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-start">
+    <div>
+      <p class="section-marker mb-4">The Details</p>
+      <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] ink-stamp">
+        When &<br />Where
+      </h2>
+
+      <dl class="mt-10 space-y-6">
+        <div>
+          <dt class="text-xs uppercase tracking-[0.3em] opacity-70 mb-1">Date</dt>
+          <dd class="font-[var(--font-display)] text-3xl md:text-4xl uppercase font-black leading-none">
+            {site.date}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs uppercase tracking-[0.3em] opacity-70 mb-1">Venue</dt>
+          <dd class="font-[var(--font-display)] text-3xl md:text-4xl uppercase font-black leading-none">
+            {site.venue}
+          </dd>
+          <dd class="text-sm opacity-80 mt-1">{site.city}</dd>
+        </div>
+        <div>
+          <dt class="text-xs uppercase tracking-[0.3em] opacity-70 mb-1">Age Policy</dt>
+          <dd class="font-[var(--font-display)] text-3xl md:text-4xl uppercase font-black leading-none">
+            {site.agePolicy}
+          </dd>
+          <dd class="text-sm opacity-80 mt-1">Valid government-issued ID required at entry.</dd>
+        </div>
+        <div>
+          <dt class="text-xs uppercase tracking-[0.3em] opacity-70 mb-1">Accessibility</dt>
+          <dd class="text-sm opacity-90 leading-relaxed mt-1">
+            The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing and restrooms.
+            For specific accommodations, email
+            <a href={`mailto:${site.accessibilityEmail}`} class="underline hover:text-bp-pink">{site.accessibilityEmail}</a>.
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div>
+      <a
+        href={mapsLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="block relative aspect-[4/5] md:aspect-square overflow-hidden border-[3px] border-ink group"
+        style="box-shadow: -8px 8px 0 var(--color-bp-pink);"
+        aria-label="Open in Google Maps"
+      >
+        <iframe
+          src={mapsEmbed}
+          class="absolute inset-0 w-full h-full grayscale contrast-110 transition-all duration-500 group-hover:grayscale-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map of Abbot Kinney Blvd, Venice, CA"
+        ></iframe>
+        <div class="absolute bottom-3 right-3 tape-label text-sm font-bold pointer-events-none">
+          Open in Maps ↗
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

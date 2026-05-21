@@ -1,0 +1,59 @@
+---
+import { site } from "../data/site";
+---
+
+<section id="newsletter" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="section-marker mb-4">Stay in the Loop</p>
+    <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] ink-stamp mb-6">
+      Get on the List
+    </h2>
+    <p class="text-base md:text-lg opacity-90 max-w-xl mx-auto mb-10">
+      First word on lineup additions, set times, after-parties, and ticket drops.
+      Email or text — we won't spam either.
+    </p>
+
+    <!-- Wired to Hive once endpoint is provided. For now, posts nowhere. -->
+    <form
+      action={site.newsletterAction}
+      method="post"
+      class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto"
+      data-newsletter
+    >
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder="you@email.com"
+        autocomplete="email"
+        class="flex-1 bg-transparent border-[2px] border-ink px-5 py-4 text-base focus:outline-none focus:border-bp-pink placeholder:opacity-50"
+      />
+      <button
+        type="submit"
+        class="bg-bp-pink text-paper px-8 py-4 text-sm uppercase tracking-[0.25em] font-bold"
+        style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+      >
+        Sign Up
+      </button>
+    </form>
+
+    <p class="mt-4 text-xs uppercase tracking-[0.3em] opacity-60">
+      SMS sign-up via Hive coming soon
+    </p>
+  </div>
+</section>
+
+<script>
+  // Until Hive endpoint is wired up, intercept and show a friendly state.
+  const form = document.querySelector<HTMLFormElement>("form[data-newsletter]");
+  if (form && form.action.endsWith("#newsletter")) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const button = form.querySelector("button");
+      if (button) {
+        button.textContent = "Wired to Hive soon";
+        button.setAttribute("disabled", "true");
+      }
+    });
+  }
+</script>

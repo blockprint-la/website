@@ -1,0 +1,155 @@
+---
+import { site } from "../data/site";
+import BpMark from "./BpMark.astro";
+
+const navLinks = [
+  { href: "#about", label: "About" },
+  { href: "#faq", label: "FAQ" },
+];
+---
+
+<nav
+  data-nav
+  class="fixed top-0 left-0 right-0 z-40 px-5 md:px-10 pt-5 md:pt-7 pb-4 md:pb-5 border-b border-transparent"
+>
+  <div class="flex items-center justify-between gap-3">
+    <a href="#top" class="block leading-none" aria-label="Blockprint home">
+      <BpMark class="h-7 md:h-9 w-auto" />
+    </a>
+
+    <!-- Desktop links — collapse into the burger overlay below md -->
+    <ul class="hidden md:flex items-center gap-8 text-sm uppercase tracking-[0.25em] font-medium">
+      {navLinks.map(({ href, label }) => (
+        <li><a href={href} class="hover:text-bp-pink transition-colors">{label}</a></li>
+      ))}
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={site.ticketUrl}
+        class="group relative inline-flex items-center gap-2 bg-bp-pink text-paper px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm uppercase tracking-[0.2em] font-bold"
+        style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+      >
+        Tickets
+        <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+      </a>
+
+      <!-- Burger trigger — mobile only, sits to the right of Tickets -->
+      <button
+        type="button"
+        data-menu-toggle
+        class="md:hidden flex flex-col items-end gap-[5px] p-2 -mr-2"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="block w-7 h-[2px] bg-ink rounded-full"></span>
+        <span class="block w-7 h-[2px] bg-ink rounded-full"></span>
+        <span class="block w-7 h-[2px] bg-ink rounded-full"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu overlay — hidden by default, visible when data-open is set,
+     and always hidden at md+ regardless of state (CSS in global.css). -->
+<div
+  id="mobile-menu"
+  data-menu-overlay
+  class="mobile-menu-overlay fixed inset-0 z-50 bg-paper flex-col"
+  aria-hidden="true"
+>
+  <!-- Top bar: bp mark + close button, mirroring the nav layout -->
+  <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-ink/10">
+    <BpMark class="h-7 w-auto" />
+    <button
+      type="button"
+      data-menu-close
+      class="flex items-center justify-center p-2 -mr-2"
+      aria-label="Close menu"
+    >
+      <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="5" y1="5" x2="19" y2="19" />
+        <line x1="19" y1="5" x2="5" y2="19" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Stacked menu items -->
+  <nav class="flex-1 flex flex-col items-start justify-center px-8 gap-1" aria-label="Mobile">
+    {navLinks.map(({ href, label }) => (
+      <a
+        href={href}
+        data-menu-link
+        class="block-print font-[var(--font-display)] uppercase font-black leading-[0.95] tracking-[-0.01em] text-[clamp(3rem,16vw,7rem)]"
+        data-ink="pink"
+        data-ghost
+        style="--ghost: var(--color-bp-cyan);"
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
+
+  <!-- Tickets CTA pinned to bottom of overlay -->
+  <div class="px-5 pb-8">
+    <a
+      href={site.ticketUrl}
+      data-menu-link
+      class="block w-full text-center bg-bp-pink text-paper py-4 text-sm uppercase tracking-[0.25em] font-bold"
+      style="filter: url(#ink-bleed-soft); box-shadow: -4px 4px 0 var(--color-bp-cyan);"
+    >
+      Buy Tickets →
+    </a>
+  </div>
+</div>
+
+<script>
+  // Drive the frosted-bg state by polling scrollY in a rAF loop. Lenis's
+  // smooth scroll suppresses native `scroll` events on window, so a scroll
+  // listener wouldn't fire — but `window.scrollY` itself is updated every
+  // frame Lenis runs, so polling it on rAF picks up changes immediately.
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  if (nav) {
+    let last: boolean | null = null;
+    const tick = () => {
+      const scrolled = window.scrollY > 24;
+      if (scrolled !== last) {
+        nav.classList.toggle("nav-scrolled", scrolled);
+        last = scrolled;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Mobile menu open/close. The overlay's visibility is driven by the
+  // `data-open` attribute (handled in CSS). JS just toggles the attribute,
+  // updates aria, and locks body scroll while open.
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const overlay = document.querySelector<HTMLElement>("[data-menu-overlay]");
+  const closeBtn = document.querySelector<HTMLButtonElement>("[data-menu-close]");
+  const menuLinks = document.querySelectorAll<HTMLAnchorElement>("[data-menu-link]");
+
+  function setOpen(open: boolean) {
+    if (!overlay || !toggle) return;
+    if (open) {
+      overlay.setAttribute("data-open", "true");
+      overlay.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      overlay.removeAttribute("data-open");
+      overlay.setAttribute("aria-hidden", "true");
+      toggle.setAttribute("aria-expanded", "false");
+      document.documentElement.style.overflow = "";
+    }
+  }
+
+  toggle?.addEventListener("click", () => setOpen(true));
+  closeBtn?.addEventListener("click", () => setOpen(false));
+  menuLinks.forEach((link) => link.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+</script>
