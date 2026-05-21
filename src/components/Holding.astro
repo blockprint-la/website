@@ -45,6 +45,16 @@
     class="mt-12 md:mt-14 w-full max-w-[420px] flex flex-col items-stretch gap-3"
     novalidate
   >
+    <label for="first-name" class="sr-only">First name</label>
+    <input
+      id="first-name"
+      name="first-name"
+      type="text"
+      autocomplete="given-name"
+      required
+      placeholder="First name"
+      class="w-full bg-transparent border-b border-ink/40 focus:border-ink outline-none px-1 py-3 text-center text-base md:text-lg tracking-wide placeholder:text-ink/40"
+    />
     <label for="phone" class="sr-only">Mobile number</label>
     <input
       id="phone"
@@ -123,6 +133,7 @@
     const form = document.getElementById("hive-signup");
     if (!form) return;
 
+    const firstNameInput = form.querySelector("#first-name");
     const phoneInput = form.querySelector("#phone");
     const button = form.querySelector("button[type=submit]");
     const labelIdle = button.querySelector("[data-label-idle]");
@@ -146,6 +157,7 @@
     };
 
     const collapseToSuccess = () => {
+      firstNameInput.disabled = true;
       phoneInput.disabled = true;
       button.hidden = true;
       setStatus("You're in. We'll text you when tickets drop.", "ok");
@@ -153,7 +165,13 @@
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      const firstName = firstNameInput.value.trim();
       const phone = phoneInput.value.trim();
+      if (!firstName) {
+        setStatus("Please enter your first name.", "err");
+        firstNameInput.focus();
+        return;
+      }
       if (!phone) {
         setStatus("Please enter your mobile number.", "err");
         phoneInput.focus();
@@ -167,7 +185,7 @@
       // so we pass the raw input and let the SDK normalize.
       window.HIVE_SDK(
         "phoneNumberSignup",
-        { phoneNumber: phone, didSmsOptIn: true },
+        { phoneNumber: phone, firstName: firstName, didSmsOptIn: true },
         function () {
           // Signup succeeded — tag into the cohort segment. We treat the
           // signup as the source of truth: if addToSegment fails, the fan
