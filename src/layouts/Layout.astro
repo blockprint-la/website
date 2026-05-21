@@ -46,6 +46,23 @@ const {
 
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <!-- Google Analytics 4. Loaded async so it never blocks render.
+         is:inline preserves the gtag queueing pattern (calls before the
+         remote script finishes loading buffer into dataLayer). -->
+    <script
+      is:inline
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${site.ga4MeasurementId}`}
+    ></script>
+    <script is:inline define:vars={{ measurementId: site.ga4MeasurementId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", measurementId);
+    </script>
   </head>
 
   <body>

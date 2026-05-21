@@ -17,6 +17,10 @@ export const site = {
   pressEmail: "press@blockprint.com",
   partnershipsEmail: "partnerships@blockprintla.com",
   domain: "blockprint.la",
+  // Google Analytics 4 measurement ID. Public by design (visible in the
+  // browser request to googletagmanager.com), so not a secret — kept in
+  // config rather than env for ease of swap and dev/staging clarity.
+  ga4MeasurementId: "G-PVDNP9V4C8",
   social: {
     instagram: "https://instagram.com/blockprintfest",
     tiktok: "",
