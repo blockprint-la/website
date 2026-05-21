@@ -98,6 +98,37 @@
       >.
     </p>
   </form>
+
+  <!-- Social footer. Single Instagram link sits at the bottom of the
+       holding section, well separated from the form so it doesn't compete
+       with the primary CTA. Tap target is padded to ~44px on every side
+       per WCAG / Apple HIG; the visible icon stays compact at 22px so the
+       footer reads as a quiet accent rather than a second CTA. -->
+  <a
+    href="https://www.instagram.com/blockprint.la/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Follow Blockprint on Instagram"
+    class="mt-12 md:mt-14 inline-flex items-center gap-2 px-3 py-2 text-[11px] md:text-xs uppercase tracking-[0.25em] text-ink/70 hover:text-ink transition-colors"
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+      <circle cx="12" cy="12" r="4"></circle>
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"
+      ></circle>
+    </svg>
+    <span>@blockprint.la</span>
+  </a>
 </section>
 
 <!-- Hive SDK loader. is:inline preserves the IIFE so Astro's bundler
