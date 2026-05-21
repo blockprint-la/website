@@ -16,7 +16,7 @@ export const site = {
   accessibilityEmail: "access@blockprint.com",
   pressEmail: "press@blockprint.com",
   partnershipsEmail: "partnerships@blockprintla.com",
-  domain: "blockprint.com",
+  domain: "blockprint.la",
   social: {
     instagram: "https://instagram.com/blockprintfest",
     tiktok: "",

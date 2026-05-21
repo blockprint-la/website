@@ -1,6 +1,13 @@
 ---
-// Minimal pre-launch holding page. Replaces the full marketing site while
-// the brand and content are still being developed.
+// Minimal pre-launch holding page. Wordmark + custom SMS capture form
+// wired to Hive's JS SDK (brand ID 135484). Submitters land in the
+// "Website Signup" segment so the Blockprint cohort stays separable
+// from any other activity on this Hive brand account.
+//
+// Hive enforces a domain whitelist — only requests from approved origins
+// will succeed. Currently whitelisted: blockprint.la. Add localhost +
+// *.vercel.app via Hive support (email support@hive.co) if you need
+// to test locally or on preview deploys.
 ---
 
 <section
@@ -22,4 +29,156 @@
   >
     Coming soon
   </p>
+
+  <!-- SMS capture form. Submission triggers phoneNumberSignup on Hive,
+       then chains addToSegment to tag the fan into the cohort. The TCPA
+       compliance copy below the input is mandatory under Hive's docs —
+       the act of submitting the form constitutes the explicit opt-in
+       passed as didSmsOptIn: true. -->
+  <form
+    id="hive-signup"
+    class="mt-12 md:mt-14 w-full max-w-[420px] flex flex-col items-stretch gap-3"
+    novalidate
+  >
+    <label for="phone" class="sr-only">Mobile number</label>
+    <input
+      id="phone"
+      name="phone"
+      type="tel"
+      inputmode="tel"
+      autocomplete="tel"
+      required
+      placeholder="Mobile number"
+      class="w-full bg-transparent border-b border-ink/40 focus:border-ink outline-none px-1 py-3 text-center text-base md:text-lg tracking-wide placeholder:text-ink/40"
+    />
+    <button
+      type="submit"
+      class="mt-3 self-center bg-bp-pink text-paper px-7 py-3 text-xs md:text-sm uppercase tracking-[0.3em] font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+      style="box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+    >
+      <span data-label-idle>Get first access</span>
+      <span data-label-loading hidden>Sending…</span>
+    </button>
+
+    <p
+      data-status
+      role="status"
+      aria-live="polite"
+      class="min-h-[1.25rem] text-center text-xs md:text-sm tracking-wide"
+    >
+    </p>
+
+    <p
+      class="mt-2 text-[10px] md:text-xs text-center text-ink/60 leading-relaxed"
+    >
+      By submitting, you opt in to receive recurring marketing texts from
+      Blockprint at the number provided. Msg &amp; data rates may apply.
+      Reply STOP to opt out, HELP for help.
+    </p>
+  </form>
 </section>
+
+<!-- Hive SDK loader. is:inline preserves the IIFE so Astro's bundler
+     doesn't tree-shake or transform the queueing pattern that lets us
+     call HIVE_SDK("init", ...) before the actual SDK has loaded. -->
+<script is:inline>
+  (function (h, i, v, e, s, d, k) {
+    h.HiveSDKObject = s;
+    h[s] =
+      h[s] ||
+      function () {
+        (h[s].q = h[s].q || []).push(arguments);
+      };
+    d = i.createElement(v);
+    k = i.getElementsByTagName(v)[0];
+    d.async = 1;
+    d.id = s;
+    d.src = e + "?r=" + parseInt(new Date() / 60000);
+    k.parentNode.insertBefore(d, k);
+  })(
+    window,
+    document,
+    "script",
+    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
+    "HIVE_SDK"
+  );
+  HIVE_SDK("init", 135484);
+</script>
+
+<!-- Form submit handler. Inline so it runs in the same global scope as
+     the SDK loader above and can call window.HIVE_SDK directly without
+     module-import dance. -->
+<script is:inline>
+  (function () {
+    const form = document.getElementById("hive-signup");
+    if (!form) return;
+
+    const phoneInput = form.querySelector("#phone");
+    const button = form.querySelector("button[type=submit]");
+    const labelIdle = button.querySelector("[data-label-idle]");
+    const labelLoading = button.querySelector("[data-label-loading]");
+    const status = form.querySelector("[data-status]");
+
+    const setLoading = (loading) => {
+      button.disabled = loading;
+      labelIdle.hidden = loading;
+      labelLoading.hidden = !loading;
+    };
+
+    const setStatus = (msg, tone) => {
+      status.textContent = msg;
+      status.style.color =
+        tone === "ok"
+          ? "var(--color-bp-navy)"
+          : tone === "err"
+            ? "var(--color-bp-pink-deep)"
+            : "";
+    };
+
+    const collapseToSuccess = () => {
+      phoneInput.disabled = true;
+      button.hidden = true;
+      setStatus("You're in. We'll text you when tickets drop.", "ok");
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        setStatus("Please enter your mobile number.", "err");
+        phoneInput.focus();
+        return;
+      }
+
+      setLoading(true);
+      setStatus("");
+
+      // Hive parses E.164 / RFC3966 and defaults bad formats to +1 (US/CA),
+      // so we pass the raw input and let the SDK normalize.
+      window.HIVE_SDK(
+        "phoneNumberSignup",
+        { phoneNumber: phone, didSmsOptIn: true },
+        function () {
+          // Signup succeeded — tag into the cohort segment. We treat the
+          // signup as the source of truth: if addToSegment fails, the fan
+          // is still subscribed, so we surface success and just log the
+          // tagging error for later cleanup.
+          window.HIVE_SDK(
+            "addToSegment",
+            "Website Signup",
+            collapseToSuccess,
+            function (err) {
+              console.error("[hive] addToSegment failed", err);
+              collapseToSuccess();
+            }
+          );
+        },
+        function (err) {
+          console.error("[hive] phoneNumberSignup failed", err);
+          setStatus("Could not subscribe — please try again.", "err");
+          setLoading(false);
+        }
+      );
+    });
+  })();
+</script>

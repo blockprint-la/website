@@ -5,7 +5,7 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://blockprint.com',
+  site: 'https://blockprint.la',
   output: 'static',
   adapter: vercel(),
   vite: {
