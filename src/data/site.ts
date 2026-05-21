@@ -21,6 +21,9 @@ export const site = {
   // browser request to googletagmanager.com), so not a secret — kept in
   // config rather than env for ease of swap and dev/staging clarity.
   ga4MeasurementId: "G-PVDNP9V4C8",
+  // Meta (Facebook) Pixel ID. Also public — visible in every request to
+  // facebook.com/tr. Used for ad retargeting + conversion tracking.
+  metaPixelId: "842607348915291",
   social: {
     instagram: "https://instagram.com/blockprintfest",
     tiktok: "",

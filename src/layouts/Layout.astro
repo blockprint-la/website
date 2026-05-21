@@ -63,6 +63,45 @@ const {
       gtag("js", new Date());
       gtag("config", measurementId);
     </script>
+
+    <!-- Meta Pixel. is:inline so Astro doesn't transform the IIFE that
+         injects fbevents.js. The PageView fires on every page load;
+         additional standard/custom events can be added later via
+         fbq('track', ...) calls from page-specific scripts. -->
+    <script is:inline define:vars={{ pixelId: site.metaPixelId }}>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+      fbq("init", pixelId);
+      fbq("track", "PageView");
+    </script>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display:none"
+        src={`https://www.facebook.com/tr?id=${site.metaPixelId}&ev=PageView&noscript=1`}
+      /></noscript>
   </head>
 
   <body>
