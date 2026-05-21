@@ -99,21 +99,21 @@
     </p>
   </form>
 
-  <!-- Social footer. Single Instagram link sits at the bottom of the
-       holding section, well separated from the form so it doesn't compete
-       with the primary CTA. Tap target is padded to ~44px on every side
-       per WCAG / Apple HIG; the visible icon stays compact at 22px so the
-       footer reads as a quiet accent rather than a second CTA. -->
+  <!-- Social footer. Icon-only Instagram link sits at the bottom of the
+       holding section, well separated from the form so it doesn't
+       compete with the primary CTA. Tap target padded to ~44px per
+       WCAG / Apple HIG; visible icon is 26px so it carries enough
+       weight on its own without the handle label. -->
   <a
     href="https://www.instagram.com/blockprint.la/"
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Follow Blockprint on Instagram"
-    class="mt-12 md:mt-14 inline-flex items-center gap-2 px-3 py-2 text-[11px] md:text-xs uppercase tracking-[0.25em] text-ink/70 hover:text-ink transition-colors"
+    class="mt-12 md:mt-14 inline-flex items-center justify-center p-3 text-ink/70 hover:text-ink transition-colors"
   >
     <svg
-      width="22"
-      height="22"
+      width="26"
+      height="26"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -127,7 +127,6 @@
       <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"
       ></circle>
     </svg>
-    <span>@blockprint.la</span>
   </a>
 </section>
 
