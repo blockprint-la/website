@@ -1,0 +1,241 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const lastUpdated = "May 21, 2026";
+// Email is a placeholder until Blockprint email infrastructure is set up
+// — swap to whatever address Jake wants to actually receive privacy
+// requests at. See site.ts notes; emails there still reference .com.
+const contactEmail = "hello@blockprint.la";
+---
+
+<Layout
+  title="Privacy Policy — Blockprint"
+  description="How Blockprint collects, uses, and protects information you share with us."
+>
+  <article class="privacy mx-auto max-w-2xl px-5 md:px-8 py-16 md:py-24">
+    <!-- Wordmark links back to home -->
+    <a
+      href="/"
+      class="block mb-12 md:mb-16"
+      aria-label="Back to Blockprint home"
+    >
+      <img
+        src="/brand/wordmark.png"
+        alt="Blockprint"
+        width="1010"
+        height="152"
+        class="w-full max-w-[360px] mx-auto"
+      />
+    </a>
+
+    <header class="mb-10 md:mb-14 text-center">
+      <h1 class="text-2xl md:text-3xl uppercase tracking-[0.3em] font-bold">
+        Privacy Policy
+      </h1>
+      <p class="mt-3 text-xs md:text-sm uppercase tracking-[0.3em] opacity-60">
+        Last updated · {lastUpdated}
+      </p>
+    </header>
+
+    <div class="prose-content text-base leading-relaxed space-y-5">
+      <p>
+        Blockprint is a music festival produced by Clavette Entertainment,
+        LLC ("Blockprint," "we," "us"). This Privacy Policy explains what
+        information we collect when you interact with this website, how we
+        use it, who we share it with, and the choices you have. By using
+        the site or submitting your phone number through our signup form,
+        you agree to the practices described below.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Information we collect
+      </h2>
+      <p>
+        <strong>Information you give us.</strong> When you sign up for
+        text-message alerts, we collect the mobile phone number you
+        submit and a record of your consent to receive marketing
+        messages from us.
+      </p>
+      <p>
+        <strong>Information collected automatically.</strong> When you
+        visit the site, our hosting and analytics providers
+        automatically receive standard request data — IP address,
+        browser type, device type, referring page, the pages you view,
+        and the date and time of your visit. We use this data in
+        aggregate to understand how the site is performing.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        How we use information
+      </h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          To send you text-message updates about Blockprint — including
+          ticket on-sales, lineup announcements, schedule changes, and
+          related festival news.
+        </li>
+        <li>
+          To operate, secure, and improve the website and our marketing.
+        </li>
+        <li>
+          To comply with legal obligations and enforce our terms.
+        </li>
+      </ul>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Third-party services we rely on
+      </h2>
+      <p>
+        We use a small number of vendors to run the site and our
+        messaging program. Each is contractually bound to use your
+        information only to provide their service to us.
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong>Hive (Hive.co)</strong> — our SMS marketing platform.
+          When you submit the signup form, your phone number and consent
+          record are stored by Hive on our behalf and used to deliver
+          messages. See
+          <a
+            href="https://hive.co/privacy"
+            target="_blank"
+            rel="noopener"
+            class="underline">Hive's Privacy Policy</a
+          >.
+        </li>
+        <li>
+          <strong>Vercel</strong> — our website host and analytics
+          provider. Vercel processes request data to serve the site and
+          provide aggregate traffic insights. See
+          <a
+            href="https://vercel.com/legal/privacy-policy"
+            target="_blank"
+            rel="noopener"
+            class="underline">Vercel's Privacy Policy</a
+          >.
+        </li>
+      </ul>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Text messaging program
+      </h2>
+      <p>
+        By submitting the signup form, you expressly consent to receive
+        recurring marketing text messages from Blockprint at the mobile
+        number you provided. Consent is not a condition of any purchase.
+        Message frequency varies. Message and data rates may apply.
+      </p>
+      <p>
+        <strong>To stop messages,</strong> reply <strong>STOP</strong> to
+        any text. <strong>For help,</strong> reply <strong>HELP</strong>
+        or contact us at the email below. Carriers are not liable for
+        delayed or undelivered messages.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Sharing your information
+      </h2>
+      <p>
+        We do not sell your personal information. We share it only with
+        the vendors listed above, with our legal and professional
+        advisors, in connection with a sale or restructuring of the
+        business, or when we are required to do so by law.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Data retention
+      </h2>
+      <p>
+        We keep your phone number and consent record for as long as you
+        remain subscribed to our messages, and for a reasonable period
+        afterwards to maintain proof of consent and honor opt-out
+        requests. Aggregated usage analytics are retained on a rolling
+        basis per our analytics provider's standard retention.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Your choices and rights
+      </h2>
+      <p>
+        You can opt out of marketing texts at any time by replying STOP.
+        You can also email us at <a
+          href={`mailto:${contactEmail}`}
+          class="underline">{contactEmail}</a
+        > to request access to, correction of, or deletion of the
+        personal information we hold about you.
+      </p>
+      <p>
+        <strong>California residents</strong> have additional rights
+        under the California Consumer Privacy Act, including the right
+        to know what personal information we collect about you, the
+        right to request deletion, the right to opt out of any sale or
+        sharing of personal information (we do not sell), and the right
+        not to be discriminated against for exercising these rights. To
+        exercise any of these rights, contact us at the email above.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Cookies and tracking
+      </h2>
+      <p>
+        The site uses minimal cookies — essentially what's needed for
+        Vercel Analytics to count visits and for the site to function.
+        We do not currently use advertising trackers, retargeting
+        pixels, or third-party analytics beyond Vercel.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Children
+      </h2>
+      <p>
+        Blockprint is intended for an audience 18 and older. We do not
+        knowingly collect personal information from children under 16.
+        If you believe a child has submitted information to us, please
+        contact us and we will delete it.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Changes to this policy
+      </h2>
+      <p>
+        We may update this Privacy Policy from time to time. When we do,
+        we will revise the "Last updated" date at the top of this page.
+        Material changes will be communicated by posting the updated
+        policy here; if the change affects how we use information you've
+        already given us, we'll notify SMS subscribers via text first.
+      </p>
+
+      <h2 class="text-lg md:text-xl uppercase tracking-[0.2em] font-bold pt-6">
+        Contact us
+      </h2>
+      <p>
+        Questions about this policy or how we handle your information?
+        Email us at <a
+          href={`mailto:${contactEmail}`}
+          class="underline">{contactEmail}</a
+        >.
+      </p>
+      <p class="text-sm opacity-70 pt-4">
+        Clavette Entertainment, LLC d/b/a Blockprint
+      </p>
+    </div>
+
+    <footer class="mt-16 text-center">
+      <a
+        href="/"
+        class="inline-block text-xs uppercase tracking-[0.4em] underline decoration-ink/40 underline-offset-4 hover:decoration-ink"
+      >
+        ← Back
+      </a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  /* Anchor styling within the policy body — keep underlines but use the
+     brand ink color and a comfortable underline offset for readability. */
+  .prose-content a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+</style>
