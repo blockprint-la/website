@@ -12,10 +12,10 @@ export const site = {
   agePolicy: "21+",
   ticketUrl: "#tickets",        // swap to Tixr URL when ready
   newsletterAction: "#newsletter", // swap to Hive endpoint when ready
-  contactEmail: "hello@blockprint.com",
-  accessibilityEmail: "access@blockprint.com",
-  pressEmail: "press@blockprint.com",
-  partnershipsEmail: "partnerships@blockprintla.com",
+  contactEmail: "info@blockprint.la",
+  accessibilityEmail: "access@blockprint.la",
+  pressEmail: "press@blockprint.la",
+  partnershipsEmail: "partnerships@blockprint.la",
   domain: "blockprint.la",
   // Google Analytics 4 measurement ID. Public by design (visible in the
   // browser request to googletagmanager.com), so not a secret — kept in
@@ -63,15 +63,15 @@ export const pressQuotes: { quote: string; source: string }[] = [
 export const faqs: { q: string; a: string }[] = [
   {
     q: "What exactly is Blockprint?",
-    a: `A one-day block party in Venice. We close down 3–4 blocks of Abbot Kinney Blvd between Brooks Ave and San Juan Ave for a single-stage festival on the street itself.`,
+    a: `A one-day block party in Venice. We close down 3–4 blocks of Abbot Kinney Blvd between Brooks Ave and San Juan Ave for a single-stage festival on the street itself — electronic music, local food, art, and Venice culture all on one stretch.`,
   },
   {
     q: "When and where is Blockprint?",
-    a: `Saturday, August 22, 2026 on Abbot Kinney Blvd in Venice, California. Doors and exact set times will be announced closer to the event.`,
+    a: `Saturday, August 22, 2026 from 3 PM to 9 PM on Abbot Kinney Blvd in Venice, California. Doors and exact set times will be announced closer to the event.`,
   },
   {
     q: "How old do I have to be?",
-    a: `Blockprint is a strictly 21+ event. Valid government-issued ID is required at entry — no exceptions.`,
+    a: `Blockprint is a strictly 21+ event. Bring a valid government-issued photo ID with date of birth — U.S. driver's license, state ID card, or a U.S. or foreign passport. No exceptions at the gate.`,
   },
   {
     q: "What's the lineup?",
@@ -86,12 +86,24 @@ export const faqs: { q: string; a: string }[] = [
     a: `Yes. Food and drink stations will be set up across the festival footprint, and many of the bars and restaurants along the stretch will be serving. Final vendor lineup announced closer to the event.`,
   },
   {
+    q: "What can I bring?",
+    a: `Sunscreen, deodorant, prescribed medications, non-professional cameras, e-cigarettes/vapes, lighters, unopened cigarettes, unopened gum, and empty reusable water bottles or personal misting fans (fill them inside). Bags must be clear and 12″ × 6″ × 12″ or smaller; small clutches under 6″ × 9″ are also fine.`,
+  },
+  {
+    q: "What's not allowed?",
+    a: `No outside food or drink, glass containers, aerosols, drones, professional recording equipment, laser pointers, large umbrellas, chairs, or blankets, toy weapons, weapons or anything dangerous, pets, or illegal substances. Costumes resembling law enforcement uniforms are not permitted.`,
+  },
+  {
+    q: "Code of conduct?",
+    a: `Blockprint is a zero-tolerance space for harassment, discrimination, illegal activity, or any behavior that makes others feel unsafe — violations mean immediate removal. The dancefloor is for dancing; no sitting on it. Look out for each other and we'll all have a good time.`,
+  },
+  {
     q: "Are tickets refundable?",
     a: `All sales are final. Tickets are transferable through Tixr if you can't make it.`,
   },
   {
     q: "Is the venue accessible?",
-    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email ${"access@blockprint.com"} and we'll make it work.`,
+    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email access@blockprint.la and we'll make it work.`,
   },
   {
     q: "Re-entry?",
@@ -102,11 +114,15 @@ export const faqs: { q: string; a: string }[] = [
     a: `Rain or shine. Refunds are not issued due to weather.`,
   },
   {
+    q: "How do I get in touch?",
+    a: `General questions go to info@blockprint.la — we respond Monday through Friday within 48 hours. For specific needs, use access@blockprint.la (accessibility), press@blockprint.la (media), or partnerships@blockprint.la (vendors, brands, activations).`,
+  },
+  {
     q: "I'm a vendor or brand — how do I get involved?",
-    a: `Email partnerships@blockprintla.com with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
+    a: `Email partnerships@blockprint.la with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
   },
   {
     q: "Press / photo / media?",
-    a: `Email press@blockprint.com with outlet, dates of coverage, and any specific requests.`,
+    a: `Email press@blockprint.la with outlet, dates of coverage, and any specific requests.`,
   },
 ];
