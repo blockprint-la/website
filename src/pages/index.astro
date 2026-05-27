@@ -1,12 +1,18 @@
 ---
-// Pre-launch: site is parked on the Holding page while the full marketing
-// site is rebuilt. To restore, swap <Holding /> back to the full section
-// stack (Nav, Hero, About, Faq, Newsletter, Footer) — components are
-// untouched on disk.
 import Layout from "../layouts/Layout.astro";
-import Holding from "../components/Holding.astro";
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import About from "../components/About.astro";
+import Faq from "../components/Faq.astro";
+import Newsletter from "../components/Newsletter.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout>
-  <Holding />
+  <Nav />
+  <Hero />
+  <About />
+  <Faq />
+  <Newsletter />
+  <Footer />
 </Layout>
