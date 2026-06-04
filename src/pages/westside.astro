@@ -258,7 +258,7 @@ const pageDesc =
                   <circle cx="12" cy="12" r="4"></circle>
                   <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"></circle>
                 </svg>
-                <span>{stop.igHandle}</span>
+                <span>Instagram</span>
               </a>
               {stop.reservation && (
                 <a
@@ -553,35 +553,44 @@ const pageDesc =
     box-shadow: -3px 3px 0 rgba(0, 241, 207, 0.5);
   }
 
-  /* ---------- Link-out chips (Instagram / Resy) ---------- */
+  /* ---------- Link-out chips (Instagram / Resy) — single row, no wrap ---------- */
   .stop-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
+    flex-wrap: nowrap;
+    gap: 0.55rem;
     margin-top: 1.4rem;
   }
   .action-chip {
+    flex: 0 1 auto;
+    min-width: 0;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
-    padding: 0.55rem 0.85rem;
+    padding: 0.6rem 0.85rem;
     border: 2px solid var(--color-ink);
     background: var(--color-paper);
     color: var(--color-ink);
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
     box-shadow: -3px 3px 0 var(--color-bp-pink);
     transition: transform 0.12s ease;
     -webkit-tap-highlight-color: transparent;
   }
   .action-chip:active { transform: translate(-1px, 1px); }
   .action-chip svg { flex-shrink: 0; }
+  .action-chip > span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  /* If space is ever tight (very small phones), the IG chip yields first so the
+     "Reserve on Resy" label always stays intact. */
+  .action-chip--ig { flex-shrink: 1; }
   .action-chip--resy {
+    flex-shrink: 0;
     background: var(--color-bp-navy);
     color: var(--color-paper);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     box-shadow: -3px 3px 0 var(--color-bp-cyan);
   }
 
