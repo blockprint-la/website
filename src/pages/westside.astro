@@ -1,0 +1,835 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
+
+// ---------------------------------------------------------------------------
+// Blockprint Field Guide No. 01 — "The West Side of Abbot Kinney"
+//
+// A standalone, mobile-first interactive guide built to text our SMS list as
+// a warm-up offer ahead of the lineup announcement. Lives at /westside so it
+// can be linked from an SMS without touching the parked holding homepage.
+//
+// Body copy for each stop is verbatim from the brief (Tab 2) — do not edit
+// the wording. Photos live in /public/guide, GIF "stickers" in
+// /public/guide/gifs. Each stop gets a tap-to-open Google Map embed (no API
+// key — classic ?q=…&output=embed) and a passport-style "stamp" the visitor
+// can press to check the stop off (persisted in localStorage).
+// ---------------------------------------------------------------------------
+
+type Stop = {
+  num: string;
+  id: string;
+  name: string;
+  img: string;
+  imgAlt: string;
+  imgW: number;
+  imgH: number;
+  paras: string[];
+  calloutLast?: boolean; // render the final paragraph as a highlighted callout
+  gif?: string;
+  gifAlt?: string;
+  gifW?: number;
+  gifH?: number;
+  caption?: string;
+  address: string;
+  mapQuery: string;
+  instagram: string;
+  igHandle: string;
+  reservation?: string; // Resy URL — restaurants/bars only
+};
+
+const stops: Stop[] = [
+  {
+    num: "01",
+    id: "albion-garden",
+    name: "Albion Garden",
+    img: "/guide/albion.jpg",
+    imgAlt: "The bright, plant-filled interior of Albion Garden in Venice",
+    imgW: 1200,
+    imgH: 800,
+    paras: [
+      "Start your day at Albion Garden, where Japanese wellness traditions meet laid-back California living. Whether you’re stopping in for a facial, a massage, or just one of the best matcha lattes in Venice, it’s the kind of place that immediately slows your heart rate.",
+    ],
+    address: "1043 Abbot Kinney Blvd · Venice",
+    mapQuery: "Albion Garden, 1043 Abbot Kinney Blvd, Venice, CA 90291",
+    instagram: "https://www.instagram.com/albion_garden/",
+    igHandle: "@albion_garden",
+  },
+  {
+    num: "02",
+    id: "cooks-garden",
+    name: "The Cook’s Garden",
+    img: "/guide/cooks-garden.jpg",
+    imgAlt: "Chickens and greenery at The Cook’s Garden urban farm in Venice",
+    imgW: 1200,
+    imgH: 900,
+    paras: [
+      "Matcha in hand, head a few steps down the street to the west side’s only urban farm. Chickens, ducks, bunnies, herbs, and vegetables all live here among the garden paths.",
+      "Venice OGs might remember when DJs like Dillon Francis played pop-ups here years ago. This summer, we’re bringing music back to the block in a much bigger way.",
+    ],
+    calloutLast: true,
+    gif: "/guide/gifs/bunny.gif",
+    gifAlt: "A bunny twitching its nose",
+    gifW: 368,
+    gifH: 480,
+    caption: "the welcoming committee",
+    address: "1033 Abbot Kinney Blvd · Venice",
+    mapQuery: "The Cook’s Garden, 1033 Abbot Kinney Blvd, Venice, CA 90291",
+    instagram: "https://www.instagram.com/thecooksgardenvenice/",
+    igHandle: "@thecooksgardenvenice",
+  },
+  {
+    num: "03",
+    id: "only-the-wild-ones",
+    name: "Only The Wild Ones",
+    img: "/guide/wild-ones.jpg",
+    imgAlt: "The low-lit, stylish interior of Only The Wild Ones wine bar",
+    imgW: 1200,
+    imgH: 800,
+    paras: [
+      "After spending time at the farm, it’s time for happy hour.",
+      "Next door you’ll find Only The Wild Ones, the newest concept from the team behind Venice institution The Butcher’s Daughter. Think listening bar meets wine bar: relaxed, unpretentious, and exactly the kind of place you end up staying longer than planned.",
+      "Expect natural wines, small-batch cocktails, and seasonal small plates, with some ingredients sourced directly from The Cook’s Garden next door.",
+      "Upstairs, Leena Culhane’s Force of Nature offers a more intimate experience, with softly lit corners and an outdoor bar overlooking the garden below.",
+    ],
+    gif: "/guide/gifs/turntable.gif",
+    gifAlt: "A vinyl record spinning on a turntable",
+    gifW: 480,
+    gifH: 378,
+    caption: "listening-bar energy",
+    address: "1031 Abbot Kinney Blvd · Venice",
+    mapQuery: "Only The Wild Ones, 1031 Abbot Kinney Blvd, Venice, CA 90291",
+    instagram: "https://www.instagram.com/only_the_wild_ones/",
+    igHandle: "@only_the_wild_ones",
+    reservation: "https://resy.com/cities/venice-los-angeles-ca/venues/only-the-wild-ones",
+  },
+  {
+    num: "04",
+    id: "felix-trattoria",
+    name: "Felix Trattoria",
+    img: "/guide/felix.jpg",
+    imgAlt: "The warm dining room at Felix Trattoria in Venice",
+    imgW: 1200,
+    imgH: 801,
+    paras: [
+      "For dinner, there’s Felix.",
+      "Chef Evan Funke’s celebrated pasta destination remains one of the hardest reservations to get on the Westside for good reason. You can watch pasta being made by hand in the restaurant’s pasta lab while enjoying signature dishes like the Sfincione focaccia, squash blossoms, and tagliatelle al ragù Bolognese.",
+      "Trust us: make a reservation.",
+    ],
+    calloutLast: true,
+    gif: "/guide/gifs/pasta.gif",
+    gifAlt: "Fresh pasta dough being worked by hand",
+    gifW: 326,
+    gifH: 480,
+    caption: "the pasta lab, in motion",
+    address: "1023 Abbot Kinney Blvd · Venice",
+    mapQuery: "Felix Trattoria, 1023 Abbot Kinney Blvd, Venice, CA 90291",
+    instagram: "https://www.instagram.com/felixlosangeles/",
+    igHandle: "@felixlosangeles",
+    reservation: "https://resy.com/cities/los-angeles-ca/venues/felix-trattoria",
+  },
+  {
+    num: "05",
+    id: "alisa-wine-and-friends",
+    name: "Alisa Wine & Friends",
+    img: "/guide/alisa.jpg",
+    imgAlt: "A glass of wine and Mediterranean small plates at Alisa Wine & Friends",
+    imgW: 1200,
+    imgH: 900,
+    paras: [
+      "Our final stop takes us across the Ionian Sea—from Italy to Greece.",
+      "If you’re in the mood for one last glass of wine, Alisa Wine & Friends is the perfect nightcap. Their thoughtfully selected Greek wines pair beautifully with a Mediterranean menu that feels transportive without being fussy.",
+      "And if you somehow still have room after dinner, the spicy feta dip is mandatory.",
+    ],
+    calloutLast: true,
+    gif: "/guide/gifs/wine.gif",
+    gifAlt: "Two glasses of wine clinking in a toast",
+    gifW: 480,
+    gifH: 268,
+    caption: "one for the road",
+    address: "1009 Abbot Kinney Blvd · Venice",
+    mapQuery: "Alisa Wine & Friends, 1009 Abbot Kinney Blvd, Venice, CA 90291",
+    instagram: "https://www.instagram.com/alisa_wine_friends/",
+    igHandle: "@alisa_wine_friends",
+    reservation: "https://resy.com/cities/los-angeles-ca/venues/alisa-wine-and-friends",
+  },
+];
+
+const directions = (q: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const embed = (q: string) =>
+  `https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed`;
+
+const instagram = "https://www.instagram.com/blockprint.la/";
+
+const pageTitle = "The West Side of Abbot Kinney — A Blockprint Field Guide";
+const pageDesc =
+  "Team Blockprint’s ideal day on the west side of Abbot Kinney — five stops from matcha to a Greek nightcap. A field guide from the crew bringing the block party to Venice on August 22.";
+---
+
+<Layout title={pageTitle} description={pageDesc}>
+  <article class="guide">
+    <!-- Wordmark — links back home -->
+    <a href="/" class="block w-full max-w-[300px] mx-auto mb-10" aria-label="Blockprint home">
+      <img src="/brand/wordmark.png" alt="Blockprint" width="1010" height="152" class="w-full" />
+    </a>
+
+    <!-- ===================== INTRO ===================== -->
+    <header class="intro mx-auto max-w-[640px] text-center px-1">
+      <p class="section-marker">Field Guide № 01</p>
+
+      <h1 class="guide-title mt-4">
+        <span class="block-print" data-ink="navy" data-ghost style="--ghost: var(--color-bp-cyan);">THE WEST SIDE</span>
+        <span class="guide-title__sub block-print" data-ink="pink" data-ghost style="--ghost: var(--color-bp-cyan);">of Abbot Kinney</span>
+      </h1>
+
+      <p class="mt-6 flex justify-center">
+        <span class="tape-label text-sm md:text-base">{site.dateShort} · VENICE, CA</span>
+      </p>
+
+      <div class="intro-copy mt-8 text-left space-y-4 text-[1.0625rem] leading-relaxed">
+        <p>
+          You’re probably already familiar with the east side of Abbot Kinney.
+          It’s home to staples like The Brig and The Tasting Kitchen.
+        </p>
+        <p>
+          But Team Blockprint is here to introduce you to our favorite stretch
+          of the block: <strong>the west side.</strong>
+        </p>
+        <p class="text-center font-accent text-xl pt-1">Here’s our ideal itinerary:</p>
+      </div>
+
+      <p class="hint mt-8 text-xs uppercase tracking-[0.25em] opacity-60">
+        Tap the <span class="hint-stamp" aria-hidden="true">◍</span> stamp at each
+        stop to check it off · scroll to start ↓
+      </p>
+    </header>
+
+    <!-- ===================== STOPS ===================== -->
+    <div class="stops mx-auto max-w-[640px] mt-14 md:mt-20">
+      {
+        stops.map((stop, i) => (
+          <section id={stop.id} class="stop" data-reveal>
+            <!-- Header: number + name + stamp -->
+            <div class="stop-head">
+              <span class="stop-num block-print" data-ink="cyan" data-ghost style="--ghost: var(--color-bp-navy);">
+                {stop.num}
+              </span>
+              <div class="stop-titles">
+                <p class="section-marker">Stop {stop.num}</p>
+                <h2 class="stop-name">{stop.name}</h2>
+              </div>
+              <button
+                type="button"
+                class="stamp-btn"
+                data-stamp={stop.id}
+                aria-pressed="false"
+                aria-label={`Mark ${stop.name} as visited`}
+              >
+                <span class="stamp-face">
+                  <span class="stamp-default">STAMP</span>
+                  <span class="stamp-done">
+                    <span class="stamp-check">✓</span>
+                    <span class="stamp-word">BEEN</span>
+                  </span>
+                </span>
+              </button>
+            </div>
+
+            <!-- Visual: the stop photo with its meme pressed onto a corner
+                 like a sticker on a print. Caption rides along as a tag. -->
+            <div class="stop-visual">
+              <figure class="stop-photo">
+                <img
+                  src={stop.img}
+                  alt={stop.imgAlt}
+                  width={stop.imgW}
+                  height={stop.imgH}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              {stop.gif && (
+                <figure class={`gif-sticker ${i % 2 ? "gif-sticker--left" : "gif-sticker--right"}`}>
+                  <img
+                    src={stop.gif}
+                    alt={stop.gifAlt}
+                    width={stop.gifW}
+                    height={stop.gifH}
+                    loading="lazy"
+                  />
+                  <figcaption>{stop.caption}</figcaption>
+                </figure>
+              )}
+            </div>
+
+            <!-- Copy -->
+            <div class="stop-copy">
+              {stop.paras.map((p, j) =>
+                stop.calloutLast && j === stop.paras.length - 1 ? (
+                  <p class="stop-callout">{p}</p>
+                ) : (
+                  <p>{p}</p>
+                )
+              )}
+            </div>
+
+            <!-- Links out: Instagram + (for restaurants/bars) a Resy reservation -->
+            <div class="stop-actions">
+              <a
+                class="action-chip action-chip--ig"
+                href={stop.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${stop.name} on Instagram`}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="15"
+                  height="15"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"></circle>
+                </svg>
+                <span>{stop.igHandle}</span>
+              </a>
+              {stop.reservation && (
+                <a
+                  class="action-chip action-chip--resy"
+                  href={stop.reservation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Reserve a table at ${stop.name} on Resy`}
+                >
+                  <span>Reserve on Resy</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </div>
+
+            <!-- Map (tap to open) -->
+            <details class="map-wrap">
+              <summary>
+                <span class="map-pin" aria-hidden="true">📍</span>
+                <span class="map-summary-text">{stop.address}</span>
+                <span class="map-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="map-body">
+                <iframe
+                  class="stop-map"
+                  src={embed(stop.mapQuery)}
+                  title={`Map to ${stop.name}`}
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                />
+                <a class="directions-link" href={directions(stop.mapQuery)} target="_blank" rel="noopener noreferrer">
+                  Get directions ↗
+                </a>
+              </div>
+            </details>
+          </section>
+        ))
+      }
+    </div>
+
+    <!-- ===================== CLOSING ===================== -->
+    <section class="closing mx-auto max-w-[640px] mt-20 text-center">
+      <p class="section-marker section-marker--navy">The whole point</p>
+      <h2 class="closing-title mt-3">
+        <span class="block-print" data-ink="pink" data-ghost style="--ghost: var(--color-bp-cyan);">SEE YOU ON</span>
+        <span class="block-print" data-ink="navy" data-ghost style="--ghost: var(--color-bp-pink);">THE BLOCK</span>
+      </h2>
+
+      <figure class="gif-sticker gif-sticker--center mt-8">
+        <img src="/guide/gifs/disco.gif" alt="Silhouettes dancing on a retro disco floor" width="500" height="377" loading="lazy" />
+        <figcaption>aug 22 · the block, but louder</figcaption>
+      </figure>
+
+      <div class="closing-copy mt-8 text-left space-y-4 text-[1.0625rem] leading-relaxed">
+        <p>
+          That’s the whole west side in one day. On <strong>August 22</strong>,
+          we’re shutting this exact stretch of Abbot Kinney down and bringing
+          the music back — a 21+ block party in the heart of Venice.
+        </p>
+        <p>
+          You’re already on the list, which means you’ll be the first to know
+          when the lineup drops <strong>next week.</strong> Keep your phone
+          close. 📱
+        </p>
+      </div>
+
+      <div class="closing-cta mt-10 flex flex-col items-stretch gap-3">
+        <button id="share-btn" class="btn btn--pink" type="button">
+          Send this to your group chat ↗
+        </button>
+        <a class="btn btn--ghost" href={instagram} target="_blank" rel="noopener noreferrer">
+          Follow @blockprint.la
+        </a>
+        <p id="share-status" role="status" aria-live="polite" class="min-h-[1.1rem] text-xs tracking-wide"></p>
+      </div>
+    </section>
+
+    <footer class="guide-foot mt-20 text-center">
+      <a href="/" class="block w-full max-w-[220px] mx-auto opacity-80 hover:opacity-100 transition-opacity" aria-label="Blockprint home">
+        <img src="/brand/wordmark.png" alt="Blockprint" width="1010" height="152" class="w-full" />
+      </a>
+      <p class="mt-5 text-xs uppercase tracking-[0.3em] opacity-50">
+        {site.date} · {site.venue} · {site.agePolicy}
+      </p>
+      <p class="mt-4 text-[11px] opacity-50">
+        <a href="/privacy-policy" class="underline underline-offset-2">Privacy Policy</a>
+      </p>
+    </footer>
+  </article>
+
+  <!-- Floating progress chip -->
+  <div id="progress-chip" class="progress-chip" hidden>
+    <span class="progress-dot" aria-hidden="true">◍</span>
+    <span id="progress-text">0 / {stops.length} stamped</span>
+  </div>
+</Layout>
+
+<style>
+  .guide {
+    position: relative;
+    z-index: 2;
+    padding: 3.5rem 1.25rem 4rem;
+  }
+
+  /* ---------- Intro ---------- */
+  .guide-title {
+    line-height: 0.92;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .guide-title .block-print {
+    font-size: clamp(3.2rem, 17vw, 5.5rem);
+    letter-spacing: -0.02em;
+  }
+  .guide-title__sub {
+    display: block;
+    margin-top: 0.15em;
+    font-size: clamp(2rem, 9.5vw, 3.25rem) !important;
+    font-family: var(--font-accent);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .intro-copy strong { font-weight: 700; }
+
+  .hint-stamp { color: var(--color-bp-pink); font-size: 1.1em; vertical-align: -0.08em; }
+
+  /* ---------- Stop ---------- */
+  .stop { margin-bottom: 4.5rem; }
+  .stop-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+  .stop-num {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2.5rem, 12vw, 3.75rem);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .stop-titles { flex: 1; min-width: 0; }
+  .stop-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 6.5vw, 2.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-top: 0.1rem;
+  }
+
+  /* ---------- Stamp button (passport press) ---------- */
+  .stamp-btn {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 9999px;
+    background: transparent;
+    border: 2px dashed rgba(21, 21, 21, 0.35);
+    color: var(--color-ink);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    transition: transform 0.15s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stamp-btn:hover { border-color: var(--color-bp-pink); }
+  .stamp-btn:active { transform: scale(0.92); }
+  .stamp-face { position: relative; display: grid; place-items: center; width: 100%; height: 100%; }
+  .stamp-default {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+  }
+  .stamp-done {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: var(--color-paper);
+  }
+  .stamp-check { font-size: 1.25rem; font-weight: 700; margin-top: -2px; }
+  .stamp-word {
+    font-family: var(--font-accent);
+    font-weight: 700;
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+  }
+
+  .stamp-btn.is-stamped {
+    border-style: solid;
+    border-color: var(--color-bp-pink);
+    background: var(--color-bp-pink);
+    box-shadow: -3px 3px 0 var(--color-bp-cyan);
+  }
+  .stamp-btn.is-stamped .stamp-default { display: none; }
+  .stamp-btn.is-stamped .stamp-done { display: flex; }
+  .stamp-btn.just-stamped { animation: stamp-press-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  @keyframes stamp-press-in {
+    0% { transform: scale(1.5) rotate(-8deg); opacity: 0.2; }
+    55% { transform: scale(0.88) rotate(2deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* ---------- Photo + corner-sticker meme ---------- */
+  .stop-visual {
+    position: relative;
+    margin-bottom: 1.9rem;
+  }
+  .stop-photo {
+    margin: 0;
+    border: 2px solid var(--color-ink);
+    box-shadow: -6px 6px 0 var(--color-bp-cyan);
+    overflow: hidden;
+    background: var(--color-paper-deep);
+    transform: rotate(-0.5deg);
+  }
+  .stop-photo img { display: block; width: 100%; height: auto; }
+
+  /* ---------- Copy ---------- */
+  .stop-copy { space-y: 0; }
+  .stop-copy p { margin-bottom: 0.9rem; font-size: 1.0625rem; line-height: 1.6; }
+  .stop-copy p:last-child { margin-bottom: 0; }
+
+  .stop-callout {
+    background: var(--color-paper-deep);
+    border-left: 4px solid var(--color-bp-pink);
+    padding: 0.9rem 1.1rem;
+    font-family: var(--font-accent);
+    font-size: 1.15rem !important;
+    line-height: 1.45 !important;
+    transform: rotate(-0.4deg);
+    box-shadow: -3px 3px 0 rgba(0, 241, 207, 0.5);
+  }
+
+  /* ---------- GIF sticker ---------- */
+  .gif-sticker {
+    width: 175px;
+    margin: 1.6rem 0 0;
+    transform: rotate(-2.5deg);
+  }
+  .gif-sticker img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 3px solid var(--color-paper);
+    box-shadow: -3px 3px 0 var(--color-bp-pink), 0 2px 14px rgba(0, 0, 0, 0.18);
+  }
+  .gif-sticker figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    text-align: center;
+    transform: rotate(1.5deg);
+  }
+  .gif-sticker--center { width: min(86%, 360px); margin-left: auto; margin-right: auto; transform: rotate(-1.5deg); }
+
+  /* Business memes ride the photo's corner like a slapped-on sticker,
+     alternating sides down the page. Caption is dropped here — the GIF's
+     own text + the placement carry it. */
+  .stop-visual .gif-sticker {
+    position: absolute;
+    bottom: -18px;
+    width: 128px;
+    margin: 0;
+    z-index: 3;
+  }
+  .stop-visual .gif-sticker--right { right: -6px; transform: rotate(-5deg); }
+  .stop-visual .gif-sticker--left { left: -6px; transform: rotate(5deg); }
+  .stop-visual .gif-sticker figcaption { display: none; }
+  /* The wine GIF is wide/landscape, so it reads small at the shared width —
+     give it more presence to match the others. */
+  #alisa-wine-and-friends .gif-sticker { width: 186px; }
+  .stop-visual .gif-sticker img {
+    border-width: 4px;
+    box-shadow: -3px 3px 0 var(--color-bp-pink), 0 3px 16px rgba(0, 0, 0, 0.28);
+  }
+
+  /* ---------- Link-out chips (Instagram / Resy) ---------- */
+  .stop-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
+  }
+  .action-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.85rem;
+    border: 2px solid var(--color-ink);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: -3px 3px 0 var(--color-bp-pink);
+    transition: transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .action-chip:active { transform: translate(-1px, 1px); }
+  .action-chip svg { flex-shrink: 0; }
+  .action-chip--resy {
+    background: var(--color-bp-navy);
+    color: var(--color-paper);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: -3px 3px 0 var(--color-bp-cyan);
+  }
+
+  /* ---------- Map ---------- */
+  .map-wrap { margin-top: 1.6rem; }
+  .map-wrap summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-ink);
+    background: var(--color-paper);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+    box-shadow: -3px 3px 0 var(--color-ink);
+    transition: transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .map-wrap summary::-webkit-details-marker { display: none; }
+  .map-wrap summary:active { transform: translate(-1px, 1px); }
+  .map-summary-text { flex: 1; min-width: 0; }
+  .map-chevron { transition: transform 0.2s ease; opacity: 0.6; }
+  .map-wrap[open] .map-chevron { transform: rotate(180deg); }
+  .map-body {
+    border: 2px solid var(--color-ink);
+    border-top: none;
+    background: var(--color-paper-deep);
+  }
+  .stop-map { display: block; width: 100%; height: 220px; border: 0; }
+  .directions-link {
+    display: block;
+    text-align: center;
+    padding: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-bp-navy);
+    border-top: 2px solid var(--color-ink);
+  }
+
+  /* ---------- Closing ---------- */
+  .closing-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+  .closing-title .block-print {
+    display: block;
+    font-size: clamp(3rem, 16vw, 5rem);
+    letter-spacing: -0.02em;
+  }
+  .closing-copy strong { font-weight: 700; }
+
+  .btn {
+    display: block;
+    text-align: center;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    border: 2px solid var(--color-ink);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s ease;
+  }
+  .btn:active { transform: translate(-1px, 1px); }
+  .btn--pink {
+    background: var(--color-bp-pink);
+    color: var(--color-paper);
+    box-shadow: -4px 4px 0 var(--color-bp-cyan);
+  }
+  .btn--ghost {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow: -4px 4px 0 var(--color-ink);
+  }
+
+  /* ---------- Floating progress chip ---------- */
+  .progress-chip {
+    position: fixed;
+    z-index: 50;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .progress-chip[hidden] { display: none; }
+  .progress-dot { color: var(--color-bp-cyan); }
+  .progress-chip.is-complete { background: var(--color-bp-pink); }
+  .progress-chip.is-complete .progress-dot { color: var(--color-paper); }
+
+  /* ---------- Desktop polish ---------- */
+  @media (min-width: 768px) {
+    .guide { padding-top: 5rem; }
+    .stop { margin-bottom: 6rem; }
+    .stop-photo { box-shadow: -8px 8px 0 var(--color-bp-cyan); }
+  }
+</style>
+
+<script>
+  // --- Passport stamps (persisted in localStorage) ---------------------------
+  const STORAGE_KEY = "bp-westside-stamps";
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".stamp-btn")
+  );
+  const total = buttons.length;
+  const chip = document.getElementById("progress-chip");
+  const chipText = document.getElementById("progress-text");
+
+  const load = (): Set<string> => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch {
+      return new Set();
+    }
+  };
+  const save = (set: Set<string>) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    } catch {
+      /* ignore quota / private-mode errors */
+    }
+  };
+
+  const stamped = load();
+
+  const renderChip = () => {
+    if (!chip || !chipText) return;
+    const n = stamped.size;
+    chip.hidden = n === 0;
+    if (n >= total) {
+      chip.classList.add("is-complete");
+      chipText.textContent = "All 5 stamped — see you Aug 22 🎉";
+    } else {
+      chip.classList.remove("is-complete");
+      chipText.textContent = `${n} / ${total} stamped`;
+    }
+  };
+
+  const paint = (btn: HTMLButtonElement, on: boolean) => {
+    btn.classList.toggle("is-stamped", on);
+    btn.setAttribute("aria-pressed", String(on));
+  };
+
+  buttons.forEach((btn) => {
+    const id = btn.dataset.stamp || "";
+    paint(btn, stamped.has(id));
+    btn.addEventListener("click", () => {
+      const on = !stamped.has(id);
+      if (on) {
+        stamped.add(id);
+        btn.classList.remove("just-stamped");
+        // reflow so the animation can replay on re-stamp
+        void btn.offsetWidth;
+        btn.classList.add("just-stamped");
+      } else {
+        stamped.delete(id);
+      }
+      paint(btn, on);
+      save(stamped);
+      renderChip();
+    });
+  });
+
+  renderChip();
+
+  // --- Share button ----------------------------------------------------------
+  const shareBtn = document.getElementById("share-btn");
+  const shareStatus = document.getElementById("share-status");
+  const shareData = {
+    title: "Blockprint — The West Side of Abbot Kinney",
+    text: "Team Blockprint’s ideal day on the west side of Abbot Kinney 🌴",
+    url: typeof window !== "undefined" ? window.location.href : "",
+  };
+  const flash = (msg: string) => {
+    if (!shareStatus) return;
+    shareStatus.textContent = msg;
+    window.setTimeout(() => {
+      if (shareStatus.textContent === msg) shareStatus.textContent = "";
+    }, 2600);
+  };
+  shareBtn?.addEventListener("click", async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareData.url);
+        flash("Link copied — paste it to the group chat ✦");
+      } else {
+        flash(shareData.url);
+      }
+    } catch {
+      /* user dismissed the share sheet — no-op */
+    }
+  });
+</script>
