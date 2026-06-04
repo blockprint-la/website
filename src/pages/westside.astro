@@ -315,13 +315,42 @@ const pageDesc =
           block party in the heart of Venice.
         </p>
         <p>
-          You’re already on the list, which means you’ll be the first to know
-          when the lineup drops. Keep your phone close. 📱
+          Most of you are already on the list — if that’s you, you’re set, keep
+          your phone close. New here? Drop your number and you’ll be the first
+          to know when the lineup lands. 📱
         </p>
       </div>
 
-      <div class="closing-cta mt-10 flex flex-col items-stretch gap-3">
-        <button id="share-btn" class="btn btn--pink" type="button">
+      <!-- SMS signup (Hive brand 135484 → "Website Signup" segment). For new
+           faces who land here via a shared link; existing subscribers can skip. -->
+      <form id="hive-signup" class="signup-form mt-8" novalidate>
+        <label for="phone" class="sr-only">Mobile number</label>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          required
+          placeholder="Your mobile number"
+          class="signup-input"
+        />
+        <button type="submit" class="btn btn--pink signup-btn">
+          <span data-label-idle>Get first access</span>
+          <span data-label-loading hidden>Sending…</span>
+        </button>
+        <p data-status role="status" aria-live="polite" class="signup-status"></p>
+        <p class="signup-fine">
+          By submitting, you opt in to recurring marketing texts from Blockprint
+          at the number provided. Msg &amp; data rates may apply. Reply STOP to
+          opt out, HELP for help. See our
+          <a href="/privacy-policy">Privacy Policy</a>.
+        </p>
+      </form>
+
+      <!-- Secondary actions -->
+      <div class="closing-cta mt-8 flex flex-col items-stretch gap-3">
+        <button id="share-btn" class="btn btn--ghost" type="button">
           Send this to your group chat ↗
         </button>
         <a class="btn btn--ghost" href={instagram} target="_blank" rel="noopener noreferrer">
@@ -344,10 +373,37 @@ const pageDesc =
     </footer>
   </article>
 
-  <!-- Floating progress chip -->
+  <!-- Floating progress chip (tap when complete to re-open the badge) -->
   <div id="progress-chip" class="progress-chip" hidden>
     <span class="progress-dot" aria-hidden="true">◍</span>
     <span id="progress-text">0 / {stops.length} stamped</span>
+  </div>
+
+  <!-- Completion reward: confetti + a shareable "Blockprint Explorer" badge,
+       fired once all five stops are stamped. Hidden moment of joy. -->
+  <canvas id="confetti-canvas" class="confetti-canvas" aria-hidden="true"></canvas>
+  <div
+    id="explorer-overlay"
+    class="explorer-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="You're a Blockprint Explorer"
+    hidden
+  >
+    <div class="explorer-card">
+      <canvas
+        id="badge-canvas"
+        width="1080"
+        height="1350"
+        class="badge-canvas"
+        role="img"
+        aria-label="Blockprint Explorer badge — all five West Side stops complete"
+      ></canvas>
+      <div class="explorer-actions">
+        <button id="badge-share" class="btn btn--pink" type="button">Save / share my badge ↗</button>
+        <button id="explorer-close" class="btn btn--ghost" type="button">Keep exploring</button>
+      </div>
+    </div>
   </div>
 </Layout>
 
@@ -629,8 +685,77 @@ const pageDesc =
   }
   .progress-chip[hidden] { display: none; }
   .progress-dot { color: var(--color-bp-cyan); }
-  .progress-chip.is-complete { background: var(--color-bp-pink); }
+  .progress-chip.is-complete { background: var(--color-bp-pink); cursor: pointer; }
   .progress-chip.is-complete .progress-dot { color: var(--color-paper); }
+
+  /* ---------- SMS signup (closing) ---------- */
+  .signup-form { display: flex; flex-direction: column; gap: 0.85rem; }
+  .signup-input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid rgba(21, 21, 21, 0.4);
+    padding: 0.75rem 0.25rem;
+    text-align: center;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
+  }
+  .signup-input:focus { outline: none; border-bottom-color: var(--color-ink); }
+  .signup-input::placeholder { color: rgba(21, 21, 21, 0.4); }
+  .signup-status { min-height: 1.1rem; font-size: 0.8rem; letter-spacing: 0.02em; text-align: center; }
+  .signup-fine {
+    font-size: 0.68rem;
+    line-height: 1.5;
+    color: rgba(21, 21, 21, 0.6);
+    text-align: center;
+    margin-top: -0.1rem;
+  }
+  .signup-fine a { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---------- Explorer reward (confetti + badge) ---------- */
+  .confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 80;
+  }
+  .explorer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(21, 21, 21, 0.82);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  .explorer-overlay[hidden] { display: none; }
+  .explorer-card {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: badge-pop 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes badge-pop {
+    0% { transform: scale(0.8) rotate(-2deg); opacity: 0; }
+    60% { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .badge-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid var(--color-ink);
+    box-shadow: -6px 6px 0 var(--color-bp-cyan);
+  }
+  .explorer-actions { display: flex; flex-direction: column; gap: 0.6rem; }
 
   /* ---------- Desktop polish ---------- */
   @media (min-width: 768px) {
@@ -690,6 +815,7 @@ const pageDesc =
     const id = btn.dataset.stamp || "";
     paint(btn, stamped.has(id));
     btn.addEventListener("click", () => {
+      const before = stamped.size;
       const on = !stamped.has(id);
       if (on) {
         stamped.add(id);
@@ -703,6 +829,8 @@ const pageDesc =
       paint(btn, on);
       save(stamped);
       renderChip();
+      // Just completed the full set → fire the hidden reward.
+      if (stamped.size === total && before < total) openExplorer();
     });
   });
 
@@ -737,4 +865,227 @@ const pageDesc =
       /* user dismissed the share sheet — no-op */
     }
   });
+
+  // --- Completion reward: confetti + a shareable "Blockprint Explorer" badge --
+  const PINK = "#ff2e76", CYAN = "#00f1cf", NAVY = "#2d326f",
+        CREAM = "#fbf5ee", INK = "#151515", BEIGE = "#e9d8c6";
+  const overlay = document.getElementById("explorer-overlay");
+  const badgeCanvas = document.getElementById("badge-canvas") as HTMLCanvasElement | null;
+  const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement | null;
+  const badgeShareBtn = document.getElementById("badge-share");
+  const explorerCloseBtn = document.getElementById("explorer-close");
+
+  let badgeDrawn = false;
+  const drawBadge = async () => {
+    if (badgeDrawn || !badgeCanvas) return;
+    try { await (document as any).fonts?.ready; } catch {}
+    const ctx = badgeCanvas.getContext("2d");
+    if (!ctx) return;
+    const W = badgeCanvas.width, H = badgeCanvas.height;
+    ctx.fillStyle = CREAM; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = INK; ctx.lineWidth = 6; ctx.strokeRect(46, 46, W - 92, H - 92);
+    ctx.textAlign = "center";
+    const stampText = (txt: string, y: number, size: number, color: string, ghost?: string) => {
+      ctx.font = `900 ${size}px Outfit, "Helvetica Neue", sans-serif`;
+      if (ghost) { ctx.fillStyle = ghost; ctx.fillText(txt, W / 2 - 7, y + 7); }
+      ctx.fillStyle = color; ctx.fillText(txt, W / 2, y);
+    };
+    ctx.fillStyle = PINK; ctx.font = '700 32px "Averia Serif Libre", Georgia, serif';
+    ctx.fillText("· OFFICIAL ·", W / 2, 205);
+    stampText("BLOCKPRINT", 355, 130, PINK, CYAN);
+    stampText("EXPLORER", 492, 130, NAVY, PINK);
+    ctx.fillStyle = INK; ctx.font = '500 36px Outfit, "Helvetica Neue", sans-serif';
+    ctx.fillText("Walked the whole West Side", W / 2, 620);
+    ctx.fillText("of Abbot Kinney — all five stops.", W / 2, 670);
+    const yC = 808, r = 46, gap = 132, x0 = W / 2 - gap * 2;
+    for (let i = 0; i < 5; i++) {
+      const x = x0 + gap * i;
+      ctx.beginPath(); ctx.arc(x, yC, r, 0, Math.PI * 2); ctx.fillStyle = PINK; ctx.fill();
+      ctx.fillStyle = CREAM; ctx.font = '900 46px Outfit, sans-serif'; ctx.fillText("✓", x, yC + 17);
+    }
+    ctx.fillStyle = NAVY; ctx.font = '700 42px "Averia Serif Libre", Georgia, serif';
+    ctx.fillText("AUG 22, 2026 · VENICE, CA", W / 2, 968);
+    ctx.globalAlpha = 0.6; ctx.fillStyle = INK; ctx.font = '700 30px Outfit, sans-serif';
+    ctx.fillText("blockprint.la/westside", W / 2, H - 108); ctx.globalAlpha = 1;
+    badgeDrawn = true;
+  };
+
+  let confettiRaf = 0;
+  const fireConfetti = () => {
+    if (!confettiCanvas) return;
+    const ctx = confettiCanvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = window.innerWidth, Hh = window.innerHeight;
+    confettiCanvas.width = W * dpr; confettiCanvas.height = Hh * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const colors = [PINK, CYAN, NAVY, BEIGE];
+    const parts = Array.from({ length: 150 }, (_, i) => ({
+      x: Math.random() * W,
+      y: -20 - Math.random() * Hh * 0.4,
+      w: 7 + Math.random() * 9,
+      h: 10 + Math.random() * 12,
+      c: colors[i % colors.length],
+      vx: -1.6 + Math.random() * 3.2,
+      vy: 2 + Math.random() * 3.5,
+      rot: Math.random() * Math.PI,
+      vr: -0.22 + Math.random() * 0.44,
+    }));
+    const DUR = 3200;
+    let start = 0;
+    cancelAnimationFrame(confettiRaf);
+    const step = (t: number) => {
+      if (!start) start = t;
+      const el = t - start;
+      ctx.clearRect(0, 0, W, Hh);
+      const fade = el > DUR - 800 ? Math.max(0, (DUR - el) / 800) : 1;
+      ctx.globalAlpha = fade;
+      for (const p of parts) {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.045; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+      if (el < DUR) { confettiRaf = requestAnimationFrame(step); }
+      else { ctx.clearRect(0, 0, W, Hh); }
+    };
+    confettiRaf = requestAnimationFrame(step);
+  };
+
+  const openExplorer = async () => {
+    if (!overlay) return;
+    await drawBadge();
+    overlay.hidden = false;
+    fireConfetti();
+    (badgeShareBtn as HTMLElement | null)?.focus();
+  };
+  const closeExplorer = () => { if (overlay) overlay.hidden = true; };
+
+  explorerCloseBtn?.addEventListener("click", closeExplorer);
+  overlay?.addEventListener("click", (e) => { if (e.target === overlay) closeExplorer(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay && !overlay.hidden) closeExplorer();
+  });
+  // Tapping the completed chip re-opens the badge.
+  chip?.addEventListener("click", () => { if (stamped.size >= total) openExplorer(); });
+
+  badgeShareBtn?.addEventListener("click", () => {
+    if (!badgeCanvas) return;
+    badgeCanvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const file = new File([blob], "blockprint-explorer.png", { type: "image/png" });
+      const nav = navigator as any;
+      try {
+        if (nav.canShare && nav.canShare({ files: [file] })) {
+          await nav.share({
+            files: [file],
+            title: "Blockprint Explorer",
+            text: "I explored the West Side of Abbot Kinney with Blockprint 🌴 blockprint.la/westside",
+          });
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url; a.download = "blockprint-explorer.png";
+          document.body.appendChild(a); a.click(); a.remove();
+          URL.revokeObjectURL(url);
+        }
+      } catch {
+        /* dismissed — no-op */
+      }
+    }, "image/png");
+  });
+</script>
+
+<!-- Hive SDK loader (brand 135484). is:inline preserves the IIFE + queueing
+     pattern so calls before the remote SDK loads buffer correctly. Same setup
+     as Holding.astro. Domain-whitelisted to blockprint.la — submits succeed on
+     prod; localhost / *.vercel.app fail silently unless whitelisted. -->
+<script is:inline>
+  (function (h, i, v, e, s, d, k) {
+    h.HiveSDKObject = s;
+    h[s] =
+      h[s] ||
+      function () {
+        (h[s].q = h[s].q || []).push(arguments);
+      };
+    d = i.createElement(v);
+    k = i.getElementsByTagName(v)[0];
+    d.async = 1;
+    d.id = s;
+    d.src = e + "?r=" + parseInt(new Date() / 60000);
+    k.parentNode.insertBefore(d, k);
+  })(
+    window,
+    document,
+    "script",
+    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
+    "HIVE_SDK"
+  );
+  HIVE_SDK("init", 135484);
+</script>
+
+<!-- Hive signup submit handler for the closing-section form. -->
+<script is:inline>
+  (function () {
+    const form = document.getElementById("hive-signup");
+    if (!form) return;
+
+    const phoneInput = form.querySelector("#phone");
+    const button = form.querySelector("button[type=submit]");
+    const labelIdle = button.querySelector("[data-label-idle]");
+    const labelLoading = button.querySelector("[data-label-loading]");
+    const status = form.querySelector("[data-status]");
+
+    const setLoading = (loading) => {
+      button.disabled = loading;
+      labelIdle.hidden = loading;
+      labelLoading.hidden = !loading;
+    };
+    const setStatus = (msg, tone) => {
+      status.textContent = msg;
+      status.style.color =
+        tone === "ok"
+          ? "var(--color-bp-navy)"
+          : tone === "err"
+            ? "var(--color-bp-pink-deep)"
+            : "";
+    };
+    const collapseToSuccess = () => {
+      phoneInput.disabled = true;
+      button.hidden = true;
+      setStatus("You're in — we'll text you when the lineup lands.", "ok");
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        setStatus("Please enter your mobile number.", "err");
+        phoneInput.focus();
+        return;
+      }
+      setLoading(true);
+      setStatus("");
+      window.HIVE_SDK(
+        "phoneNumberSignup",
+        { phoneNumber: phone, didSmsOptIn: true },
+        function () {
+          window.HIVE_SDK(
+            "addToSegment",
+            "Website Signup",
+            collapseToSuccess,
+            function (err) {
+              console.error("[hive] addToSegment failed", err);
+              collapseToSuccess();
+            }
+          );
+        },
+        function (err) {
+          console.error("[hive] phoneNumberSignup failed", err);
+          setStatus("Could not subscribe — please try again.", "err");
+          setLoading(false);
+        }
+      );
+    });
+  })();
 </script>
