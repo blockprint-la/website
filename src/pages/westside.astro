@@ -10,10 +10,10 @@ import { site } from "../data/site";
 // can be linked from an SMS without touching the parked holding homepage.
 //
 // Body copy for each stop is verbatim from the brief (Tab 2) — do not edit
-// the wording. Photos live in /public/guide, GIF "stickers" in
-// /public/guide/gifs. Each stop gets a tap-to-open Google Map embed (no API
-// key — classic ?q=…&output=embed) and a passport-style "stamp" the visitor
-// can press to check the stop off (persisted in localStorage).
+// the wording. Photos live in /public/guide. Each stop gets a tap-to-open
+// Google Map embed (no API key — classic ?q=…&output=embed), Instagram +
+// Resy link-outs, and a passport-style "stamp" the visitor can press to
+// check the stop off (persisted in localStorage).
 // ---------------------------------------------------------------------------
 
 type Stop = {
@@ -26,11 +26,6 @@ type Stop = {
   imgH: number;
   paras: string[];
   calloutLast?: boolean; // render the final paragraph as a highlighted callout
-  gif?: string;
-  gifAlt?: string;
-  gifW?: number;
-  gifH?: number;
-  caption?: string;
   address: string;
   mapQuery: string;
   instagram: string;
@@ -60,19 +55,14 @@ const stops: Stop[] = [
     id: "cooks-garden",
     name: "The Cook’s Garden",
     img: "/guide/cooks-garden.jpg",
-    imgAlt: "Chickens and greenery at The Cook’s Garden urban farm in Venice",
-    imgW: 1200,
-    imgH: 900,
+    imgAlt: "The Cook’s Garden storefront and hand-painted sign on Abbot Kinney in Venice",
+    imgW: 1100,
+    imgH: 1100,
     paras: [
       "Matcha in hand, head a few steps down the street to the west side’s only urban farm. Chickens, ducks, bunnies, herbs, and vegetables all live here among the garden paths.",
       "Venice OGs might remember when DJs like Dillon Francis played pop-ups here years ago. This summer, we’re bringing music back to the block in a much bigger way.",
     ],
     calloutLast: true,
-    gif: "/guide/gifs/bunny.gif",
-    gifAlt: "A bunny twitching its nose",
-    gifW: 368,
-    gifH: 480,
-    caption: "the welcoming committee",
     address: "1033 Abbot Kinney Blvd · Venice",
     mapQuery: "The Cook’s Garden, 1033 Abbot Kinney Blvd, Venice, CA 90291",
     instagram: "https://www.instagram.com/thecooksgardenvenice/",
@@ -83,7 +73,7 @@ const stops: Stop[] = [
     id: "only-the-wild-ones",
     name: "Only The Wild Ones",
     img: "/guide/wild-ones.jpg",
-    imgAlt: "The low-lit, stylish interior of Only The Wild Ones wine bar",
+    imgAlt: "The warm, low-lit listening bar at Only The Wild Ones in Venice",
     imgW: 1200,
     imgH: 800,
     paras: [
@@ -92,11 +82,6 @@ const stops: Stop[] = [
       "Expect natural wines, small-batch cocktails, and seasonal small plates, with some ingredients sourced directly from The Cook’s Garden next door.",
       "Upstairs, Leena Culhane’s Force of Nature offers a more intimate experience, with softly lit corners and an outdoor bar overlooking the garden below.",
     ],
-    gif: "/guide/gifs/turntable.gif",
-    gifAlt: "A vinyl record spinning on a turntable",
-    gifW: 480,
-    gifH: 378,
-    caption: "listening-bar energy",
     address: "1031 Abbot Kinney Blvd · Venice",
     mapQuery: "Only The Wild Ones, 1031 Abbot Kinney Blvd, Venice, CA 90291",
     instagram: "https://www.instagram.com/only_the_wild_ones/",
@@ -117,11 +102,6 @@ const stops: Stop[] = [
       "Trust us: make a reservation.",
     ],
     calloutLast: true,
-    gif: "/guide/gifs/pasta.gif",
-    gifAlt: "Fresh pasta dough being worked by hand",
-    gifW: 326,
-    gifH: 480,
-    caption: "the pasta lab, in motion",
     address: "1023 Abbot Kinney Blvd · Venice",
     mapQuery: "Felix Trattoria, 1023 Abbot Kinney Blvd, Venice, CA 90291",
     instagram: "https://www.instagram.com/felixlosangeles/",
@@ -142,11 +122,6 @@ const stops: Stop[] = [
       "And if you somehow still have room after dinner, the spicy feta dip is mandatory.",
     ],
     calloutLast: true,
-    gif: "/guide/gifs/wine.gif",
-    gifAlt: "Two glasses of wine clinking in a toast",
-    gifW: 480,
-    gifH: 268,
-    caption: "one for the road",
     address: "1009 Abbot Kinney Blvd · Venice",
     mapQuery: "Alisa Wine & Friends, 1009 Abbot Kinney Blvd, Venice, CA 90291",
     instagram: "https://www.instagram.com/alisa_wine_friends/",
@@ -208,7 +183,7 @@ const pageDesc =
     <!-- ===================== STOPS ===================== -->
     <div class="stops mx-auto max-w-[640px] mt-14 md:mt-20">
       {
-        stops.map((stop, i) => (
+        stops.map((stop) => (
           <section id={stop.id} class="stop" data-reveal>
             <!-- Header: number + name + stamp -->
             <div class="stop-head">
@@ -236,32 +211,17 @@ const pageDesc =
               </button>
             </div>
 
-            <!-- Visual: the stop photo with its meme pressed onto a corner
-                 like a sticker on a print. Caption rides along as a tag. -->
-            <div class="stop-visual">
-              <figure class="stop-photo">
-                <img
-                  src={stop.img}
-                  alt={stop.imgAlt}
-                  width={stop.imgW}
-                  height={stop.imgH}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-              {stop.gif && (
-                <figure class={`gif-sticker ${i % 2 ? "gif-sticker--left" : "gif-sticker--right"}`}>
-                  <img
-                    src={stop.gif}
-                    alt={stop.gifAlt}
-                    width={stop.gifW}
-                    height={stop.gifH}
-                    loading="lazy"
-                  />
-                  <figcaption>{stop.caption}</figcaption>
-                </figure>
-              )}
-            </div>
+            <!-- Photo -->
+            <figure class="stop-photo">
+              <img
+                src={stop.img}
+                alt={stop.imgAlt}
+                width={stop.imgW}
+                height={stop.imgH}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
 
             <!-- Copy -->
             <div class="stop-copy">
@@ -348,21 +308,15 @@ const pageDesc =
         <span class="block-print" data-ink="navy" data-ghost style="--ghost: var(--color-bp-pink);">THE BLOCK</span>
       </h2>
 
-      <figure class="gif-sticker gif-sticker--center mt-8">
-        <img src="/guide/gifs/disco.gif" alt="Silhouettes dancing on a retro disco floor" width="500" height="377" loading="lazy" />
-        <figcaption>aug 22 · the block, but louder</figcaption>
-      </figure>
-
       <div class="closing-copy mt-8 text-left space-y-4 text-[1.0625rem] leading-relaxed">
         <p>
           That’s the whole west side in one day. On <strong>August 22</strong>,
-          we’re shutting this exact stretch of Abbot Kinney down and bringing
-          the music back — a 21+ block party in the heart of Venice.
+          we’re bringing the music back to this stretch of Abbot Kinney — a 21+
+          block party in the heart of Venice.
         </p>
         <p>
           You’re already on the list, which means you’ll be the first to know
-          when the lineup drops <strong>next week.</strong> Keep your phone
-          close. 📱
+          when the lineup drops. Keep your phone close. 📱
         </p>
       </div>
 
@@ -512,13 +466,9 @@ const pageDesc =
     100% { transform: scale(1) rotate(0); }
   }
 
-  /* ---------- Photo + corner-sticker meme ---------- */
-  .stop-visual {
-    position: relative;
-    margin-bottom: 1.9rem;
-  }
+  /* ---------- Photo ---------- */
   .stop-photo {
-    margin: 0;
+    margin: 0 0 1.9rem;
     border: 2px solid var(--color-ink);
     box-shadow: -6px 6px 0 var(--color-bp-cyan);
     overflow: hidden;
@@ -541,51 +491,6 @@ const pageDesc =
     line-height: 1.45 !important;
     transform: rotate(-0.4deg);
     box-shadow: -3px 3px 0 rgba(0, 241, 207, 0.5);
-  }
-
-  /* ---------- GIF sticker ---------- */
-  .gif-sticker {
-    width: 175px;
-    margin: 1.6rem 0 0;
-    transform: rotate(-2.5deg);
-  }
-  .gif-sticker img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border: 3px solid var(--color-paper);
-    box-shadow: -3px 3px 0 var(--color-bp-pink), 0 2px 14px rgba(0, 0, 0, 0.18);
-  }
-  .gif-sticker figcaption {
-    margin-top: 0.5rem;
-    font-family: var(--font-accent);
-    font-style: italic;
-    font-size: 0.9rem;
-    opacity: 0.7;
-    text-align: center;
-    transform: rotate(1.5deg);
-  }
-  .gif-sticker--center { width: min(86%, 360px); margin-left: auto; margin-right: auto; transform: rotate(-1.5deg); }
-
-  /* Business memes ride the photo's corner like a slapped-on sticker,
-     alternating sides down the page. Caption is dropped here — the GIF's
-     own text + the placement carry it. */
-  .stop-visual .gif-sticker {
-    position: absolute;
-    bottom: -18px;
-    width: 128px;
-    margin: 0;
-    z-index: 3;
-  }
-  .stop-visual .gif-sticker--right { right: -6px; transform: rotate(-5deg); }
-  .stop-visual .gif-sticker--left { left: -6px; transform: rotate(5deg); }
-  .stop-visual .gif-sticker figcaption { display: none; }
-  /* The wine GIF is wide/landscape, so it reads small at the shared width —
-     give it more presence to match the others. */
-  #alisa-wine-and-friends .gif-sticker { width: 186px; }
-  .stop-visual .gif-sticker img {
-    border-width: 4px;
-    box-shadow: -3px 3px 0 var(--color-bp-pink), 0 3px 16px rgba(0, 0, 0, 0.28);
   }
 
   /* ---------- Link-out chips (Instagram / Resy) ---------- */
