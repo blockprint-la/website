@@ -316,34 +316,27 @@ const pageDesc =
         </p>
         <p>
           Most of you are already on the list — if that’s you, you’re set, keep
-          your phone close. New here? Drop your number and you’ll be the first
-          to know when the lineup lands. 📱
+          your phone close. New here? Drop your number or email and you’ll be
+          the first to know when the lineup lands. 📱
         </p>
       </div>
 
       <!-- SMS signup (Hive brand 135484 → "Website Signup" segment). For new
            faces who land here via a shared link; existing subscribers can skip. -->
       <form id="hive-signup" class="signup-form mt-8" novalidate>
-        <label for="phone" class="sr-only">Mobile number</label>
+        <div class="signup-toggle" role="group" aria-label="How should we reach you?">
+          <button type="button" class="signup-tab is-active" data-mode="sms" aria-pressed="true">Text me</button>
+          <button type="button" class="signup-tab" data-mode="email" aria-pressed="false">Email me</button>
+        </div>
+        <label for="signup-value" class="sr-only">Mobile number or email address</label>
         <input
-          id="phone"
-          name="phone"
+          id="signup-value"
+          name="value"
           type="tel"
           inputmode="tel"
           autocomplete="tel"
           required
           placeholder="Mobile number"
-          class="signup-input"
-        />
-        <label for="email" class="sr-only">Email address</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          inputmode="email"
-          autocomplete="email"
-          required
-          placeholder="Email address"
           class="signup-input"
         />
         <button type="submit" class="btn btn--pink signup-btn">
@@ -352,10 +345,10 @@ const pageDesc =
         </button>
         <p data-status role="status" aria-live="polite" class="signup-status"></p>
         <p class="signup-fine">
-          By submitting, you opt in to receive marketing emails and recurring
-          texts from Blockprint at the contact info provided. Msg &amp; data
-          rates may apply. Reply STOP to opt out of texts, HELP for help. See
-          our <a href="/privacy-policy">Privacy Policy</a>.
+          By submitting, you opt in to receive marketing messages from Blockprint
+          at the contact info provided. Msg &amp; data rates may apply. Reply
+          STOP to opt out of texts, HELP for help. See our
+          <a href="/privacy-policy">Privacy Policy</a>.
         </p>
       </form>
 
@@ -699,8 +692,31 @@ const pageDesc =
   .progress-chip.is-complete { background: var(--color-bp-pink); cursor: pointer; }
   .progress-chip.is-complete .progress-dot { color: var(--color-paper); }
 
-  /* ---------- SMS signup (closing) ---------- */
+  /* ---------- Signup (closing) — Text-or-Email toggle ---------- */
   .signup-form { display: flex; flex-direction: column; gap: 0.85rem; }
+  .signup-toggle {
+    display: inline-flex;
+    align-self: center;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+  }
+  .signup-tab {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: var(--color-ink);
+    border: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .signup-tab.is-active { background: var(--color-bp-pink); color: var(--color-paper); }
+  .signup-tab:disabled { cursor: default; opacity: 0.7; }
   .signup-input {
     width: 100%;
     background: transparent;
@@ -1041,12 +1057,14 @@ const pageDesc =
     const form = document.getElementById("hive-signup");
     if (!form) return;
 
-    const phoneInput = form.querySelector("#phone");
-    const emailInput = form.querySelector("#email");
+    const input = form.querySelector("#signup-value");
+    const tabs = form.querySelectorAll(".signup-tab");
     const button = form.querySelector("button[type=submit]");
     const labelIdle = button.querySelector("[data-label-idle]");
     const labelLoading = button.querySelector("[data-label-loading]");
     const status = form.querySelector("[data-status]");
+
+    let mode = "sms"; // "sms" | "email" — user picks one (Laylo-style)
 
     const setLoading = (loading) => {
       button.disabled = loading;
@@ -1062,51 +1080,87 @@ const pageDesc =
             ? "var(--color-bp-pink-deep)"
             : "";
     };
+    const setMode = (next) => {
+      mode = next;
+      tabs.forEach((t) => {
+        const on = t.dataset.mode === next;
+        t.classList.toggle("is-active", on);
+        t.setAttribute("aria-pressed", String(on));
+      });
+      if (next === "email") {
+        input.type = "email";
+        input.inputMode = "email";
+        input.autocomplete = "email";
+        input.placeholder = "Email address";
+      } else {
+        input.type = "tel";
+        input.inputMode = "tel";
+        input.autocomplete = "tel";
+        input.placeholder = "Mobile number";
+      }
+      setStatus("");
+      input.focus();
+    };
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => setMode(t.dataset.mode))
+    );
+
     const collapseToSuccess = () => {
-      phoneInput.disabled = true;
-      emailInput.disabled = true;
+      input.disabled = true;
+      tabs.forEach((t) => (t.disabled = true));
       button.hidden = true;
       setStatus("You're in — we'll be in touch when the lineup lands.", "ok");
     };
 
+    const onSegment = () =>
+      window.HIVE_SDK(
+        "addToSegment",
+        "Website Signup",
+        collapseToSuccess,
+        function (err) {
+          console.error("[hive] addToSegment failed", err);
+          collapseToSuccess();
+        }
+      );
+    const onError = (cmd) =>
+      function (err) {
+        console.error("[hive] " + cmd + " failed", err);
+        setStatus("Could not subscribe — please try again.", "err");
+        setLoading(false);
+      };
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const phone = phoneInput.value.trim();
-      const email = emailInput.value.trim();
-      if (!email || email.indexOf("@") < 1) {
-        setStatus("Please enter a valid email address.", "err");
-        emailInput.focus();
-        return;
-      }
-      if (!phone) {
+      const value = input.value.trim();
+      if (mode === "email") {
+        if (!value || value.indexOf("@") < 1) {
+          setStatus("Please enter a valid email address.", "err");
+          input.focus();
+          return;
+        }
+      } else if (!value) {
         setStatus("Please enter your mobile number.", "err");
-        phoneInput.focus();
+        input.focus();
         return;
       }
       setLoading(true);
       setStatus("");
-      // emailSignup captures email + phone in a single call (email is the only
-      // hard-required field); both opt-ins flow into the same Hive contact.
-      window.HIVE_SDK(
-        "emailSignup",
-        { email: email, didOptIn: true, phoneNumber: phone, didSmsOptIn: true },
-        function () {
-          window.HIVE_SDK(
-            "addToSegment",
-            "Website Signup",
-            collapseToSuccess,
-            function (err) {
-              console.error("[hive] addToSegment failed", err);
-              collapseToSuccess();
-            }
-          );
-        },
-        function (err) {
-          console.error("[hive] emailSignup failed", err);
-          setStatus("Could not subscribe — please try again.", "err");
-          setLoading(false);
-        }
-      );
+      // Whichever channel they picked → the matching Hive signup command.
+      if (mode === "email") {
+        window.HIVE_SDK(
+          "emailSignup",
+          { email: value, didOptIn: true },
+          onSegment,
+          onError("emailSignup")
+        );
+      } else {
+        window.HIVE_SDK(
+          "phoneNumberSignup",
+          { phoneNumber: value, didSmsOptIn: true },
+          onSegment,
+          onError("phoneNumberSignup")
+        );
+      }
     });
   })();
 </script>
