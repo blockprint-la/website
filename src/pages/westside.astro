@@ -332,7 +332,18 @@ const pageDesc =
           inputmode="tel"
           autocomplete="tel"
           required
-          placeholder="Your mobile number"
+          placeholder="Mobile number"
+          class="signup-input"
+        />
+        <label for="email" class="sr-only">Email address</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          required
+          placeholder="Email address"
           class="signup-input"
         />
         <button type="submit" class="btn btn--pink signup-btn">
@@ -341,10 +352,10 @@ const pageDesc =
         </button>
         <p data-status role="status" aria-live="polite" class="signup-status"></p>
         <p class="signup-fine">
-          By submitting, you opt in to recurring marketing texts from Blockprint
-          at the number provided. Msg &amp; data rates may apply. Reply STOP to
-          opt out, HELP for help. See our
-          <a href="/privacy-policy">Privacy Policy</a>.
+          By submitting, you opt in to receive marketing emails and recurring
+          texts from Blockprint at the contact info provided. Msg &amp; data
+          rates may apply. Reply STOP to opt out of texts, HELP for help. See
+          our <a href="/privacy-policy">Privacy Policy</a>.
         </p>
       </form>
 
@@ -1031,6 +1042,7 @@ const pageDesc =
     if (!form) return;
 
     const phoneInput = form.querySelector("#phone");
+    const emailInput = form.querySelector("#email");
     const button = form.querySelector("button[type=submit]");
     const labelIdle = button.querySelector("[data-label-idle]");
     const labelLoading = button.querySelector("[data-label-loading]");
@@ -1052,13 +1064,20 @@ const pageDesc =
     };
     const collapseToSuccess = () => {
       phoneInput.disabled = true;
+      emailInput.disabled = true;
       button.hidden = true;
-      setStatus("You're in — we'll text you when the lineup lands.", "ok");
+      setStatus("You're in — we'll be in touch when the lineup lands.", "ok");
     };
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const phone = phoneInput.value.trim();
+      const email = emailInput.value.trim();
+      if (!email || email.indexOf("@") < 1) {
+        setStatus("Please enter a valid email address.", "err");
+        emailInput.focus();
+        return;
+      }
       if (!phone) {
         setStatus("Please enter your mobile number.", "err");
         phoneInput.focus();
@@ -1066,9 +1085,11 @@ const pageDesc =
       }
       setLoading(true);
       setStatus("");
+      // emailSignup captures email + phone in a single call (email is the only
+      // hard-required field); both opt-ins flow into the same Hive contact.
       window.HIVE_SDK(
-        "phoneNumberSignup",
-        { phoneNumber: phone, didSmsOptIn: true },
+        "emailSignup",
+        { email: email, didOptIn: true, phoneNumber: phone, didSmsOptIn: true },
         function () {
           window.HIVE_SDK(
             "addToSegment",
@@ -1081,7 +1102,7 @@ const pageDesc =
           );
         },
         function (err) {
-          console.error("[hive] phoneNumberSignup failed", err);
+          console.error("[hive] emailSignup failed", err);
           setStatus("Could not subscribe — please try again.", "err");
           setLoading(false);
         }
