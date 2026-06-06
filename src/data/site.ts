@@ -10,8 +10,8 @@ export const site = {
   venueAddress: "Abbot Kinney Blvd, Venice, CA",
   mapsQuery: "Abbot Kinney Blvd, Venice, CA",
   agePolicy: "21+",
-  ticketUrl: "#tickets",        // swap to Tixr URL when ready
-  newsletterAction: "#newsletter", // swap to Hive endpoint when ready
+  ticketUrl: "https://www.tixr.com/",  // placeholder Tixr landing — swap to real event URL when live
+  newsletterAction: "#newsletter",     // legacy; Newsletter form is now Hive SDK direct, no endpoint needed
   contactEmail: "info@blockprint.la",
   accessibilityEmail: "access@blockprint.la",
   pressEmail: "press@blockprint.la",
@@ -25,7 +25,7 @@ export const site = {
   // facebook.com/tr. Used for ad retargeting + conversion tracking.
   metaPixelId: "842607348915291",
   social: {
-    instagram: "https://instagram.com/blockprintfest",
+    instagram: "https://instagram.com/blockprint.la",
     tiktok: "",
     spotify: "",
   },

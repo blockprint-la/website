@@ -1,5 +1,10 @@
 ---
-import { site } from "../data/site";
+// Hive Text/Email signup — ported from the /westside page pattern.
+// Same Hive brand (135484) → "Website Signup" segment, so newsletter
+// signups land in the same cohort as holding-page + westside captures.
+// User picks one channel (Laylo-style toggle) — no dual entry, no
+// pretend "both" path. SDK loader sits below the form; the SDK is
+// queueing-aware so any call before load is captured and replayed.
 ---
 
 <section id="newsletter" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper">
@@ -9,51 +14,252 @@ import { site } from "../data/site";
       Get on the List
     </h2>
     <p class="text-base md:text-lg opacity-90 max-w-xl mx-auto mb-10">
-      First word on lineup additions, set times, after-parties, and ticket drops.
-      Email or text — we won't spam either.
+      First word on set times, after-parties, and ticket drops. Pick text
+      or email — we won't spam either.
     </p>
 
-    <!-- Wired to Hive once endpoint is provided. For now, posts nowhere. -->
-    <form
-      action={site.newsletterAction}
-      method="post"
-      class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto"
-      data-newsletter
-    >
+    <form id="hive-newsletter" class="signup-form mt-2 max-w-xl mx-auto" novalidate>
+      <div class="signup-toggle" role="group" aria-label="How should we reach you?">
+        <button type="button" class="signup-tab is-active" data-mode="sms" aria-pressed="true">Text me</button>
+        <button type="button" class="signup-tab" data-mode="email" aria-pressed="false">Email me</button>
+      </div>
+
+      <label for="newsletter-value" class="sr-only">Mobile number or email address</label>
       <input
-        type="email"
-        name="email"
+        id="newsletter-value"
+        name="value"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
         required
-        placeholder="you@email.com"
-        autocomplete="email"
-        class="flex-1 bg-transparent border-[2px] border-ink px-5 py-4 text-base focus:outline-none focus:border-bp-pink placeholder:opacity-50"
+        placeholder="Mobile number"
+        class="signup-input"
       />
+
       <button
         type="submit"
-        class="bg-bp-pink text-paper px-8 py-4 text-sm uppercase tracking-[0.25em] font-bold"
+        class="signup-btn bg-bp-pink text-paper px-8 py-4 text-sm uppercase tracking-[0.25em] font-bold"
         style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
       >
-        Sign Up
+        <span data-label-idle>Sign Up</span>
+        <span data-label-loading hidden>Sending…</span>
       </button>
-    </form>
 
-    <p class="mt-4 text-xs uppercase tracking-[0.3em] opacity-60">
-      SMS sign-up via Hive coming soon
-    </p>
+      <p data-status role="status" aria-live="polite" class="signup-status"></p>
+
+      <p class="signup-fine">
+        By submitting, you opt in to receive recurring marketing messages from
+        Blockprint at the contact method provided. Msg &amp; data rates may
+        apply. Reply STOP to opt out (SMS), HELP for help. See our
+        <a href="/privacy-policy">Privacy Policy</a>.
+      </p>
+    </form>
   </div>
 </section>
 
-<script>
-  // Until Hive endpoint is wired up, intercept and show a friendly state.
-  const form = document.querySelector<HTMLFormElement>("form[data-newsletter]");
-  if (form && form.action.endsWith("#newsletter")) {
+<style>
+  /* Mirrors the westside page form so the look stays consistent across
+     the SMS + email signup surfaces. Local scope — does not affect the
+     Holding page's older single-channel SMS form. */
+  .signup-form { display: flex; flex-direction: column; gap: 0.85rem; }
+  .signup-toggle {
+    display: inline-flex;
+    align-self: center;
+    border: 2px solid var(--color-ink);
+    margin-bottom: 0.5rem;
+  }
+  .signup-tab {
+    appearance: none;
+    background: transparent;
+    color: var(--color-ink);
+    border: none;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .signup-tab.is-active { background: var(--color-bp-pink); color: var(--color-paper); }
+  .signup-tab:disabled { cursor: default; opacity: 0.7; }
+  .signup-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-ink);
+    padding: 0.85rem 0.25rem;
+    font-size: 1rem;
+    text-align: center;
+    letter-spacing: 0.04em;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .signup-input:focus { border-bottom-color: var(--color-bp-pink); }
+  .signup-input::placeholder { color: rgba(21, 21, 21, 0.4); }
+  .signup-btn {
+    align-self: center;
+    margin-top: 0.25rem;
+  }
+  .signup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .signup-status {
+    min-height: 1.1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .signup-fine {
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: rgba(21, 21, 21, 0.6);
+    text-align: center;
+  }
+  .signup-fine a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<!-- Hive SDK loader (brand 135484). is:inline preserves the IIFE + the
+     queueing pattern that lets us call HIVE_SDK("init", ...) before the
+     actual SDK has loaded. The __hiveInited guard makes it safe if any
+     other component on the page (Holding, Partners) loads the SDK too. -->
+<script is:inline>
+  (function (h, i, v, e, s, d, k) {
+    h.HiveSDKObject = s;
+    h[s] =
+      h[s] ||
+      function () {
+        (h[s].q = h[s].q || []).push(arguments);
+      };
+    d = i.createElement(v);
+    k = i.getElementsByTagName(v)[0];
+    d.async = 1;
+    d.id = s;
+    d.src = e + "?r=" + parseInt(new Date() / 60000);
+    k.parentNode.insertBefore(d, k);
+  })(
+    window,
+    document,
+    "script",
+    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
+    "HIVE_SDK"
+  );
+  if (!window.__hiveInited) {
+    HIVE_SDK("init", 135484);
+    window.__hiveInited = true;
+  }
+</script>
+
+<!-- Submit handler for the Newsletter form. Mirrors the westside
+     handler so behavior is identical across the two surfaces. -->
+<script is:inline>
+  (function () {
+    const form = document.getElementById("hive-newsletter");
+    if (!form) return;
+
+    const input = form.querySelector("#newsletter-value");
+    const tabs = form.querySelectorAll(".signup-tab");
+    const button = form.querySelector("button[type=submit]");
+    const labelIdle = button.querySelector("[data-label-idle]");
+    const labelLoading = button.querySelector("[data-label-loading]");
+    const status = form.querySelector("[data-status]");
+
+    let mode = "sms"; // "sms" | "email"
+
+    const setLoading = (loading) => {
+      button.disabled = loading;
+      labelIdle.hidden = loading;
+      labelLoading.hidden = !loading;
+    };
+    const setStatus = (msg, tone) => {
+      status.textContent = msg;
+      status.style.color =
+        tone === "ok"
+          ? "var(--color-bp-navy)"
+          : tone === "err"
+            ? "var(--color-bp-pink-deep)"
+            : "";
+    };
+    const setMode = (next) => {
+      mode = next;
+      tabs.forEach((t) => {
+        const on = t.dataset.mode === next;
+        t.classList.toggle("is-active", on);
+        t.setAttribute("aria-pressed", String(on));
+      });
+      if (next === "email") {
+        input.type = "email";
+        input.inputMode = "email";
+        input.autocomplete = "email";
+        input.placeholder = "Email address";
+      } else {
+        input.type = "tel";
+        input.inputMode = "tel";
+        input.autocomplete = "tel";
+        input.placeholder = "Mobile number";
+      }
+      setStatus("");
+      input.focus();
+    };
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => setMode(t.dataset.mode))
+    );
+
+    const collapseToSuccess = () => {
+      input.disabled = true;
+      tabs.forEach((t) => (t.disabled = true));
+      button.hidden = true;
+      setStatus("You're on the list — we'll be in touch when tickets drop.", "ok");
+    };
+
+    const onSegment = () =>
+      window.HIVE_SDK(
+        "addToSegment",
+        "Website Signup",
+        collapseToSuccess,
+        function (err) {
+          console.error("[hive] addToSegment failed", err);
+          collapseToSuccess();
+        }
+      );
+    const onError = (cmd) =>
+      function (err) {
+        console.error("[hive] " + cmd + " failed", err);
+        setStatus("Could not subscribe — please try again.", "err");
+        setLoading(false);
+      };
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const button = form.querySelector("button");
-      if (button) {
-        button.textContent = "Wired to Hive soon";
-        button.setAttribute("disabled", "true");
+      const value = input.value.trim();
+      if (mode === "email") {
+        if (!value || value.indexOf("@") < 1) {
+          setStatus("Please enter a valid email address.", "err");
+          input.focus();
+          return;
+        }
+      } else if (!value) {
+        setStatus("Please enter your mobile number.", "err");
+        input.focus();
+        return;
+      }
+      setLoading(true);
+      setStatus("");
+      if (mode === "email") {
+        window.HIVE_SDK(
+          "emailSignup",
+          { email: value, didOptIn: true },
+          onSegment,
+          onError("emailSignup")
+        );
+      } else {
+        window.HIVE_SDK(
+          "phoneNumberSignup",
+          { phoneNumber: value, didSmsOptIn: true },
+          onSegment,
+          onError("phoneNumberSignup")
+        );
       }
     });
-  }
+  })();
 </script>

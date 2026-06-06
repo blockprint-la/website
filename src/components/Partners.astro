@@ -1,0 +1,279 @@
+---
+// Partners interest form — for sponsors, vendors, and volunteers.
+// Captures email + role via Hive (brand 135484), tagging each signup
+// into a role-specific segment so Jake can filter inside Hive:
+//   - "Partner — Sponsor"
+//   - "Partner — Vendor"
+//   - "Partner — Volunteer"
+//
+// v1 deliberately stays Hive-only: email + role. For richer detail
+// (company, deck, scope), the success state tells the lead to follow
+// up at partnerships@blockprint.la directly. A future v2 could swap
+// the submit handler to hit a Vercel function + transactional email
+// (Resend/Postmark) and capture company + notes properly.
+import { site } from "../data/site";
+---
+
+<section
+  id="partners"
+  class="relative px-5 md:px-10 py-24 md:py-32 bg-paper-deep"
+>
+  <div class="max-w-4xl mx-auto">
+    <p class="section-marker mb-4">Get Involved</p>
+    <h2
+      class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-8"
+      data-ink="pink"
+      data-ghost
+      style="--ghost: var(--color-bp-cyan);"
+    >
+      Partner With Us
+    </h2>
+
+    <p class="text-base md:text-lg leading-relaxed opacity-90 max-w-2xl mb-12">
+      Blockprint is built with the brands, restaurants, makers, and neighbors
+      who already make Abbot Kinney what it is. If you want to sponsor, vend,
+      or volunteer on August 22, drop your email below and we'll be in touch.
+    </p>
+
+    <form id="partners-form" class="partners-form" novalidate>
+      <fieldset class="partners-roles" aria-label="I'm interested as a">
+        <legend class="partners-roles__legend">I'm interested as a</legend>
+        <label class="partners-role">
+          <input type="radio" name="role" value="Sponsor" checked />
+          <span>Sponsor</span>
+        </label>
+        <label class="partners-role">
+          <input type="radio" name="role" value="Vendor" />
+          <span>Vendor</span>
+        </label>
+        <label class="partners-role">
+          <input type="radio" name="role" value="Volunteer" />
+          <span>Volunteer</span>
+        </label>
+      </fieldset>
+
+      <label for="partners-email" class="sr-only">Email address</label>
+      <input
+        id="partners-email"
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        required
+        placeholder="Email address"
+        class="partners-input"
+      />
+
+      <button
+        type="submit"
+        class="partners-btn bg-bp-pink text-paper px-8 py-4 text-sm uppercase tracking-[0.25em] font-bold"
+        style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+      >
+        <span data-label-idle>Send Interest</span>
+        <span data-label-loading hidden>Sending…</span>
+      </button>
+
+      <p data-status role="status" aria-live="polite" class="partners-status"></p>
+
+      <p class="partners-fine">
+        We'll reach out within 48 hours (Mon–Fri). For detailed pitches,
+        decks, or scope, email <a href={`mailto:${site.partnershipsEmail}`}>{site.partnershipsEmail}</a>
+        directly.
+      </p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .partners-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 32rem;
+  }
+  .partners-roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    border: none;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+    align-items: center;
+  }
+  .partners-roles__legend {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    opacity: 0.7;
+    margin-right: 0.5rem;
+    padding: 0;
+  }
+  .partners-role {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .partners-role input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .partners-role span {
+    display: inline-block;
+    border: 2px solid var(--color-ink);
+    padding: 0.5rem 0.95rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .partners-role input:checked + span {
+    background: var(--color-bp-pink);
+    color: var(--color-paper);
+  }
+  .partners-role input:focus-visible + span {
+    outline: 2px solid var(--color-bp-cyan);
+    outline-offset: 2px;
+  }
+  .partners-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-ink);
+    padding: 0.85rem 0.25rem;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .partners-input:focus { border-bottom-color: var(--color-bp-pink); }
+  .partners-input::placeholder { color: rgba(21, 21, 21, 0.4); }
+  .partners-btn {
+    align-self: flex-start;
+    margin-top: 0.25rem;
+  }
+  .partners-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .partners-status {
+    min-height: 1.1rem;
+    font-size: 0.85rem;
+  }
+  .partners-fine {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.55;
+    opacity: 0.7;
+  }
+  .partners-fine a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<!-- Hive SDK loader — gated by __hiveInited so it composes with the
+     Newsletter component without double-initializing. -->
+<script is:inline>
+  (function (h, i, v, e, s, d, k) {
+    h.HiveSDKObject = s;
+    h[s] =
+      h[s] ||
+      function () {
+        (h[s].q = h[s].q || []).push(arguments);
+      };
+    d = i.createElement(v);
+    k = i.getElementsByTagName(v)[0];
+    d.async = 1;
+    d.id = s;
+    d.src = e + "?r=" + parseInt(new Date() / 60000);
+    k.parentNode.insertBefore(d, k);
+  })(
+    window,
+    document,
+    "script",
+    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
+    "HIVE_SDK"
+  );
+  if (!window.__hiveInited) {
+    HIVE_SDK("init", 135484);
+    window.__hiveInited = true;
+  }
+</script>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById("partners-form");
+    if (!form) return;
+
+    const input = form.querySelector("#partners-email");
+    const button = form.querySelector("button[type=submit]");
+    const labelIdle = button.querySelector("[data-label-idle]");
+    const labelLoading = button.querySelector("[data-label-loading]");
+    const status = form.querySelector("[data-status]");
+
+    const setLoading = (loading) => {
+      button.disabled = loading;
+      labelIdle.hidden = loading;
+      labelLoading.hidden = !loading;
+    };
+    const setStatus = (msg, tone) => {
+      status.textContent = msg;
+      status.style.color =
+        tone === "ok"
+          ? "var(--color-bp-navy)"
+          : tone === "err"
+            ? "var(--color-bp-pink-deep)"
+            : "";
+    };
+
+    const collapseToSuccess = () => {
+      input.disabled = true;
+      form.querySelectorAll('input[name="role"]').forEach((r) => (r.disabled = true));
+      button.hidden = true;
+      setStatus("Got it — we'll be in touch within 48 hours.", "ok");
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      const role = (form.querySelector('input[name="role"]:checked') || {}).value || "Sponsor";
+
+      if (!email || email.indexOf("@") < 1) {
+        setStatus("Please enter a valid email address.", "err");
+        input.focus();
+        return;
+      }
+
+      setLoading(true);
+      setStatus("");
+
+      window.HIVE_SDK(
+        "emailSignup",
+        { email: email, didOptIn: true },
+        function () {
+          // Tag the lead into the role-specific Partners segment so Jake
+          // can filter inside Hive. Falls back to a generic Partners tag
+          // if the role-specific segment is missing on the Hive side.
+          window.HIVE_SDK(
+            "addToSegment",
+            "Partner — " + role,
+            collapseToSuccess,
+            function () {
+              window.HIVE_SDK(
+                "addToSegment",
+                "Partner Interest",
+                collapseToSuccess,
+                collapseToSuccess
+              );
+            }
+          );
+        },
+        function (err) {
+          console.error("[hive] emailSignup (partners) failed", err);
+          setStatus("Could not submit — please try again, or email us directly.", "err");
+          setLoading(false);
+        }
+      );
+    });
+  })();
+</script>
