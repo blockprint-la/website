@@ -27,8 +27,8 @@ import { faqs } from "../data/site";
                 class="shrink-0 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-bp-pink text-2xl md:text-3xl font-bold transition-transform group-open:rotate-45"
               >+</span>
             </summary>
-            <div class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-[68ch] space-y-4">
-              {f.a && f.a.split("\n\n").map((para) => <p>{para}</p>)}
+            <div class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-[68ch] space-y-4 [&_a]:text-bp-pink-deep [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-bp-pink">
+              {f.a && f.a.split("\n\n").map((para) => <p set:html={para} />)}
 
               {f.intro && <p>{f.intro}</p>}
 

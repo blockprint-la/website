@@ -100,15 +100,15 @@ export const faqs: {
   },
   {
     q: "How do I get to Blockprint?",
-    a: `Transportation and parking information is coming soon. Check back closer to the event and follow us on Instagram for updates.`,
+    a: `Transportation and parking information is coming soon. Check back closer to the event and follow us on <a href="https://instagram.com/blockprint.la" target="_blank" rel="noopener noreferrer">Instagram</a> for updates.`,
   },
   {
     q: "Who should I contact for general event or ticketing info?",
-    a: `Email info@blockprint.la. We try to answer questions as quickly as possible — please allow 48 hours, Monday–Friday, for a response.`,
+    a: `For general questions and info, email <a href="mailto:info@blockprint.la">info@blockprint.la</a>. For ticketing help and information, email <a href="mailto:tickets@blockprint.la">tickets@blockprint.la</a>. We try to answer questions as quickly as possible — please allow 48 hours, Monday–Friday, for a response.`,
   },
   {
     q: "Will there be a lost & found?",
-    a: `Yes. Lost & found will be marked on the event map, and you can email info@blockprint.la to inquire about your lost items.`,
+    a: `Yes. Lost & found will be marked on the event map, and you can email <a href="mailto:info@blockprint.la">info@blockprint.la</a> to inquire about your lost items.`,
   },
   {
     q: "What can I bring?",
@@ -143,7 +143,7 @@ export const faqs: {
     ],
   },
   {
-    q: "Festival Policies",
+    q: "What are the festival policies?",
     list: [
       `No re-entry`,
       `No refunds`,
@@ -153,7 +153,7 @@ export const faqs: {
     ],
   },
   {
-    q: "Zero Tolerance",
+    q: "What's your zero-tolerance policy?",
     a: `Blockprint has a zero-tolerance policy for illegal activity, harassment, discrimination, racism, homophobia, or any other behavior that makes someone feel unsafe.
 
 Anyone found in violation will be removed from the event immediately. If something happens to you or someone near you, tell a staff member or security immediately.
@@ -161,11 +161,11 @@ Anyone found in violation will be removed from the event immediately. If somethi
 Event security and police officers will be working the event, and all laws will be strictly enforced. Be responsible, make smart choices, and look out for one another.`,
   },
   {
-    q: "Weather",
+    q: "What if it rains?",
     a: `The event will take place rain or shine. Please keep up to date on weather reports and dress for the weather.`,
   },
   {
-    q: "Security & Entry",
+    q: "How do entry and security work?",
     a: `All persons and items are subject to search upon entry by security and law enforcement. Security personnel reserve the right to prohibit items deemed harmful, dangerous, or not in the best interest of the event and its patrons.
 
 We reserve the right to refuse entry to anyone.`,
