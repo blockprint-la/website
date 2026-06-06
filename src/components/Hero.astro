@@ -47,91 +47,99 @@ import { site } from "../data/site";
     aria-hidden="true"
   />
 
-  <!-- Hero wordmark — the BLOCKPRINT logotype, custom-cut letterforms -->
   <h1 class="sr-only">Blockprint</h1>
-  <img
-    src="/brand/wordmark-2026.png"
-    alt=""
-    width="1016"
-    height="148"
-    class="hero-stamp relative z-10 w-full max-w-[920px]"
-    aria-hidden="true"
-  />
 
-  <!-- "A BLOCK PARTY / ABBOT KINNEY BLVD" lockup — sits below the wordmark.
-       Replaces the old "Presented by Mudwatr" line (Mudwatr removed). -->
-  <img
-    src="/brand/block-party-lockup.png"
-    alt="A block party on Abbot Kinney Blvd"
-    width="545"
-    height="73"
-    class="hero-print relative z-10 w-[290px] md:w-[460px] mt-4 md:mt-6"
-    style="animation-delay: 0.25s;"
-  />
-
-  <!-- "A — Z" tracker — sits directly above the lineup -->
-  <img
-    src="/brand/az-tracker.png"
-    alt=""
-    width="130"
-    height="21"
-    class="hero-print relative z-10 w-[60px] md:w-[88px] mt-6 md:mt-9 mb-1 md:mb-2"
-    style="animation-delay: 0.4s;"
-    aria-hidden="true"
-  />
-
-  <!-- Lineup lockup + flanking stamps. The lineup PNG is the centerpiece;
-       MUSIC ARTS EATS and AUG 22 are anchored RELATIVE to this wrapper (not
-       the viewport) so the poster composition holds at every width. On
-       desktop they drift into the side margins; on mobile they shrink and
-       hug the lineup's corners. Both stamps carry their rotation baked in. -->
-  <div
-    class="hero-line relative z-10 w-full max-w-[720px] mt-2 md:mt-3"
-    style="animation-delay: 0.35s;"
-  >
+  <!-- POSTER COLUMN — the entire hero lockup lives inside one centered,
+       width-capped column so the wordmark, lineup, and collage all share a
+       single width and stack as one poster at every size. Desktop is simply
+       a scaled-up version of the mobile composition (the look we're matching)
+       rather than each element sprawling to its own max-width. Sub-elements
+       are sized as a PERCENTAGE of this column so their proportions hold
+       across breakpoints. Birds stay anchored to the section, so they keep
+       drifting in the margins around this column. -->
+  <div class="relative z-10 w-full max-w-[700px] mx-auto flex flex-col items-center">
+    <!-- Hero wordmark — the BLOCKPRINT logotype, custom-cut letterforms -->
     <img
-      src="/brand/lineup-2026.png"
-      alt="Darius, Eli & Fur, Franc Moody (DJ Set), Luxxury, Sosh & Mosh"
-      width="959"
-      height="481"
-      class="relative z-10 w-full"
+      src="/brand/wordmark-2026.png"
+      alt=""
+      width="1016"
+      height="148"
+      class="hero-stamp w-full"
+      aria-hidden="true"
     />
 
-    <!-- MUSIC · ARTS · EATS — upper-left flank (rotation baked into PNG) -->
+    <!-- "A BLOCK PARTY / ABBOT KINNEY BLVD" lockup — sits below the wordmark.
+         Replaces the old "Presented by Mudwatr" line (Mudwatr removed). -->
     <img
-      src="/brand/music-arts-eats.png"
-      alt="Music · Arts · Eats"
-      width="187"
-      height="178"
-      class="hero-print absolute z-20 w-[74px] lg:w-[128px] top-[-7%] left-[-1%] lg:top-[-9%] lg:left-[-17%]"
-      style="animation-delay: 0.7s;"
+      src="/brand/block-party-lockup.png"
+      alt="A block party on Abbot Kinney Blvd"
+      width="545"
+      height="73"
+      class="hero-print w-[86%] mt-4 md:mt-6"
+      style="animation-delay: 0.25s;"
     />
 
-    <!-- AUG 22 — right flank (rotation baked into PNG) -->
+    <!-- "A — Z" tracker — sits directly above the lineup -->
     <img
-      src="/brand/aug-22.png"
-      alt="August 22"
-      width="134"
-      height="107"
-      class="hero-print absolute z-20 w-[60px] lg:w-[116px] top-[2%] right-[-1%] lg:top-[28%] lg:right-[-15%]"
-      style="animation-delay: 0.85s;"
+      src="/brand/az-tracker.png"
+      alt=""
+      width="130"
+      height="21"
+      class="hero-print w-[18%] mt-6 md:mt-8 mb-1 md:mb-2"
+      style="animation-delay: 0.4s;"
+      aria-hidden="true"
     />
+
+    <!-- Lineup lockup + flanking stamps. MUSIC ARTS EATS and AUG 22 are
+         anchored RELATIVE to this wrapper. On desktop they drift into the
+         side margins; on mobile/tablet they tuck beside the top row (no
+         margin to drift into). Both stamps carry their rotation baked in. -->
+    <div
+      class="hero-line relative w-full mt-2 md:mt-3"
+      style="animation-delay: 0.35s;"
+    >
+      <img
+        src="/brand/lineup-2026.png"
+        alt="Darius, Eli & Fur, Franc Moody (DJ Set), Luxxury, Sosh & Mosh"
+        width="959"
+        height="481"
+        class="relative z-10 w-full"
+      />
+
+      <!-- MUSIC · ARTS · EATS — upper-left flank (rotation baked into PNG) -->
+      <img
+        src="/brand/music-arts-eats.png"
+        alt="Music · Arts · Eats"
+        width="187"
+        height="178"
+        class="hero-print absolute z-20 w-[74px] lg:w-[128px] top-[-7%] left-[-1%] lg:top-[-9%] lg:left-[-17%]"
+        style="animation-delay: 0.7s;"
+      />
+
+      <!-- AUG 22 — right flank (rotation baked into PNG) -->
+      <img
+        src="/brand/aug-22.png"
+        alt="August 22"
+        width="134"
+        height="107"
+        class="hero-print absolute z-20 w-[60px] lg:w-[116px] top-[2%] right-[-1%] lg:top-[28%] lg:right-[-15%]"
+        style="animation-delay: 0.85s;"
+      />
+    </div>
   </div>
 
   <!-- Date / venue / age (text-only, sr-only — image alts cover the visual) -->
   <p class="sr-only">{site.date} · {site.venue}, {site.city} · {site.agePolicy}</p>
 
-  <!-- Venue collage — full-bleed. Negative margins cancel the section's
-       horizontal padding so the illustration stretches edge-to-edge with
-       the viewport at any window size. The source PNG is 1008×439; on
-       wider monitors it upscales, which actually plays to the halftone
-       screen-print aesthetic rather than against it. -->
+  <!-- Venue collage. Full-bleed edge-to-edge on mobile (the look Jake
+       liked); contained to the poster column on desktop so it reads as part
+       of the poster instead of detaching across the whole viewport. -->
   <img
     src="/brand/collage.png"
     alt=""
     width="1008"
     height="439"
-    class="hero-print relative z-10 block mt-3 md:mt-4 w-screen max-w-none -mx-5 md:-mx-10"
+    class="hero-print relative z-10 block mt-3 md:mt-5 w-screen max-w-none -mx-5 md:w-full md:max-w-[700px] md:mx-auto"
     style="animation-delay: 1s;"
     aria-hidden="true"
   />
