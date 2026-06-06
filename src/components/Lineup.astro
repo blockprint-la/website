@@ -40,14 +40,14 @@ function primaryLink(a: (typeof lineup)[number]) {
                 : {})}
               class="group block"
             >
-              {/* Wordmark + optional DJ SET tag, kept inside ONE fixed-height
-                 band so every card's photo lines up regardless of the tag.
-                 The wordmark shrinks (min-w-0) to make room for the tag. */}
+              {/* Wordmark + optional DJ SET tag in ONE fixed-height band so every
+                 card's photo lines up. Wordmarks are trimmed to their content and
+                 bottom-aligned, so caps + the DJ SET tag share the same top/bottom. */}
               <div class="h-12 md:h-16 flex items-end gap-3 md:gap-4">
                 <img
                   src={a.wordmark}
                   alt={a.name}
-                  class="min-w-0 max-h-full w-auto max-w-full object-contain object-left object-bottom"
+                  class="max-h-full w-auto max-w-full object-contain object-left-bottom"
                   loading="lazy"
                 />
                 {a.set && (
