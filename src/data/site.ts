@@ -41,6 +41,8 @@ export type Artist = {
   set?: string;                  // e.g. "DJ SET"
   photo?: string;                // film-strip B&W photo card (headliners)
   wordmark?: string;             // cream wordmark logo on transparent (headliners)
+  wordmarkAspect?: number;       // trimmed wordmark width/height — used to size it next to the DJ SET tag
+
   spotify?: string;
   instagram?: string;
   website?: string;
@@ -51,7 +53,7 @@ export type Artist = {
 export const lineup: Artist[] = [
   { name: "Darius",      variant: "headline", photo: "/lineup/darius.png",      wordmark: "/lineup/darius-wordmark-trim.png",      spotify: "", instagram: "" },
   { name: "Eli & Fur",   variant: "headline", photo: "/lineup/eli-fur.png",     wordmark: "/lineup/eli-fur-wordmark-trim.png",     spotify: "", instagram: "" },
-  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-stacked-trim.png", spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
+  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.11, spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
   { name: "Luxxury",     variant: "tape",                    spotify: "", instagram: "" },
   { name: "Sosh & Mosh", variant: "tape",                    spotify: "", instagram: "" },
 ];

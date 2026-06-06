@@ -40,21 +40,35 @@ function primaryLink(a: (typeof lineup)[number]) {
                 : {})}
               class="group block"
             >
-              {/* Wordmark + optional DJ SET tag in ONE fixed-height band so every
-                 card's photo lines up. Wordmarks are trimmed to their content and
-                 bottom-aligned, so caps + the DJ SET tag share the same top/bottom. */}
+              {/* Wordmark (+ optional DJ SET tag) in ONE fixed-height band so every
+                 card's photo lines up. For an act with a set tag, the inline name
+                 and the DJ SET tag share the row width in proportion to their shapes
+                 (flex-grow = aspect ratio), so both render at the SAME height with
+                 matching tops and bottoms. Trimmed assets + object-*-bottom keep a
+                 consistent baseline across all cards. */}
               <div class="h-12 md:h-16 flex items-end gap-3 md:gap-4">
-                <img
-                  src={a.wordmark}
-                  alt={a.name}
-                  class="max-h-full w-auto max-w-full object-contain object-left-bottom"
-                  loading="lazy"
-                />
-                {a.set && (
+                {a.set ? (
+                  <Fragment>
+                    <img
+                      src={a.wordmark}
+                      alt={a.name}
+                      class="min-w-0 h-auto self-end object-contain object-left-bottom"
+                      style={`flex: ${a.wordmarkAspect ?? 8} 1 0`}
+                      loading="lazy"
+                    />
+                    <img
+                      src="/lineup/dj-set-trim.png"
+                      alt={a.set}
+                      class="min-w-0 h-auto self-end object-contain object-bottom"
+                      style="flex: 1.084 1 0"
+                      loading="lazy"
+                    />
+                  </Fragment>
+                ) : (
                   <img
-                    src="/lineup/dj-set-trim.png"
-                    alt={a.set}
-                    class="max-h-full w-auto object-contain object-bottom shrink-0"
+                    src={a.wordmark}
+                    alt={a.name}
+                    class="max-h-full w-auto max-w-full object-contain object-left-bottom"
                     loading="lazy"
                   />
                 )}
