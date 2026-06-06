@@ -2,7 +2,6 @@
 
 export const site = {
   name: "Blockprint",
-  tagline: "Presented by Mudwatr",
   date: "Aug 22, 2026",
   dateShort: "AUG 22",
   city: "Venice, CA",
@@ -46,12 +45,13 @@ export type Artist = {
 };
 
 // A–Z order, locked to poster. Variants control visual treatment.
+// Links left empty for the new acts pending confirmation — wire later.
 export const lineup: Artist[] = [
+  { name: "Darius",      variant: "headline",                spotify: "", instagram: "" },
+  { name: "Eli & Fur",   variant: "headline",                spotify: "", instagram: "" },
   { name: "Franc Moody", variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
-  { name: "Nimino",      variant: "headline",                spotify: "https://open.spotify.com/artist/7zKGqJ6E1A24qH1NIiTl81", instagram: "https://instagram.com/nimino" },
-  { name: "Vandelux",    variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/6V8WQfvDP4U4qN8Z0cq4Qy", instagram: "https://instagram.com/vandelux" },
-  { name: "Coco & Breezy", variant: "tape",                  spotify: "",                                                                  instagram: "https://instagram.com/cocoandbreezy" },
-  { name: "Never Dull",    variant: "tape",                  spotify: "",                                                                  instagram: "https://instagram.com/neverdull" },
+  { name: "Luxxury",     variant: "tape",                    spotify: "", instagram: "" },
+  { name: "Sosh & Mosh", variant: "tape",                    spotify: "", instagram: "" },
 ];
 
 export const sponsors = [
@@ -80,7 +80,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "What's the lineup?",
-    a: `Franc Moody (DJ Set), Nimino, Vandelux (DJ Set), with support from Coco & Breezy and Never Dull. Set times TBA.`,
+    a: `Darius, Eli & Fur, Franc Moody (DJ Set), with support from Luxxury and Sosh & Mosh. Set times TBA.`,
   },
   {
     q: "How do I get there?",
