@@ -4,80 +4,95 @@ import { lineup } from "../data/site";
 const headliners = lineup.filter((a) => a.variant === "headline");
 const tapeActs = lineup.filter((a) => a.variant === "tape");
 
-function primaryLink(a: typeof lineup[number]) {
-  return a.spotify || a.instagram || a.website || "#";
+function primaryLink(a: (typeof lineup)[number]) {
+  return a.spotify || a.instagram || a.website || "";
 }
 ---
 
-<section id="lineup" class="relative px-5 md:px-10 py-24 md:py-36">
+<!-- Black section styled after the artist-asset cards: cream wordmark over a
+     film-strip B&W photo, three headliners in a row (A–Z). -->
+<section id="lineup" class="relative bg-ink text-paper px-5 md:px-10 py-24 md:py-36">
   <div class="max-w-6xl mx-auto">
     <header class="mb-12 md:mb-16 flex items-end justify-between gap-6">
       <h2
         class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(3rem,10vw,8rem)]"
-        data-ink="navy"
+        data-ink="cream"
         data-ghost
-        style="--ghost: var(--color-bp-cyan);"
+        style="--ghost: var(--color-bp-pink);"
       >
         Lineup
       </h2>
       <div class="text-right hidden md:block">
-        <p class="section-marker section-marker--navy">A — Z</p>
-        <p class="text-xs uppercase tracking-[0.25em] opacity-85 mt-1">Set times TBA</p>
+        <p class="section-marker section-marker--cream">A — Z</p>
+        <p class="text-xs uppercase tracking-[0.25em] text-paper/70 mt-1">Set times TBA</p>
       </div>
     </header>
 
-    <ul class="flex flex-col gap-5 md:gap-7">
-      {headliners.map((a) => (
-        <li data-reveal>
-          <a
-            href={primaryLink(a)}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="lineup-row group block"
-            data-name={a.name}
-          >
-            <span
-              class="block-print block-print--soft font-[var(--font-display)] uppercase font-black leading-[0.9] text-[clamp(3rem,11vw,9rem)] tracking-[-0.01em] inline-block transition-transform duration-200 group-hover:translate-x-1"
-              data-ink="navy"
-              data-ghost
-              style="--ghost: var(--color-bp-cyan);"
+    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
+      {headliners.map((a) => {
+        const href = primaryLink(a);
+        const Tag = href ? "a" : "div";
+        return (
+          <li data-reveal>
+            <Tag
+              {...(href
+                ? { href, target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+              class="group block"
             >
-              {a.name}
-            </span>
-            {a.set && (
-              <span class="ml-3 text-xs md:text-sm uppercase tracking-[0.3em] align-top opacity-80">
-                ({a.set})
-              </span>
-            )}
-            <span
-              class="lineup-meta block mt-2 text-xs uppercase tracking-[0.3em] opacity-80 group-hover:opacity-100 transition-opacity"
-            >
-              {a.spotify ? "Spotify" : a.instagram ? "Instagram" : "Listen"} ↗
-            </span>
-          </a>
-        </li>
-      ))}
+              {/* Wordmark — constrained by height so cap sizes stay even across the row */}
+              <div class="h-12 md:h-16 flex items-end">
+                <img
+                  src={a.wordmark}
+                  alt={a.name}
+                  class="max-h-full w-auto max-w-full object-contain object-left"
+                  loading="lazy"
+                />
+              </div>
+
+              {a.set && (
+                <p class="mt-2 text-[0.7rem] md:text-xs uppercase tracking-[0.3em] text-paper/70">
+                  {a.set}
+                </p>
+              )}
+
+              {/* Film-strip photo card */}
+              <div class="mt-4 overflow-hidden">
+                <img
+                  src={a.photo}
+                  alt={`${a.name} — Blockprint`}
+                  class="w-full h-auto transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                  loading="lazy"
+                />
+              </div>
+            </Tag>
+          </li>
+        );
+      })}
     </ul>
 
-    <div class="mt-12 md:mt-16">
-      <p class="section-marker mb-4">With Support</p>
-      <ul class="flex flex-wrap gap-4 md:gap-6">
-        {tapeActs.map((a) => (
-          <li>
-            <a
-              href={primaryLink(a)}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="tape-label text-xl md:text-3xl font-bold inline-block transition-transform hover:-rotate-3"
-            >
-              {a.name}
-            </a>
-          </li>
-        ))}
+    <div class="mt-16 md:mt-20">
+      <p class="section-marker section-marker--cream mb-5">With Support</p>
+      <ul class="flex flex-wrap items-baseline gap-x-8 gap-y-4">
+        {tapeActs.map((a) => {
+          const href = primaryLink(a);
+          const Tag = href ? "a" : "span";
+          return (
+            <li>
+              <Tag
+                {...(href
+                  ? { href, target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                class="font-[var(--font-display)] uppercase font-black tracking-[-0.01em] leading-none text-paper text-[clamp(1.75rem,5vw,3rem)] transition-opacity hover:opacity-70"
+              >
+                {a.name}
+              </Tag>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </div>
 </section>
 
 <!-- Scroll reveal handled by [data-reveal] + IntersectionObserver in Layout.astro -->
-

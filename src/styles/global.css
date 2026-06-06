@@ -136,6 +136,7 @@ main { position: relative; z-index: 2; }
 .section-marker--cyan { color: var(--color-bp-cyan); }
 .section-marker--navy { color: var(--color-bp-navy); }
 .section-marker--ink  { color: var(--color-ink); }
+.section-marker--cream { color: var(--color-paper); } /* on dark/black sections */
 
 /* ---------- Announcement tile ----------
    The reusable design-system primitive from p19: a colored square with
