@@ -1,16 +1,22 @@
 ---
 // Partners interest form — for sponsors, vendors, and volunteers.
-// Captures email + role via Hive (brand 135484), tagging each signup
-// into a role-specific segment so Jake can filter inside Hive:
-//   - "Partner — Sponsor"
-//   - "Partner — Vendor"
-//   - "Partner — Volunteer"
 //
-// v1 deliberately stays Hive-only: email + role. For richer detail
-// (company, deck, scope), the success state tells the lead to follow
-// up at partners@blockprint.la directly. A future v2 could swap
-// the submit handler to hit a Vercel function + transactional email
-// (Resend/Postmark) and capture company + notes properly.
+// Posts JSON to a Google Apps Script Web App (URL in site.partnersFormUrl)
+// which appends a row to the "Website Submissions — Partner Interest"
+// spreadsheet in the Stereo Punks Drive. Apps Script Web Apps don't
+// support CORS preflight, so the request uses Content-Type text/plain
+// (a "simple request" that skips preflight) — the body is still a JSON
+// string and the server-side handler does JSON.parse(e.postData.contents).
+//
+// Honeypot: a visually-hidden "website" field bots fill in but humans
+// don't see. If populated, the Apps Script silently 200s without writing
+// a row, so the bot believes it succeeded.
+//
+// Field set is deliberately minimal per the 2026-06-02 Crowd Control sync:
+// name + email + role + optional notes. No budget, scope, or menu — Jeff's
+// direction was "more general, you'd rather have too many than not enough."
+// Volunteers don't pick a role at signup either; the "pick your adventure"
+// task list comes later via direct outreach.
 import { site } from "../data/site";
 ---
 
@@ -32,10 +38,15 @@ import { site } from "../data/site";
     <p class="text-base md:text-lg leading-relaxed opacity-90 max-w-2xl mb-12">
       Blockprint is built with the brands, restaurants, makers, and neighbors
       who already make Abbot Kinney what it is. If you want to sponsor, vend,
-      or volunteer on August 22, drop your email below and we'll be in touch.
+      or volunteer on August 22, drop your details below and we'll be in touch.
     </p>
 
-    <form id="partners-form" class="partners-form" novalidate>
+    <form
+      id="partners-form"
+      class="partners-form"
+      data-endpoint={site.partnersFormUrl}
+      novalidate
+    >
       <fieldset class="partners-roles" aria-label="I'm interested as a">
         <legend class="partners-roles__legend">I'm interested as a</legend>
         <label class="partners-role">
@@ -52,7 +63,18 @@ import { site } from "../data/site";
         </label>
       </fieldset>
 
-      <label for="partners-email" class="sr-only">Email address</label>
+      <label for="partners-name" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">Name</label>
+      <input
+        id="partners-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        required
+        placeholder="Your name"
+        class="partners-input"
+      />
+
+      <label for="partners-email" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">Email</label>
       <input
         id="partners-email"
         name="email"
@@ -60,14 +82,40 @@ import { site } from "../data/site";
         inputmode="email"
         autocomplete="email"
         required
-        placeholder="Email address"
+        placeholder="you@email.com"
         class="partners-input"
       />
+
+      <label for="partners-notes" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">
+        Anything we should know? <span class="partners-label__hint">(Optional)</span>
+      </label>
+      <textarea
+        id="partners-notes"
+        name="notes"
+        rows="3"
+        placeholder="Sponsors: one-line pitch. Vendors: what you sell. Volunteers: anything you'd want to help with."
+        class="partners-input partners-textarea"
+      ></textarea>
+
+      <!-- Honeypot. Visually hidden + tab-skipped + autocomplete off.
+           Bots fill in any field with a benign-looking name; humans never
+           see this one. If populated on submit, the Apps Script silently
+           accepts the request without writing a row. -->
+      <div class="partners-hp" aria-hidden="true">
+        <label for="partners-website">Website (leave blank)</label>
+        <input
+          id="partners-website"
+          name="website"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
 
       <button
         type="submit"
         class="partners-btn bg-bp-pink text-paper px-8 py-4 text-sm uppercase tracking-[0.25em] font-bold"
-        style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+        style="filter: url(#ink-bleed-soft); box-shadow: -4px 4px 0 var(--color-bp-cyan);"
       >
         <span data-label-idle>Send Interest</span>
         <span data-label-loading hidden>Sending…</span>
@@ -77,9 +125,7 @@ import { site } from "../data/site";
 
       <p class="partners-fine">
         We'll reach out within 48 hours (Mon–Fri). For detailed pitches,
-        decks, or scope, email <a href={`mailto:${site.partnershipsEmail}`}>{site.partnershipsEmail}</a>
-        directly. By submitting, you agree to receive partnership-related
-        emails from Blockprint. See our <a href="/privacy-policy">Privacy Policy</a>.
+        decks, or scope, email <a href={`mailto:${site.partnershipsEmail}`}>{site.partnershipsEmail}</a> directly.
       </p>
     </form>
   </div>
@@ -89,8 +135,8 @@ import { site } from "../data/site";
   .partners-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    max-width: 32rem;
+    gap: 0.9rem;
+    max-width: 36rem;
   }
   .partners-roles {
     display: flex;
@@ -98,7 +144,7 @@ import { site } from "../data/site";
     gap: 0.5rem 0.75rem;
     border: none;
     padding: 0;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 1rem 0;
     align-items: center;
   }
   .partners-roles__legend {
@@ -139,21 +185,35 @@ import { site } from "../data/site";
     outline: 2px solid var(--color-bp-cyan);
     outline-offset: 2px;
   }
+  .partners-label__hint {
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.7;
+    font-weight: 400;
+  }
   .partners-input {
     background: transparent;
     border: none;
     border-bottom: 2px solid var(--color-ink);
-    padding: 0.85rem 0.25rem;
+    padding: 0.7rem 0.25rem;
     font-size: 1rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     outline: none;
     transition: border-color 0.15s ease;
+    font-family: inherit;
+    color: inherit;
+    width: 100%;
   }
   .partners-input:focus { border-bottom-color: var(--color-bp-pink); }
   .partners-input::placeholder { color: rgba(21, 21, 21, 0.4); }
+  .partners-textarea {
+    resize: vertical;
+    min-height: 5rem;
+    line-height: 1.45;
+  }
   .partners-btn {
     align-self: flex-start;
-    margin-top: 0.25rem;
+    margin-top: 0.85rem;
   }
   .partners-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .partners-status {
@@ -170,43 +230,33 @@ import { site } from "../data/site";
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-</style>
-
-<!-- Hive SDK loader — gated by __hiveInited so it composes with the
-     Newsletter component without double-initializing. -->
-<script is:inline>
-  (function (h, i, v, e, s, d, k) {
-    h.HiveSDKObject = s;
-    h[s] =
-      h[s] ||
-      function () {
-        (h[s].q = h[s].q || []).push(arguments);
-      };
-    d = i.createElement(v);
-    k = i.getElementsByTagName(v)[0];
-    d.async = 1;
-    d.id = s;
-    d.src = e + "?r=" + parseInt(new Date() / 60000);
-    k.parentNode.insertBefore(d, k);
-  })(
-    window,
-    document,
-    "script",
-    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
-    "HIVE_SDK"
-  );
-  if (!window.__hiveInited) {
-    HIVE_SDK("init", 135484);
-    window.__hiveInited = true;
+  /* Honeypot — visually hidden but still focusable for bots scraping
+     the form. Off-screen positioning + zero size + aria-hidden so
+     humans on screen readers / keyboard / vision never see it. */
+  .partners-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
-</script>
+</style>
 
 <script is:inline>
   (function () {
     const form = document.getElementById("partners-form");
     if (!form) return;
 
-    const input = form.querySelector("#partners-email");
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      console.error("[partners] no endpoint configured");
+      return;
+    }
+
+    const nameInput = form.querySelector("#partners-name");
+    const emailInput = form.querySelector("#partners-email");
+    const notesInput = form.querySelector("#partners-notes");
+    const honeypot = form.querySelector("#partners-website");
     const button = form.querySelector("button[type=submit]");
     const labelIdle = button.querySelector("[data-label-idle]");
     const labelLoading = button.querySelector("[data-label-loading]");
@@ -228,53 +278,70 @@ import { site } from "../data/site";
     };
 
     const collapseToSuccess = () => {
-      input.disabled = true;
+      [nameInput, emailInput, notesInput].forEach((i) => (i.disabled = true));
       form.querySelectorAll('input[name="role"]').forEach((r) => (r.disabled = true));
       button.hidden = true;
       setStatus("Got it — we'll be in touch within 48 hours.", "ok");
     };
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = input.value.trim();
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const notes = notesInput.value.trim();
       const role = (form.querySelector('input[name="role"]:checked') || {}).value || "Sponsor";
 
+      if (!name) {
+        setStatus("Please enter your name.", "err");
+        nameInput.focus();
+        return;
+      }
       if (!email || email.indexOf("@") < 1) {
         setStatus("Please enter a valid email address.", "err");
-        input.focus();
+        emailInput.focus();
         return;
       }
 
       setLoading(true);
       setStatus("");
 
-      window.HIVE_SDK(
-        "emailSignup",
-        { email: email, didOptIn: true },
-        function () {
-          // Tag the lead into the role-specific Partners segment so Jake
-          // can filter inside Hive. Falls back to a generic Partners tag
-          // if the role-specific segment is missing on the Hive side.
-          window.HIVE_SDK(
-            "addToSegment",
-            "Partner — " + role,
-            collapseToSuccess,
-            function () {
-              window.HIVE_SDK(
-                "addToSegment",
-                "Partner Interest",
-                collapseToSuccess,
-                collapseToSuccess
-              );
-            }
-          );
-        },
-        function (err) {
-          console.error("[hive] emailSignup (partners) failed", err);
+      const payload = {
+        name: name,
+        email: email,
+        role: role,
+        notes: notes,
+        website: honeypot ? honeypot.value : "",
+        source: "blockprint.la/#partners",
+      };
+
+      try {
+        // text/plain content-type avoids the CORS preflight that Apps
+        // Script Web Apps don't support. The body is still JSON; the
+        // doPost handler does JSON.parse(e.postData.contents).
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+
+        // Apps Script always 200s when the script runs (even on caught
+        // errors). Parse the body and check the ok flag.
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) { /* non-JSON response */ }
+
+        if (res.ok && data && data.ok) {
+          collapseToSuccess();
+        } else {
+          console.error("[partners] submit failed", { status: res.status, body: text });
           setStatus("Could not submit — please try again, or email us directly.", "err");
           setLoading(false);
         }
-      );
+      } catch (err) {
+        console.error("[partners] network error", err);
+        setStatus("Network error — please try again, or email us directly.", "err");
+        setLoading(false);
+      }
     });
   })();
 </script>
