@@ -12,10 +12,10 @@ export const site = {
   agePolicy: "21+",
   ticketUrl: "https://www.tixr.com/",  // placeholder Tixr landing — swap to real event URL when live
   newsletterAction: "#newsletter",     // legacy; Newsletter form is now Hive SDK direct, no endpoint needed
-  contactEmail: "info@blockprint.la",
-  accessibilityEmail: "access@blockprint.la",
-  pressEmail: "press@blockprint.la",
-  partnershipsEmail: "partnerships@blockprint.la",
+  contactEmail: "info@blockprint.la",       // alias of hello@ (team box)
+  accessibilityEmail: "info@blockprint.la", // no dedicated access@ alias yet — routes through team box
+  pressEmail: "press@blockprint.la",        // Zoho Group → Jake + Evan
+  partnershipsEmail: "partners@blockprint.la", // Zoho Group → Jake + Evan
   domain: "blockprint.la",
   // Google Analytics 4 measurement ID. Public by design (visible in the
   // browser request to googletagmanager.com), so not a secret — kept in
@@ -103,7 +103,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Is the venue accessible?",
-    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email access@blockprint.la and we'll make it work.`,
+    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email info@blockprint.la and we'll make it work.`,
   },
   {
     q: "Re-entry?",
@@ -115,11 +115,11 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "How do I get in touch?",
-    a: `General questions go to info@blockprint.la — we respond Monday through Friday within 48 hours. For specific needs, use access@blockprint.la (accessibility), press@blockprint.la (media), or partnerships@blockprint.la (vendors, brands, activations).`,
+    a: `General questions, accessibility, and ticket help go to info@blockprint.la — we respond Monday through Friday within 48 hours. For media, email press@blockprint.la. For sponsorships, vendors, and brand partnerships, email partners@blockprint.la.`,
   },
   {
     q: "I'm a vendor or brand — how do I get involved?",
-    a: `Email partnerships@blockprint.la with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
+    a: `Email partners@blockprint.la with your pitch and any links — the address routes to Jake and Evan directly. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
   },
   {
     q: "Press / photo / media?",
