@@ -40,21 +40,25 @@ function primaryLink(a: (typeof lineup)[number]) {
                 : {})}
               class="group block"
             >
-              {/* Wordmark — constrained by height so cap sizes stay even across the row */}
-              <div class="h-12 md:h-16 flex items-end">
+              {/* Wordmark + optional DJ SET tag, kept inside ONE fixed-height
+                 band so every card's photo lines up regardless of the tag.
+                 The wordmark shrinks (min-w-0) to make room for the tag. */}
+              <div class="h-12 md:h-16 flex items-end gap-3 md:gap-4">
                 <img
                   src={a.wordmark}
                   alt={a.name}
-                  class="max-h-full w-auto max-w-full object-contain object-left"
+                  class="min-w-0 max-h-full w-auto max-w-full object-contain object-left object-bottom"
                   loading="lazy"
                 />
+                {a.set && (
+                  <img
+                    src="/lineup/dj-set-trim.png"
+                    alt={a.set}
+                    class="max-h-full w-auto object-contain object-bottom shrink-0"
+                    loading="lazy"
+                  />
+                )}
               </div>
-
-              {a.set && (
-                <p class="mt-2 text-[0.7rem] md:text-xs uppercase tracking-[0.3em] text-paper/70">
-                  {a.set}
-                </p>
-              )}
 
               {/* Film-strip photo card */}
               <div class="mt-4 overflow-hidden">
