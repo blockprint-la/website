@@ -128,8 +128,10 @@ main { position: relative; z-index: 2; }
   font-size: 0.75rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-bp-pink);
-  opacity: 0.85;
+  /* Deep pink (not the bright #ff2e76) so these small kickers clear WCAG AA
+     on cream — bright pink at this size is only ~3.3:1. No opacity dimming
+     for the same reason. */
+  color: var(--color-bp-pink-deep);
 }
 .section-marker--cyan { color: var(--color-bp-cyan); }
 .section-marker--navy { color: var(--color-bp-navy); }

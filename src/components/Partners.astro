@@ -63,7 +63,7 @@ import { site } from "../data/site";
         </label>
       </fieldset>
 
-      <label for="partners-name" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">Name</label>
+      <label for="partners-name" class="block text-xs uppercase tracking-[0.25em] opacity-80 mt-2">Name</label>
       <input
         id="partners-name"
         name="name"
@@ -74,7 +74,7 @@ import { site } from "../data/site";
         class="partners-input"
       />
 
-      <label for="partners-email" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">Email</label>
+      <label for="partners-email" class="block text-xs uppercase tracking-[0.25em] opacity-80 mt-2">Email</label>
       <input
         id="partners-email"
         name="email"
@@ -86,7 +86,7 @@ import { site } from "../data/site";
         class="partners-input"
       />
 
-      <label for="partners-notes" class="block text-[0.7rem] uppercase tracking-[0.25em] opacity-70 mt-2">
+      <label for="partners-notes" class="block text-xs uppercase tracking-[0.25em] opacity-80 mt-2">
         Anything we should know? <span class="partners-label__hint">(Optional)</span>
       </label>
       <textarea
@@ -222,9 +222,10 @@ import { site } from "../data/site";
   }
   .partners-fine {
     margin-top: 0.5rem;
+    max-width: 52ch;        /* keep the line under ~80 chars */
     font-size: 0.75rem;
     line-height: 1.55;
-    opacity: 0.7;
+    opacity: 0.8;
   }
   .partners-fine a {
     text-decoration: underline;
