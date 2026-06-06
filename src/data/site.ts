@@ -26,7 +26,7 @@ export const site = {
   metaPixelId: "842607348915291",
   social: {
     instagram: "https://instagram.com/blockprint.la",
-    tiktok: "",
+    tiktok: "https://www.tiktok.com/@blockprint_la",
     spotify: "",
   },
 };
