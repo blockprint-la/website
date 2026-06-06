@@ -27,9 +27,48 @@ import { faqs } from "../data/site";
                 class="shrink-0 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-bp-pink text-2xl md:text-3xl font-bold transition-transform group-open:rotate-45"
               >+</span>
             </summary>
-            <p class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-[68ch]">
-              {f.a}
-            </p>
+            <div class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-[68ch] space-y-4">
+              {f.a && f.a.split("\n\n").map((para) => <p>{para}</p>)}
+
+              {f.intro && <p>{f.intro}</p>}
+
+              {f.list && (
+                <ul class="list-disc pl-5 space-y-1.5">
+                  {f.list.map((item) => <li>{item}</li>)}
+                </ul>
+              )}
+
+              {(f.allow || f.prohibit) && (
+                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6 text-sm md:text-base">
+                  {f.allow && (
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.25em] font-bold mb-3">Allowed</p>
+                      <ul class="space-y-1.5">
+                        {f.allow.map((item) => (
+                          <li class="flex gap-2">
+                            <span aria-hidden="true" class="text-bp-pink-deep font-bold shrink-0">+</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {f.prohibit && (
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.25em] font-bold mb-3">Prohibited</p>
+                      <ul class="space-y-1.5">
+                        {f.prohibit.map((item) => (
+                          <li class="flex gap-2">
+                            <span aria-hidden="true" class="opacity-50 font-bold shrink-0">–</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </details>
         </li>
       ))}

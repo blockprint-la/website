@@ -66,69 +66,108 @@ export const pressQuotes: { quote: string; source: string }[] = [
   // Placeholder — fill these in as press lands
 ];
 
-export const faqs: { q: string; a: string }[] = [
+/**
+ * FAQ entries. An answer can be expressed as any combination of:
+ *   a       — a paragraph (or several, separated by blank lines)
+ *   intro   — a lead line shown before a list
+ *   list    — a simple bulleted list
+ *   allow / prohibit — the two-column "what to bring" allowed / prohibited lists
+ * Content mirrors the FAQ section of the master copy doc.
+ */
+export const faqs: {
+  q: string;
+  a?: string;
+  intro?: string;
+  list?: string[];
+  allow?: string[];
+  prohibit?: string[];
+}[] = [
   {
-    q: "What exactly is Blockprint?",
-    a: `A one-day block party in Venice. We close down 3–4 blocks of Abbot Kinney Blvd between Brooks Ave and San Juan Ave for a single-stage festival on the street itself — electronic music, local food, art, and Venice culture all on one stretch.`,
+    q: "Is re-entry allowed?",
+    a: `No ins and outs.`,
   },
   {
-    q: "When and where is Blockprint?",
-    a: `Saturday, August 22, 2026 from 3 PM to 9 PM on Abbot Kinney Blvd in Venice, California. Doors and exact set times will be announced closer to the event.`,
+    q: "Can I attend if I'm under 21?",
+    a: `No — Blockprint is 21+ only.`,
   },
   {
-    q: "How old do I have to be?",
-    a: `Blockprint is a strictly 21+ event. Bring a valid government-issued photo ID with date of birth — U.S. driver's license, state ID card, or a U.S. or foreign passport. No exceptions at the gate.`,
+    q: "What kind of ID do I need?",
+    intro: `Acceptable forms of ID:`,
+    list: [
+      `Any U.S. government-issued driver's license or ID card containing a photograph and date of birth`,
+      `A U.S. or foreign government-issued passport containing a photograph and date of birth`,
+    ],
   },
   {
-    q: "What's the lineup?",
-    a: `Darius, Eli & Fur, Franc Moody (DJ Set), with support from Luxxury and Sosh & Mosh. Set times TBA.`,
+    q: "How do I get to Blockprint?",
+    a: `Transportation and parking information is coming soon. Check back closer to the event and follow us on Instagram for updates.`,
   },
   {
-    q: "How do I get there?",
-    a: `Walking, biking, and ride share are the way to go — Abbot Kinney is closed to vehicles during the festival, so plan to be dropped off a few blocks away. Bike parking will be available near entry. Public transit details and rideshare drop-off zones will be announced closer to the event.`,
+    q: "Who should I contact for general event or ticketing info?",
+    a: `Email info@blockprint.la. We try to answer questions as quickly as possible — please allow 48 hours, Monday–Friday, for a response.`,
   },
   {
-    q: "Is there food and drink?",
-    a: `Yes. Food and drink stations will be set up across the festival footprint, and many of the bars and restaurants along the stretch will be serving. Final vendor lineup announced closer to the event.`,
+    q: "Will there be a lost & found?",
+    a: `Yes. Lost & found will be marked on the event map, and you can email info@blockprint.la to inquire about your lost items.`,
   },
   {
     q: "What can I bring?",
-    a: `Sunscreen, deodorant, prescribed medications, non-professional cameras, e-cigarettes/vapes, lighters, unopened cigarettes, unopened gum, and empty reusable water bottles or personal misting fans (fill them inside). Bags must be clear and 12″ × 6″ × 12″ or smaller; small clutches under 6″ × 9″ are also fine.`,
+    allow: [
+      `Sunscreen`,
+      `Deodorant`,
+      `E-cigs / vapes`,
+      `Non-professional flash / still cameras`,
+      `Personal misting fan (bottle must be empty upon entry)`,
+      `Unopened cigarettes`,
+      `Lighters`,
+      `Physician-prescribed medication that is not expired`,
+      `Unopened chewing gum`,
+      `Reusable water bottles (must be empty upon entry)`,
+      `Clear bags that do not exceed 12″ × 6″ × 12″`,
+      `Non-clear (and clear) small clutch bags not exceeding 6″ × 9″`,
+    ],
+    prohibit: [
+      `Aerosol products / cans`,
+      `Costumes that resemble public safety uniforms (police, SWAT, fire, security, or medical)`,
+      `Drones, remote-controlled aircraft, toys`,
+      `Drugs or drug paraphernalia`,
+      `Glass, cans, cups, or coolers`,
+      `Illegal substances of any kind`,
+      `Laser pointers and air horns`,
+      `Outside food or beverages (including alcohol and candy)`,
+      `Pets`,
+      `Professional photo, video, or audio recording equipment`,
+      `Large umbrellas, chairs, or blankets`,
+      `Toy guns, water guns, slingshots`,
+      `Weapons of any kind (including pocket knives, pepper spray, fireworks, tasers, etc.)`,
+    ],
   },
   {
-    q: "What's not allowed?",
-    a: `No outside food or drink, glass containers, aerosols, drones, professional recording equipment, laser pointers, large umbrellas, chairs, or blankets, toy weapons, weapons or anything dangerous, pets, or illegal substances. Costumes resembling law enforcement uniforms are not permitted.`,
+    q: "Festival Policies",
+    list: [
+      `No re-entry`,
+      `No refunds`,
+      `No sitting on designated dancefloor areas`,
+      `No moshing, crowd-surfing, or stage-diving`,
+      `No unauthorized / unlicensed vendors`,
+    ],
   },
   {
-    q: "Code of conduct?",
-    a: `Blockprint is a zero-tolerance space for harassment, discrimination, illegal activity, or any behavior that makes others feel unsafe — violations mean immediate removal. The dancefloor is for dancing; no sitting on it. Look out for each other and we'll all have a good time.`,
+    q: "Zero Tolerance",
+    a: `Blockprint has a zero-tolerance policy for illegal activity, harassment, discrimination, racism, homophobia, or any other behavior that makes someone feel unsafe.
+
+Anyone found in violation will be removed from the event immediately. If something happens to you or someone near you, tell a staff member or security immediately.
+
+Event security and police officers will be working the event, and all laws will be strictly enforced. Be responsible, make smart choices, and look out for one another.`,
   },
   {
-    q: "Are tickets refundable?",
-    a: `All sales are final. Tickets are transferable through Tixr if you can't make it.`,
+    q: "Weather",
+    a: `The event will take place rain or shine. Please keep up to date on weather reports and dress for the weather.`,
   },
   {
-    q: "Is the venue accessible?",
-    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email info@blockprint.la and we'll make it work.`,
-  },
-  {
-    q: "Re-entry?",
-    a: `No re-entry once you've left the festival footprint, so plan accordingly.`,
-  },
-  {
-    q: "What if it rains?",
-    a: `Rain or shine. Refunds are not issued due to weather.`,
-  },
-  {
-    q: "How do I get in touch?",
-    a: `General questions, accessibility, and ticket help go to info@blockprint.la — we respond Monday through Friday within 48 hours. For media, email press@blockprint.la. For sponsorships, vendors, and brand partnerships, email partners@blockprint.la.`,
-  },
-  {
-    q: "I'm a vendor or brand — how do I get involved?",
-    a: `Email partners@blockprint.la with your pitch and any links — the address routes to Jake and Evan directly. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
-  },
-  {
-    q: "Press / photo / media?",
-    a: `Email press@blockprint.la with outlet, dates of coverage, and any specific requests.`,
+    q: "Security & Entry",
+    a: `All persons and items are subject to search upon entry by security and law enforcement. Security personnel reserve the right to prohibit items deemed harmful, dangerous, or not in the best interest of the event and its patrons.
+
+We reserve the right to refuse entry to anyone.`,
   },
 ];
