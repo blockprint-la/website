@@ -103,7 +103,7 @@ main { position: relative; z-index: 2; }
 
 /* ---------- Tape label ----------
    Small rotated badge with ink-bleed, set in the accent serif (Averia Serif
-   Libre per p14). Used for "AUG 22", "PRESENTED BY", support-act lockups. */
+   Libre per p14). Used for "AUG 22" and support-act lockups. */
 .tape-label {
   display: inline-block;
   background: var(--color-bp-pink);

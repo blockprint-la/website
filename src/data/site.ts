@@ -54,8 +54,9 @@ export const lineup: Artist[] = [
   { name: "Sosh & Mosh", variant: "tape",                    spotify: "", instagram: "" },
 ];
 
+// No presenting sponsor (the "presented by Mudwatr" partnership was dropped).
+// Leave `tier: "presenting"` supported for a future headline partner.
 export const sponsors = [
-  { name: "Mudwatr",            tier: "presenting" },
   { name: "805",                tier: "supporting" },
   { name: "The Butcher's Daughter", tier: "supporting" },
   { name: "Stüssy",             tier: "supporting" },
