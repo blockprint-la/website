@@ -168,14 +168,13 @@ main { position: relative; z-index: 2; }
 /* ---------- Nav scroll state ----------
    At the top of the page the nav is fully transparent. Once the user
    scrolls past a small threshold, JS adds .nav-scrolled and the bar
-   gains a frosted cream background with backdrop blur — keeps menu
-   items legible over any section beneath. (No CSS transition — Lenis's
-   per-frame transform updates were resetting it; the scroll-driven
-   class toggle already feels smooth without one.) */
+   becomes a solid beige bar (the page background color) that scrolls
+   over everything beneath — no translucency or blur. A hairline bottom
+   border keeps it defined when it passes over same-colored sections.
+   (No CSS transition — Lenis's per-frame transform updates were
+   resetting it; the scroll-driven class toggle already feels smooth.) */
 [data-nav].nav-scrolled {
-  background-color: rgba(251, 245, 238, 0.72);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  background-color: var(--color-paper);
   border-bottom-color: rgba(21, 21, 21, 0.08);
 }
 
