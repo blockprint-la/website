@@ -31,10 +31,9 @@ const ROW_ASPECT =
       >
         Lineup
       </h2>
-      <div class="text-right hidden md:block">
-        <p class="section-marker section-marker--cream">A — Z</p>
-        <p class="text-xs uppercase tracking-[0.25em] text-paper/70 mt-1">Set times TBA</p>
-      </div>
+      <p class="hidden md:block font-[var(--font-display)] font-black uppercase tracking-[0.08em] leading-none text-paper text-[clamp(2rem,5vw,4rem)]">
+        A — Z
+      </p>
     </header>
 
     <ul class="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
@@ -96,7 +95,7 @@ const ROW_ASPECT =
 
     <div class="mt-16 md:mt-20">
       <p class="section-marker section-marker--cream mb-5">With Support</p>
-      <ul class="flex flex-wrap items-baseline gap-x-8 gap-y-4">
+      <ul class="flex flex-wrap items-center gap-4 md:gap-6">
         {tapeActs.map((a) => {
           const href = primaryLink(a);
           const Tag = href ? "a" : "span";
@@ -106,7 +105,7 @@ const ROW_ASPECT =
                 {...(href
                   ? { href, target: "_blank", rel: "noopener noreferrer" }
                   : {})}
-                class="font-[var(--font-display)] uppercase font-black tracking-[-0.01em] leading-none text-paper text-[clamp(1.75rem,5vw,3rem)] transition-opacity hover:opacity-70"
+                class="tape-label text-lg md:text-2xl font-bold inline-block transition-transform hover:-rotate-3"
               >
                 {a.name}
               </Tag>
