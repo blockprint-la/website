@@ -7,6 +7,15 @@ const tapeActs = lineup.filter((a) => a.variant === "tape");
 function primaryLink(a: (typeof lineup)[number]) {
   return a.spotify || a.instagram || a.website || "";
 }
+
+// Every headliner name is sized to the SAME total row-width "budget" so they
+// all render at the same height regardless of name length. The budget is the
+// widest card: the longest name (Franc Moody) + its DJ SET tag. Shorter names
+// get an invisible spacer filling the remainder. Each child's flex-grow equals
+// its aspect ratio, so width ∝ aspect → height is constant across all cards.
+const DJ_ASPECT = 1.084;
+const ROW_ASPECT =
+  Math.max(...headliners.map((a) => a.wordmarkAspect ?? 0)) + DJ_ASPECT;
 ---
 
 <!-- Black section styled after the artist-asset cards: cream wordmark over a
@@ -40,37 +49,33 @@ function primaryLink(a: (typeof lineup)[number]) {
                 : {})}
               class="group block"
             >
-              {/* Wordmark (+ optional DJ SET tag) in ONE fixed-height band so every
-                 card's photo lines up. For an act with a set tag, the inline name
-                 and the DJ SET tag share the row width in proportion to their shapes
-                 (flex-grow = aspect ratio), so both render at the SAME height with
-                 matching tops and bottoms. Trimmed assets + object-*-bottom keep a
-                 consistent baseline across all cards. */}
-              <div class="h-12 md:h-16 flex items-end gap-3 md:gap-4">
+              {/* Name (+ optional DJ SET tag) sized to a shared width budget so
+                 every card's name renders at the SAME height; shorter names get an
+                 invisible spacer. Each child's flex-grow = its aspect ratio, so
+                 width ∝ aspect → constant height. Bottom-aligned trimmed assets keep
+                 a consistent baseline, and the equal heights keep photos in line. */}
+              <div class="flex items-end gap-3 md:gap-4">
+                <img
+                  src={a.wordmark}
+                  alt={a.name}
+                  class="min-w-0 h-auto self-end object-contain object-left-bottom"
+                  style={`flex: ${a.wordmarkAspect ?? 8} 1 0`}
+                  loading="lazy"
+                />
                 {a.set ? (
-                  <Fragment>
-                    <img
-                      src={a.wordmark}
-                      alt={a.name}
-                      class="min-w-0 h-auto self-end object-contain object-left-bottom"
-                      style={`flex: ${a.wordmarkAspect ?? 8} 1 0`}
-                      loading="lazy"
-                    />
-                    <img
-                      src="/lineup/dj-set-trim.png"
-                      alt={a.set}
-                      class="min-w-0 h-auto self-end object-contain object-bottom"
-                      style="flex: 1.084 1 0"
-                      loading="lazy"
-                    />
-                  </Fragment>
-                ) : (
                   <img
-                    src={a.wordmark}
-                    alt={a.name}
-                    class="max-h-full w-auto max-w-full object-contain object-left-bottom"
+                    src="/lineup/dj-set-trim.png"
+                    alt={a.set}
+                    class="min-w-0 h-auto self-end object-contain object-bottom"
+                    style={`flex: ${DJ_ASPECT} 1 0`}
                     loading="lazy"
                   />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    style={`flex: ${ROW_ASPECT - (a.wordmarkAspect ?? 0)} 1 0`}
+                  >
+                  </div>
                 )}
               </div>
 

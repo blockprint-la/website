@@ -51,9 +51,9 @@ export type Artist = {
 // A–Z order, locked to poster. Variants control visual treatment.
 // Links left empty for the new acts pending confirmation — wire later.
 export const lineup: Artist[] = [
-  { name: "Darius",      variant: "headline", photo: "/lineup/darius.png",      wordmark: "/lineup/darius-wordmark-trim.png",      spotify: "", instagram: "" },
-  { name: "Eli & Fur",   variant: "headline", photo: "/lineup/eli-fur.png",     wordmark: "/lineup/eli-fur-wordmark-trim.png",     spotify: "", instagram: "" },
-  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.11, spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
+  { name: "Darius",      variant: "headline", photo: "/lineup/darius.png",      wordmark: "/lineup/darius-wordmark-trim.png",      wordmarkAspect: 3.898, spotify: "", instagram: "" },
+  { name: "Eli & Fur",   variant: "headline", photo: "/lineup/eli-fur.png",     wordmark: "/lineup/eli-fur-wordmark-trim.png",     wordmarkAspect: 4.780, spotify: "", instagram: "" },
+  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.109, spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
   { name: "Luxxury",     variant: "tape",                    spotify: "", instagram: "" },
   { name: "Sosh & Mosh", variant: "tape",                    spotify: "", instagram: "" },
 ];
