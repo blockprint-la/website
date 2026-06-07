@@ -119,6 +119,7 @@ main { position: relative; z-index: 2; }
 .tape-label--cyan { background: var(--color-bp-cyan); color: var(--color-ink); box-shadow: -2px 2px 0 var(--color-bp-pink); }
 .tape-label--navy { background: var(--color-bp-navy); color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-cyan); }
 .tape-label--ink  { background: var(--color-ink);     color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-pink); }
+.tape-label--cream { background: var(--color-paper);  color: var(--color-ink);   box-shadow: -2px 2px 0 var(--color-bp-pink); } /* for dark/black sections */
 
 /* ---------- Section markers ----------
    Tracked-out Helvetica caps per the brand book's small label treatment. */
