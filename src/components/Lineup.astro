@@ -78,17 +78,17 @@ const ROW_ASPECT =
                 )}
               </div>
 
-              {/* Film-strip photo card with a light-sweep ("lens flare") on hover */}
+              {/* Film-strip photo card with an 8mm film-burn bloom on hover */}
               <div class="relative mt-4 overflow-hidden">
                 <img
                   src={a.photo}
                   alt={`${a.name} — Blockprint`}
-                  class="w-full h-auto transition duration-700 ease-out group-hover:brightness-110"
+                  class="w-full h-auto transition duration-700 ease-out group-hover:brightness-110 group-hover:sepia-[.4]"
                   loading="lazy"
                 />
                 <span
                   aria-hidden="true"
-                  class="lineup-flare pointer-events-none absolute inset-0 -translate-x-[130%] group-hover:translate-x-[130%] transition-transform duration-[900ms] ease-out"
+                  class="lineup-burn pointer-events-none absolute inset-0 origin-bottom-right opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-110 transition duration-500 ease-out"
                 >
                 </span>
               </div>

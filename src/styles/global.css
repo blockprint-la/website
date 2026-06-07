@@ -252,18 +252,18 @@ main { position: relative; z-index: 2; }
 .hero-bird-l { animation: hero-bird-drift-l 6s ease-in-out infinite; }
 .hero-bird-r { animation: hero-bird-drift-r 7.5s ease-in-out infinite; }
 
-/* ---------- Lineup photo hover: light sweep ("lens flare") ----------
-   A bright diagonal band that passes across the film-strip photo on hover.
-   mix-blend screen makes it brighten the B&W image like a light pass. The
-   sweep motion is driven by Tailwind transform utilities on the element. */
-.lineup-flare {
-  background: linear-gradient(
-    110deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.15) 47%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0.15) 53%,
-    transparent 62%
+/* ---------- Lineup photo hover: 8mm film burn ----------
+   A warm light-leak that blooms from a corner on hover — white-hot core into
+   amber and burnt orange. screen blend makes it burn through the B&W frame.
+   Bloom (opacity + scale, from the burn origin) is driven by Tailwind utils. */
+.lineup-burn {
+  background: radial-gradient(
+    62% 78% at 80% 88%,
+    rgba(255, 250, 235, 0.95) 0%,
+    rgba(255, 179, 71, 0.82) 20%,
+    rgba(214, 70, 20, 0.55) 40%,
+    rgba(120, 30, 10, 0.25) 55%,
+    transparent 70%
   );
   mix-blend-mode: screen;
 }
