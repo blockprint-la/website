@@ -53,7 +53,7 @@ export type Artist = {
 export const lineup: Artist[] = [
   { name: "Darius",      variant: "headline", photo: "/lineup/darius.png",      wordmark: "/lineup/darius-wordmark-trim.png",      wordmarkAspect: 3.898, spotify: "https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK", instagram: "" },
   { name: "Eli & Fur",   variant: "headline", photo: "/lineup/eli-fur.png",     wordmark: "/lineup/eli-fur-wordmark-trim.png",     wordmarkAspect: 4.780, spotify: "https://open.spotify.com/artist/5CkVLGKUJkIc1pmSk10QP4", instagram: "" },
-  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.109, spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
+  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.109, spotify: "https://open.spotify.com/artist/10GT4yz8c6xjjnPGtGPI1l", instagram: "https://instagram.com/francmoody" },
   { name: "Luxxury",     variant: "tape",                    spotify: "https://open.spotify.com/artist/562q9ntuNSaVyt1bvPa77z", instagram: "" },
   { name: "Sosh & Mosh", variant: "tape",                    spotify: "https://open.spotify.com/artist/5eyJw0SeeTMFQKy9huXIHc", instagram: "" },
 ];
