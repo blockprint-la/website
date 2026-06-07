@@ -138,6 +138,9 @@ main { position: relative; z-index: 2; }
 .section-marker--navy { color: var(--color-bp-navy); }
 .section-marker--ink  { color: var(--color-ink); }
 .section-marker--cream { color: var(--color-paper); } /* on dark/black sections */
+/* Stronger treatment for markers used as STANDALONE sub-headers (no big
+   headline beneath them) — bolder + a touch larger so they read as headers. */
+.section-marker--head { font-weight: 700; font-size: 0.875rem; letter-spacing: 0.2em; }
 
 /* ---------- Announcement tile ----------
    The reusable design-system primitive from p19: a colored square with
