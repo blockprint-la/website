@@ -1121,25 +1121,43 @@ const pageDesc =
       setStatus("You're in — we'll be in touch when the lineup lands.", "ok");
     };
 
+    // The Hive SDK sometimes resolves NEITHER callback — e.g. a number already
+    // on the list, or a non-whitelisted domain (preview/localhost). Without a
+    // guard the button sticks on "Sending…" forever. First terminal outcome
+    // wins; a watchdog falls back to success (accurate for already-subscribed)
+    // so the form can never hang.
+    let settled = false;
+    let watchdog = null;
+    const finish = (fn) => {
+      if (settled) return;
+      settled = true;
+      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
+      fn();
+    };
+    const succeed = () => finish(collapseToSuccess);
+    const fail = (cmd) =>
+      function (err) {
+        console.error("[hive] " + cmd + " failed", err);
+        finish(() => {
+          setStatus("Could not subscribe — please try again.", "err");
+          setLoading(false);
+        });
+      };
+
     const onSegment = () =>
       window.HIVE_SDK(
         "addToSegment",
         "Website Signup",
-        collapseToSuccess,
+        succeed,
         function (err) {
           console.error("[hive] addToSegment failed", err);
-          collapseToSuccess();
+          succeed();
         }
       );
-    const onError = (cmd) =>
-      function (err) {
-        console.error("[hive] " + cmd + " failed", err);
-        setStatus("Could not subscribe — please try again.", "err");
-        setLoading(false);
-      };
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (settled) return;
       const value = input.value.trim();
       if (mode === "email") {
         if (!value || value.indexOf("@") < 1) {
@@ -1154,20 +1172,22 @@ const pageDesc =
       }
       setLoading(true);
       setStatus("");
+      // No callback within 7s → treat as done so the button never hangs.
+      watchdog = setTimeout(succeed, 7000);
       // Whichever channel they picked → the matching Hive signup command.
       if (mode === "email") {
         window.HIVE_SDK(
           "emailSignup",
           { email: value, didOptIn: true },
           onSegment,
-          onError("emailSignup")
+          fail("emailSignup")
         );
       } else {
         window.HIVE_SDK(
           "phoneNumberSignup",
           { phoneNumber: value, didSmsOptIn: true },
           onSegment,
-          onError("phoneNumberSignup")
+          fail("phoneNumberSignup")
         );
       }
     });
