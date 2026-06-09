@@ -1,29 +1,60 @@
 ---
-// Placeholder copy — swap when story is final.
+// About copy from the master copy doc (hero thesis + about-page copy).
+// Headline uses the hero thesis line; body uses the about-page intro and the
+// two subsections (Our Connection to the Block / Designed for Venice).
+// NOTE: rough first pass on presentation — copy is linked up, layout to be
+// refined.
+import { Image } from "astro:assets";
+import aboutPhoto from "../assets/about/abbot-kinney.jpg";
 ---
 
 <section id="about" class="relative px-5 md:px-10 py-24 md:py-36">
   <div class="max-w-4xl mx-auto">
-    <p class="section-marker mb-4">The Story</p>
-    <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] ink-stamp mb-12">
-      A One-Day Press<br />on Abbot Kinney
+    <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.88] text-[clamp(2.25rem,6vw,4.75rem)] ink-stamp mb-10">
+      Born from the neighborhood,<br />not dropped into it.
     </h2>
 
-    <div class="prose-lg text-lg md:text-xl leading-relaxed space-y-6 max-w-none opacity-95">
-      <p>
-        Blockprint is a one-day, one-block summer festival in the heart of Venice — a hand-pressed,
-        hand-cut take on what an LA street party can be. We close down a stretch of Abbot Kinney,
-        run a single stage, and bring together the artists, brands, and neighbors that make this
-        corner of the city what it is.
+    <div class="grid md:grid-cols-2 gap-10 md:gap-14 md:items-center mb-14">
+      <p class="text-lg md:text-2xl leading-relaxed">
+        Blockprint is a block party on Abbot Kinney, built from the block up. On
+        August 22 the block transforms into a shared stage for dance music,
+        local art, food, and Venice culture.
       </p>
-      <p>
-        The name comes from the craft: a single sheet, pressed twice, never quite the same as the
-        last one. That's the festival we want to throw — singular, unpolished in the right places,
-        and built for the people standing in the room.
-      </p>
-      <p class="text-bp-pink font-semibold">
-        August 22, 2026. Abbot Kinney Blvd. 21 and over.
-      </p>
+      <div class="corner-frame">
+        <Image
+          src={aboutPhoto}
+          alt="Abbot Kinney Boulevard in Venice — the palm-lined street where Blockprint takes place"
+          widths={[400, 640, 840]}
+          sizes="(min-width: 768px) 420px, 90vw"
+          format="webp"
+          class="w-full aspect-square object-cover"
+          loading="lazy"
+        />
+      </div>
     </div>
+
+    <div class="grid md:grid-cols-2 gap-10 md:gap-14">
+      <div>
+        <p class="section-marker section-marker--head mb-3">Our Connection to the Block</p>
+        <p class="text-base md:text-lg leading-relaxed max-w-[60ch]">
+          Blockprint grew out of The Cook's Garden, an urban farm owned by the
+          co-founder's family that has been part of the boulevard's fabric for
+          over a decade. When COVID threatened its survival, small,
+          community-first music gatherings became the foundation for Blockprint.
+        </p>
+      </div>
+      <div>
+        <p class="section-marker section-marker--head mb-3">Designed for Venice</p>
+        <p class="text-base md:text-lg leading-relaxed max-w-[60ch]">
+          The experience is woven into the fabric of Abbot Kinney. Businesses
+          stay open. The street stays alive. Blockprint is built to feel like an
+          elevated day on the boulevard.
+        </p>
+      </div>
+    </div>
+
+    <p class="text-bp-pink-deep font-semibold text-lg md:text-xl mt-14">
+      August 22, 2026 · 3–9 PM · Abbot Kinney Blvd · 21 and over.
+    </p>
   </div>
 </section>

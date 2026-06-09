@@ -103,7 +103,7 @@ main { position: relative; z-index: 2; }
 
 /* ---------- Tape label ----------
    Small rotated badge with ink-bleed, set in the accent serif (Averia Serif
-   Libre per p14). Used for "AUG 22", "PRESENTED BY", support-act lockups. */
+   Libre per p14). Used for "AUG 22" and support-act lockups. */
 .tape-label {
   display: inline-block;
   background: var(--color-bp-pink);
@@ -119,6 +119,43 @@ main { position: relative; z-index: 2; }
 .tape-label--cyan { background: var(--color-bp-cyan); color: var(--color-ink); box-shadow: -2px 2px 0 var(--color-bp-pink); }
 .tape-label--navy { background: var(--color-bp-navy); color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-cyan); }
 .tape-label--ink  { background: var(--color-ink);     color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-pink); }
+.tape-label--cream { background: var(--color-paper);  color: var(--color-ink);   box-shadow: -2px 2px 0 var(--color-bp-navy); } /* for dark/black sections */
+
+/* ---------- Corner frame ----------
+   Two thick, offset corner brackets (NOT a full border) with a torn/jagged
+   ink-distressed edge echoing the stamped buttons. Top-left = pink,
+   bottom-right = cyan; each sits in the wrapper's padding with a gap from
+   the image. Wrap an <img>. */
+.corner-frame {
+  position: relative;
+  display: block;
+  padding: 26px;
+}
+.corner-frame > img { display: block; width: 100%; }
+.corner-frame::before,
+.corner-frame::after {
+  content: "";
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  pointer-events: none;
+  filter: url(#edge-rough);
+}
+.corner-frame::before {            /* top-left bracket */
+  top: 0;
+  left: 0;
+  border-top: 12px solid var(--color-bp-pink);
+  border-left: 12px solid var(--color-bp-pink);
+}
+.corner-frame::after {             /* bottom-right bracket */
+  bottom: 0;
+  right: 0;
+  border-bottom: 12px solid var(--color-bp-cyan);
+  border-right: 12px solid var(--color-bp-cyan);
+}
+@media (min-width: 768px) {
+  .corner-frame { padding: 30px; }
+}
 
 /* ---------- Section markers ----------
    Tracked-out Helvetica caps per the brand book's small label treatment. */
@@ -128,12 +165,18 @@ main { position: relative; z-index: 2; }
   font-size: 0.75rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-bp-pink);
-  opacity: 0.85;
+  /* Deep pink (not the bright #ff2e76) so these small kickers clear WCAG AA
+     on cream — bright pink at this size is only ~3.3:1. No opacity dimming
+     for the same reason. */
+  color: var(--color-bp-pink-deep);
 }
 .section-marker--cyan { color: var(--color-bp-cyan); }
 .section-marker--navy { color: var(--color-bp-navy); }
 .section-marker--ink  { color: var(--color-ink); }
+.section-marker--cream { color: var(--color-paper); } /* on dark/black sections */
+/* Stronger treatment for markers used as STANDALONE sub-headers (no big
+   headline beneath them) — bolder + a touch larger so they read as headers. */
+.section-marker--head { font-weight: 700; font-size: 0.875rem; letter-spacing: 0.2em; }
 
 /* ---------- Announcement tile ----------
    The reusable design-system primitive from p19: a colored square with
@@ -166,14 +209,13 @@ main { position: relative; z-index: 2; }
 /* ---------- Nav scroll state ----------
    At the top of the page the nav is fully transparent. Once the user
    scrolls past a small threshold, JS adds .nav-scrolled and the bar
-   gains a frosted cream background with backdrop blur — keeps menu
-   items legible over any section beneath. (No CSS transition — Lenis's
-   per-frame transform updates were resetting it; the scroll-driven
-   class toggle already feels smooth without one.) */
+   becomes a solid beige bar (the page background color) that scrolls
+   over everything beneath — no translucency or blur. A hairline bottom
+   border keeps it defined when it passes over same-colored sections.
+   (No CSS transition — Lenis's per-frame transform updates were
+   resetting it; the scroll-driven class toggle already feels smooth.) */
 [data-nav].nav-scrolled {
-  background-color: rgba(251, 245, 238, 0.72);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  background-color: var(--color-paper);
   border-bottom-color: rgba(21, 21, 21, 0.08);
 }
 
@@ -248,6 +290,22 @@ main { position: relative; z-index: 2; }
 /* Two separate drifts at slightly different periods so the birds never sync. */
 .hero-bird-l { animation: hero-bird-drift-l 6s ease-in-out infinite; }
 .hero-bird-r { animation: hero-bird-drift-r 7.5s ease-in-out infinite; }
+
+/* ---------- Lineup photo hover: 8mm film burn ----------
+   A warm light-leak that blooms from a corner on hover — white-hot core into
+   amber and burnt orange. screen blend makes it burn through the B&W frame.
+   Bloom (opacity + scale, from the burn origin) is driven by Tailwind utils. */
+.lineup-burn {
+  background: radial-gradient(
+    62% 78% at 80% 88%,
+    rgba(255, 250, 235, 0.95) 0%,
+    rgba(255, 179, 71, 0.82) 20%,
+    rgba(214, 70, 20, 0.55) 40%,
+    rgba(120, 30, 10, 0.25) 55%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
 
 /* ---------- Generic scroll reveal ---------- */
 [data-reveal][data-reveal-armed] {

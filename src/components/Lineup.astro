@@ -4,80 +4,122 @@ import { lineup } from "../data/site";
 const headliners = lineup.filter((a) => a.variant === "headline");
 const tapeActs = lineup.filter((a) => a.variant === "tape");
 
-function primaryLink(a: typeof lineup[number]) {
-  return a.spotify || a.instagram || a.website || "#";
+function primaryLink(a: (typeof lineup)[number]) {
+  return a.spotify || a.instagram || a.website || "";
 }
+
+// Every headliner name is sized to the SAME total row-width "budget" so they
+// all render at the same height regardless of name length. The budget is the
+// widest card: the longest name (Franc Moody) + its DJ SET tag. Shorter names
+// get an invisible spacer filling the remainder. Each child's flex-grow equals
+// its aspect ratio, so width ∝ aspect → height is constant across all cards.
+const DJ_ASPECT = 1.084;
+const ROW_ASPECT =
+  Math.max(...headliners.map((a) => a.wordmarkAspect ?? 0)) + DJ_ASPECT;
 ---
 
-<section id="lineup" class="relative px-5 md:px-10 py-24 md:py-36">
+<!-- Black section styled after the artist-asset cards: cream wordmark over a
+     film-strip B&W photo, three headliners in a row (A–Z). -->
+<section id="lineup" class="relative bg-ink text-paper px-5 md:px-10 py-24 md:py-36">
   <div class="max-w-6xl mx-auto">
     <header class="mb-12 md:mb-16 flex items-end justify-between gap-6">
       <h2
         class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(3rem,10vw,8rem)]"
-        data-ink="navy"
+        data-ink="cream"
         data-ghost
-        style="--ghost: var(--color-bp-cyan);"
+        style="--ghost: var(--color-bp-navy);"
       >
         Lineup
       </h2>
-      <div class="text-right hidden md:block">
-        <p class="section-marker section-marker--navy">A — Z</p>
-        <p class="text-xs uppercase tracking-[0.25em] opacity-70 mt-1">Set times TBA</p>
-      </div>
+      <p class="shrink-0 font-[var(--font-display)] font-black uppercase tracking-[0.08em] leading-none text-paper text-[clamp(1.25rem,3vw,2.5rem)]">
+        A — Z
+      </p>
     </header>
 
-    <ul class="flex flex-col gap-5 md:gap-7">
-      {headliners.map((a) => (
-        <li data-reveal>
-          <a
-            href={primaryLink(a)}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="lineup-row group block"
-            data-name={a.name}
-          >
-            <span
-              class="block-print block-print--soft font-[var(--font-display)] uppercase font-black leading-[0.9] text-[clamp(3rem,11vw,9rem)] tracking-[-0.01em] inline-block transition-transform duration-200 group-hover:translate-x-1"
-              data-ink="navy"
-              data-ghost
-              style="--ghost: var(--color-bp-cyan);"
+    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
+      {headliners.map((a) => {
+        const href = primaryLink(a);
+        const Tag = href ? "a" : "div";
+        return (
+          <li data-reveal>
+            <Tag
+              {...(href
+                ? { href, target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+              class="group block"
             >
-              {a.name}
-            </span>
-            {a.set && (
-              <span class="ml-3 text-xs md:text-sm uppercase tracking-[0.3em] align-top opacity-80">
-                ({a.set})
-              </span>
-            )}
-            <span
-              class="lineup-meta block mt-2 text-xs uppercase tracking-[0.3em] opacity-60 group-hover:opacity-100 transition-opacity"
-            >
-              {a.spotify ? "Spotify" : a.instagram ? "Instagram" : "Listen"} ↗
-            </span>
-          </a>
-        </li>
-      ))}
+              {/* Name (+ optional DJ SET tag) sized to a shared width budget so
+                 every card's name renders at the SAME height; shorter names get an
+                 invisible spacer. Each child's flex-grow = its aspect ratio, so
+                 width ∝ aspect → constant height. Bottom-aligned trimmed assets keep
+                 a consistent baseline, and the equal heights keep photos in line. */}
+              <div class="flex items-end gap-3 md:gap-4">
+                <img
+                  src={a.wordmark}
+                  alt={a.name}
+                  class="min-w-0 h-auto self-end object-contain object-left-bottom"
+                  style={`flex: ${a.wordmarkAspect ?? 8} 1 0`}
+                  loading="lazy"
+                />
+                {a.set ? (
+                  <img
+                    src="/lineup/dj-set-trim.png"
+                    alt={a.set}
+                    class="min-w-0 h-auto self-end object-contain object-bottom"
+                    style={`flex: ${DJ_ASPECT} 1 0`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    style={`flex: ${ROW_ASPECT - (a.wordmarkAspect ?? 0)} 1 0`}
+                  >
+                  </div>
+                )}
+              </div>
+
+              {/* Film-strip photo card with an 8mm film-burn bloom on hover */}
+              <div class="relative mt-4 overflow-hidden">
+                <img
+                  src={a.photo}
+                  alt={`${a.name} — Blockprint`}
+                  class="w-full h-auto transition duration-700 ease-out group-hover:brightness-[1.08] group-hover:sepia-[.32]"
+                  loading="lazy"
+                />
+                <span
+                  aria-hidden="true"
+                  class="lineup-burn pointer-events-none absolute inset-0 origin-bottom-right opacity-0 scale-50 group-hover:opacity-80 group-hover:scale-110 transition duration-500 ease-out"
+                >
+                </span>
+              </div>
+            </Tag>
+          </li>
+        );
+      })}
     </ul>
 
-    <div class="mt-12 md:mt-16">
-      <p class="section-marker mb-4">With Support</p>
-      <ul class="flex flex-wrap gap-4 md:gap-6">
-        {tapeActs.map((a) => (
-          <li>
-            <a
-              href={primaryLink(a)}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="tape-label text-xl md:text-3xl font-bold inline-block transition-transform hover:-rotate-3"
-            >
-              {a.name}
-            </a>
-          </li>
-        ))}
+    <div class="mt-16 md:mt-20">
+      <p class="section-marker section-marker--cream mb-5">With Support</p>
+      <ul class="flex flex-wrap items-center gap-4 md:gap-6">
+        {tapeActs.map((a) => {
+          const href = primaryLink(a);
+          const Tag = href ? "a" : "span";
+          return (
+            <li>
+              <Tag
+                {...(href
+                  ? { href, target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                class="tape-label tape-label--cream text-lg md:text-2xl font-bold inline-block transition-transform hover:-rotate-3"
+              >
+                {a.name}
+              </Tag>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </div>
 </section>
 
 <!-- Scroll reveal handled by [data-reveal] + IntersectionObserver in Layout.astro -->
-

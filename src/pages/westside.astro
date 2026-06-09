@@ -368,10 +368,10 @@ const pageDesc =
       <a href="/" class="block w-full max-w-[220px] mx-auto opacity-80 hover:opacity-100 transition-opacity" aria-label="Blockprint home">
         <img src="/brand/wordmark.png" alt="Blockprint" width="1010" height="152" class="w-full" />
       </a>
-      <p class="mt-5 text-xs uppercase tracking-[0.3em] opacity-50">
+      <p class="mt-5 text-xs uppercase tracking-[0.3em] opacity-70">
         {site.date} · {site.venue} · {site.agePolicy}
       </p>
-      <p class="mt-4 text-[11px] opacity-50">
+      <p class="mt-4 text-xs opacity-70">
         <a href="/privacy-policy" class="underline underline-offset-2">Privacy Policy</a>
       </p>
     </footer>
@@ -544,7 +544,10 @@ const pageDesc =
 
   .stop-callout {
     background: var(--color-paper-deep);
-    border-left: 4px solid var(--color-bp-pink);
+    /* Full ink frame (matches .stop-photo) instead of a one-sided accent bar —
+       the thick colored left border is a generic UI tell, and the framed
+       treatment ties the callout into the zine/poster system. */
+    border: 2px solid var(--color-ink);
     padding: 0.9rem 1.1rem;
     font-family: var(--font-accent);
     font-size: 1.15rem !important;
@@ -741,11 +744,12 @@ const pageDesc =
   .signup-input::placeholder { color: rgba(21, 21, 21, 0.4); }
   .signup-status { min-height: 1.1rem; font-size: 0.8rem; letter-spacing: 0.02em; text-align: center; }
   .signup-fine {
-    font-size: 0.68rem;
+    max-width: 44ch;        /* keep the line under ~80 chars */
+    margin: -0.1rem auto 0;
+    font-size: 0.78rem;     /* ≥12px — was 10.88px */
     line-height: 1.5;
-    color: rgba(21, 21, 21, 0.6);
+    color: rgba(21, 21, 21, 0.72);
     text-align: center;
-    margin-top: -0.1rem;
   }
   .signup-fine a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -1121,25 +1125,42 @@ const pageDesc =
       setStatus("You're in — we'll be in touch when the lineup lands.", "ok");
     };
 
+    // The Hive SDK sometimes resolves NEITHER callback — e.g. a number already
+    // on the list, or a non-whitelisted domain (preview/localhost). Without a
+    // guard the button sticks on "Sending…" forever. First terminal outcome
+    // wins; a watchdog falls back to success so the form can never hang.
+    let settled = false;
+    let watchdog = null;
+    const finish = (fn) => {
+      if (settled) return;
+      settled = true;
+      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
+      fn();
+    };
+    const succeed = () => finish(collapseToSuccess);
+    const fail = (cmd) =>
+      function (err) {
+        console.error("[hive] " + cmd + " failed", err);
+        finish(() => {
+          setStatus("Could not subscribe — please try again.", "err");
+          setLoading(false);
+        });
+      };
+
     const onSegment = () =>
       window.HIVE_SDK(
         "addToSegment",
         "Website Signup",
-        collapseToSuccess,
+        succeed,
         function (err) {
           console.error("[hive] addToSegment failed", err);
-          collapseToSuccess();
+          succeed();
         }
       );
-    const onError = (cmd) =>
-      function (err) {
-        console.error("[hive] " + cmd + " failed", err);
-        setStatus("Could not subscribe — please try again.", "err");
-        setLoading(false);
-      };
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (settled) return;
       const value = input.value.trim();
       if (mode === "email") {
         if (!value || value.indexOf("@") < 1) {
@@ -1154,20 +1175,22 @@ const pageDesc =
       }
       setLoading(true);
       setStatus("");
+      // No callback within 7s → treat as done so the button never hangs.
+      watchdog = setTimeout(succeed, 7000);
       // Whichever channel they picked → the matching Hive signup command.
       if (mode === "email") {
         window.HIVE_SDK(
           "emailSignup",
           { email: value, didOptIn: true },
           onSegment,
-          onError("emailSignup")
+          fail("emailSignup")
         );
       } else {
         window.HIVE_SDK(
           "phoneNumberSignup",
           { phoneNumber: value, didSmsOptIn: true },
           onSegment,
-          onError("phoneNumberSignup")
+          fail("phoneNumberSignup")
         );
       }
     });

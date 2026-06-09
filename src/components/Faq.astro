@@ -4,7 +4,6 @@ import { faqs } from "../data/site";
 
 <section id="faq" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper-deep">
   <div class="max-w-4xl mx-auto">
-    <p class="section-marker mb-4">Questions</p>
     <h2
       class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-12"
       data-ink="pink"
@@ -19,7 +18,7 @@ import { faqs } from "../data/site";
         <li>
           <details class="group py-5 md:py-6">
             <summary class="flex items-center justify-between gap-6 cursor-pointer list-none">
-              <span class="font-[var(--font-display)] text-xl md:text-3xl uppercase font-black leading-tight">
+              <span class="font-[var(--font-display)] text-xl md:text-3xl font-black leading-tight">
                 {f.q}
               </span>
               <span
@@ -27,9 +26,48 @@ import { faqs } from "../data/site";
                 class="shrink-0 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-bp-pink text-2xl md:text-3xl font-bold transition-transform group-open:rotate-45"
               >+</span>
             </summary>
-            <p class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-3xl">
-              {f.a}
-            </p>
+            <div class="mt-4 text-base md:text-lg leading-relaxed opacity-90 max-w-[68ch] space-y-4 [&_a]:text-bp-pink-deep [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-bp-pink">
+              {f.a && f.a.split("\n\n").map((para) => <p set:html={para} />)}
+
+              {f.intro && <p>{f.intro}</p>}
+
+              {f.list && (
+                <ul class="list-disc pl-5 space-y-1.5">
+                  {f.list.map((item) => <li>{item}</li>)}
+                </ul>
+              )}
+
+              {(f.allow || f.prohibit) && (
+                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6 text-sm md:text-base">
+                  {f.allow && (
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.25em] font-bold mb-3">Allowed</p>
+                      <ul class="space-y-1.5">
+                        {f.allow.map((item) => (
+                          <li class="flex gap-2">
+                            <span aria-hidden="true" class="text-bp-pink-deep font-bold shrink-0">+</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {f.prohibit && (
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.25em] font-bold mb-3">Prohibited</p>
+                      <ul class="space-y-1.5">
+                        {f.prohibit.map((item) => (
+                          <li class="flex gap-2">
+                            <span aria-hidden="true" class="opacity-50 font-bold shrink-0">–</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </details>
         </li>
       ))}

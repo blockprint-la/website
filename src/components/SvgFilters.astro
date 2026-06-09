@@ -22,6 +22,13 @@
       <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
 
+    <!-- Rough edge: chunky torn/jagged displacement for thick frame brackets.
+         Generous region so displaced pixels aren't clipped. -->
+    <filter id="edge-rough" x="-35%" y="-35%" width="170%" height="170%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="3" seed="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="11" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
     <!-- Halftone-ish dot pattern for accents/dividers -->
     <pattern id="halftone" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
       <circle cx="3" cy="3" r="1.1" fill="currentColor"/>

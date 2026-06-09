@@ -2,7 +2,6 @@
 
 export const site = {
   name: "Blockprint",
-  tagline: "", // no presenting sponsor (the Mudwatr partnership was dropped)
   date: "Aug 22, 2026",
   dateShort: "AUG 22",
   city: "Venice, CA",
@@ -10,12 +9,21 @@ export const site = {
   venueAddress: "Abbot Kinney Blvd, Venice, CA",
   mapsQuery: "Abbot Kinney Blvd, Venice, CA",
   agePolicy: "21+",
-  ticketUrl: "#tickets",        // swap to Tixr URL when ready
-  newsletterAction: "#newsletter", // swap to Hive endpoint when ready
-  contactEmail: "info@blockprint.la",
-  accessibilityEmail: "info@blockprint.la",
-  pressEmail: "press@blockprint.la",
-  partnershipsEmail: "partners@blockprint.la",
+  // Tixr promoter link: /pr/<referralID>/<eventID> logs sales under the
+  // referral ID in Tixr → Reports → Sales by Source (72h attribution).
+  // "website" = the owned-site channel (vs email=laylo-onsale, sms=laylo-sms).
+  // UTMs append after for GA4. Event 192184, group blockprint.
+  ticketUrl: "https://www.tixr.com/pr/website/192184?utm_source=blockprint.la&utm_medium=website&utm_campaign=onsale",
+  newsletterAction: "#newsletter",     // legacy; Newsletter form is now Hive SDK direct, no endpoint needed
+  contactEmail: "info@blockprint.la",       // alias of hello@ (team box)
+  accessibilityEmail: "info@blockprint.la", // no dedicated access@ alias yet — routes through team box
+  pressEmail: "press@blockprint.la",        // Zoho Group → Jake + Evan
+  partnershipsEmail: "partners@blockprint.la", // Zoho Group → Jake + Evan
+  // Google Apps Script Web App endpoint for the Partners form. POSTs JSON
+  // (Content-Type text/plain to dodge CORS preflight) and appends a row to
+  // "Website Submissions — Partner Interest" in the Stereo Punks Drive at
+  // 26.08.22 - Blockprint Venice / 03. PLANNING + LOGISTICS.
+  partnersFormUrl: "https://script.google.com/macros/s/AKfycbyyJPa3T9Ou3AU1Mgau3kFtfxdgLwAsbtu-AyObxgF8osRxq90vU3NCVkIUF9HCN0k/exec",
   domain: "blockprint.la",
   // Google Analytics 4 measurement ID. Public by design (visible in the
   // browser request to googletagmanager.com), so not a secret — kept in
@@ -35,74 +43,139 @@ export type Artist = {
   name: string;
   variant?: "headline" | "tape"; // headline = stamped lineup, tape = supporting acts
   set?: string;                  // e.g. "DJ SET"
+  photo?: string;                // film-strip B&W photo card (headliners)
+  wordmark?: string;             // cream wordmark logo on transparent (headliners)
+  wordmarkAspect?: number;       // trimmed wordmark width/height — used to size it next to the DJ SET tag
+
   spotify?: string;
   instagram?: string;
   website?: string;
 };
 
 // A–Z order, locked to poster. Variants control visual treatment.
+// Links left empty for the new acts pending confirmation — wire later.
 export const lineup: Artist[] = [
-  { name: "Darius",      variant: "headline",                spotify: "https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK" },
-  { name: "Eli & Fur",   variant: "headline",                spotify: "https://open.spotify.com/artist/5CkVLGKUJkIc1pmSk10QP4" },
-  { name: "Franc Moody", variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/10GT4yz8c6xjjnPGtGPI1l", instagram: "https://instagram.com/francmoody" },
-  { name: "Luxxury",     variant: "tape",                    spotify: "https://open.spotify.com/artist/562q9ntuNSaVyt1bvPa77z" },
-  { name: "Sosh & Mosh", variant: "tape",                    spotify: "https://open.spotify.com/artist/5eyJw0SeeTMFQKy9huXIHc" },
+  { name: "Darius",      variant: "headline", photo: "/lineup/darius.png",      wordmark: "/lineup/darius-wordmark-trim.png",      wordmarkAspect: 3.898, spotify: "https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK", instagram: "" },
+  { name: "Eli & Fur",   variant: "headline", photo: "/lineup/eli-fur.png",     wordmark: "/lineup/eli-fur-wordmark-trim.png",     wordmarkAspect: 4.780, spotify: "https://open.spotify.com/artist/5CkVLGKUJkIc1pmSk10QP4", instagram: "" },
+  { name: "Franc Moody", variant: "headline", set: "DJ SET", photo: "/lineup/franc-moody.png", wordmark: "/lineup/franc-moody-wordmark-trim.png", wordmarkAspect: 8.109, spotify: "https://open.spotify.com/artist/10GT4yz8c6xjjnPGtGPI1l", instagram: "https://instagram.com/francmoody" },
+  { name: "Luxxury",     variant: "tape",                    spotify: "https://open.spotify.com/artist/562q9ntuNSaVyt1bvPa77z", instagram: "" },
+  { name: "Sosh & Mosh", variant: "tape",                    spotify: "https://open.spotify.com/artist/5eyJw0SeeTMFQKy9huXIHc", instagram: "" },
 ];
 
-// No announced sponsors yet (the initial Mudwatr/805/etc. list was placeholder).
-export const sponsors: { name: string; tier: string }[] = [];
+// No presenting sponsor (the "presented by Mudwatr" partnership was dropped).
+// Leave `tier: "presenting"` supported for a future headline partner.
+export const sponsors = [
+  { name: "805",                tier: "supporting" },
+  { name: "The Butcher's Daughter", tier: "supporting" },
+  { name: "Stüssy",             tier: "supporting" },
+];
 
 export const pressQuotes: { quote: string; source: string }[] = [
   // Placeholder — fill these in as press lands
 ];
 
-export const faqs: { q: string; a: string }[] = [
+/**
+ * FAQ entries. An answer can be expressed as any combination of:
+ *   a       — a paragraph (or several, separated by blank lines)
+ *   intro   — a lead line shown before a list
+ *   list    — a simple bulleted list
+ *   allow / prohibit — the two-column "what to bring" allowed / prohibited lists
+ * Content mirrors the FAQ section of the master copy doc.
+ */
+export const faqs: {
+  q: string;
+  a?: string;
+  intro?: string;
+  list?: string[];
+  allow?: string[];
+  prohibit?: string[];
+}[] = [
   {
-    q: "What exactly is Blockprint?",
-    a: `A one-day block party in Venice. We close down 3–4 blocks of Abbot Kinney Blvd between Brooks Ave and San Juan Ave for a single-stage festival on the street itself.`,
+    q: "Is re-entry allowed?",
+    a: `No ins and outs.`,
   },
   {
-    q: "When and where is Blockprint?",
-    a: `Saturday, August 22, 2026 on Abbot Kinney Blvd in Venice, California. Doors and exact set times will be announced closer to the event.`,
+    q: "Can I attend if I'm under 21?",
+    a: `No — Blockprint is 21+ only.`,
   },
   {
-    q: "How old do I have to be?",
-    a: `Blockprint is a strictly 21+ event. Valid government-issued ID is required at entry — no exceptions.`,
+    q: "What kind of ID do I need?",
+    intro: `Acceptable forms of ID:`,
+    list: [
+      `Any U.S. government-issued driver's license or ID card containing a photograph and date of birth`,
+      `A U.S. or foreign government-issued passport containing a photograph and date of birth`,
+    ],
   },
   {
-    q: "What's the lineup?",
-    a: `Darius, Eli & Fur, Franc Moody (DJ Set), with support from Luxxury and Sosh & Mosh. Set times TBA.`,
+    q: "How do I get to Blockprint?",
+    a: `Transportation and parking information is coming soon. Check back closer to the event and follow us on <a href="https://instagram.com/blockprint.la" target="_blank" rel="noopener noreferrer">Instagram</a> for updates.`,
   },
   {
-    q: "How do I get there?",
-    a: `Walking, biking, and ride share are the way to go — Abbot Kinney is closed to vehicles during the festival, so plan to be dropped off a few blocks away. Bike parking will be available near entry. Public transit details and rideshare drop-off zones will be announced closer to the event.`,
+    q: "Who should I contact for general event or ticketing info?",
+    a: `For general questions and info, email <a href="mailto:info@blockprint.la">info@blockprint.la</a>. For ticketing help and information, email <a href="mailto:tickets@blockprint.la">tickets@blockprint.la</a>. We try to answer questions as quickly as possible — please allow 48 hours, Monday–Friday, for a response.`,
   },
   {
-    q: "Is there food and drink?",
-    a: `Yes. Food and drink stations will be set up across the festival footprint, and many of the bars and restaurants along the stretch will be serving. Final vendor lineup announced closer to the event.`,
+    q: "Will there be a lost & found?",
+    a: `Yes. Lost & found will be marked on the event map, and you can email <a href="mailto:info@blockprint.la">info@blockprint.la</a> to inquire about your lost items.`,
   },
   {
-    q: "Are tickets refundable?",
-    a: `All sales are final. Tickets are transferable through Tixr if you can't make it.`,
+    q: "What can I bring?",
+    allow: [
+      `Sunscreen`,
+      `Deodorant`,
+      `E-cigs / vapes`,
+      `Non-professional flash / still cameras`,
+      `Personal misting fan (bottle must be empty upon entry)`,
+      `Unopened cigarettes`,
+      `Lighters`,
+      `Physician-prescribed medication that is not expired`,
+      `Unopened chewing gum`,
+      `Reusable water bottles (must be empty upon entry)`,
+      `Clear bags that do not exceed 12″ × 6″ × 12″`,
+      `Non-clear (and clear) small clutch bags not exceeding 6″ × 9″`,
+    ],
+    prohibit: [
+      `Aerosol products / cans`,
+      `Costumes that resemble public safety uniforms (police, SWAT, fire, security, or medical)`,
+      `Drones, remote-controlled aircraft, toys`,
+      `Drugs or drug paraphernalia`,
+      `Glass, cans, cups, or coolers`,
+      `Illegal substances of any kind`,
+      `Laser pointers and air horns`,
+      `Outside food or beverages (including alcohol and candy)`,
+      `Pets`,
+      `Professional photo, video, or audio recording equipment`,
+      `Large umbrellas, chairs, or blankets`,
+      `Toy guns, water guns, slingshots`,
+      `Weapons of any kind (including pocket knives, pepper spray, fireworks, tasers, etc.)`,
+    ],
   },
   {
-    q: "Is the venue accessible?",
-    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email ${"info@blockprint.la"} and we'll make it work.`,
+    q: "What are the Blockprint policies?",
+    list: [
+      `No re-entry`,
+      `No refunds`,
+      `No sitting on designated dancefloor areas`,
+      `No moshing, crowd-surfing, or stage-diving`,
+      `No unauthorized / unlicensed vendors`,
+    ],
   },
   {
-    q: "Re-entry?",
-    a: `No re-entry once you've left the festival footprint, so plan accordingly.`,
+    q: "What's your zero-tolerance policy?",
+    a: `Blockprint has a zero-tolerance policy for illegal activity, harassment, discrimination, racism, homophobia, or any other behavior that makes someone feel unsafe.
+
+Anyone found in violation will be removed from the event immediately. If something happens to you or someone near you, tell a staff member or security immediately.
+
+Event security and police officers will be working the event, and all laws will be strictly enforced. Be responsible, make smart choices, and look out for one another.`,
   },
   {
     q: "What if it rains?",
-    a: `Rain or shine. Refunds are not issued due to weather.`,
+    a: `The event will take place rain or shine. Please keep up to date on weather reports and dress for the weather.`,
   },
   {
-    q: "I'm a vendor or brand — how do I get involved?",
-    a: `Email partners@blockprint.la with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
-  },
-  {
-    q: "Press / photo / media?",
-    a: `Email press@blockprint.la with outlet, dates of coverage, and any specific requests.`,
+    q: "How do entry and security work?",
+    a: `All persons and items are subject to search upon entry by security and law enforcement. Security personnel reserve the right to prohibit items deemed harmful, dangerous, or not in the best interest of the event and its patrons.
+
+We reserve the right to refuse entry to anyone.`,
   },
 ];
