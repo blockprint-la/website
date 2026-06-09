@@ -2,7 +2,7 @@
 
 export const site = {
   name: "Blockprint",
-  tagline: "Presented by Mudwatr",
+  tagline: "", // no presenting sponsor (the Mudwatr partnership was dropped)
   date: "Aug 22, 2026",
   dateShort: "AUG 22",
   city: "Venice, CA",
@@ -12,10 +12,10 @@ export const site = {
   agePolicy: "21+",
   ticketUrl: "#tickets",        // swap to Tixr URL when ready
   newsletterAction: "#newsletter", // swap to Hive endpoint when ready
-  contactEmail: "hello@blockprint.com",
-  accessibilityEmail: "access@blockprint.com",
-  pressEmail: "press@blockprint.com",
-  partnershipsEmail: "partnerships@blockprintla.com",
+  contactEmail: "info@blockprint.la",
+  accessibilityEmail: "info@blockprint.la",
+  pressEmail: "press@blockprint.la",
+  partnershipsEmail: "partners@blockprint.la",
   domain: "blockprint.la",
   // Google Analytics 4 measurement ID. Public by design (visible in the
   // browser request to googletagmanager.com), so not a secret — kept in
@@ -25,8 +25,8 @@ export const site = {
   // facebook.com/tr. Used for ad retargeting + conversion tracking.
   metaPixelId: "842607348915291",
   social: {
-    instagram: "https://instagram.com/blockprintfest",
-    tiktok: "",
+    instagram: "https://instagram.com/blockprint.la",
+    tiktok: "https://www.tiktok.com/@blockprint_la",
     spotify: "",
   },
 };
@@ -42,19 +42,15 @@ export type Artist = {
 
 // A–Z order, locked to poster. Variants control visual treatment.
 export const lineup: Artist[] = [
-  { name: "Franc Moody", variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/2qcg8Bc5W08UfukuFEEIOj", instagram: "https://instagram.com/francmoody" },
-  { name: "Nimino",      variant: "headline",                spotify: "https://open.spotify.com/artist/7zKGqJ6E1A24qH1NIiTl81", instagram: "https://instagram.com/nimino" },
-  { name: "Vandelux",    variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/6V8WQfvDP4U4qN8Z0cq4Qy", instagram: "https://instagram.com/vandelux" },
-  { name: "Coco & Breezy", variant: "tape",                  spotify: "",                                                                  instagram: "https://instagram.com/cocoandbreezy" },
-  { name: "Never Dull",    variant: "tape",                  spotify: "",                                                                  instagram: "https://instagram.com/neverdull" },
+  { name: "Darius",      variant: "headline",                spotify: "https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK" },
+  { name: "Eli & Fur",   variant: "headline",                spotify: "https://open.spotify.com/artist/5CkVLGKUJkIc1pmSk10QP4" },
+  { name: "Franc Moody", variant: "headline", set: "DJ SET", spotify: "https://open.spotify.com/artist/10GT4yz8c6xjjnPGtGPI1l", instagram: "https://instagram.com/francmoody" },
+  { name: "Luxxury",     variant: "tape",                    spotify: "https://open.spotify.com/artist/562q9ntuNSaVyt1bvPa77z" },
+  { name: "Sosh & Mosh", variant: "tape",                    spotify: "https://open.spotify.com/artist/5eyJw0SeeTMFQKy9huXIHc" },
 ];
 
-export const sponsors = [
-  { name: "Mudwatr",            tier: "presenting" },
-  { name: "805",                tier: "supporting" },
-  { name: "The Butcher's Daughter", tier: "supporting" },
-  { name: "Stüssy",             tier: "supporting" },
-];
+// No announced sponsors yet (the initial Mudwatr/805/etc. list was placeholder).
+export const sponsors: { name: string; tier: string }[] = [];
 
 export const pressQuotes: { quote: string; source: string }[] = [
   // Placeholder — fill these in as press lands
@@ -75,7 +71,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "What's the lineup?",
-    a: `Franc Moody (DJ Set), Nimino, Vandelux (DJ Set), with support from Coco & Breezy and Never Dull. Set times TBA.`,
+    a: `Darius, Eli & Fur, Franc Moody (DJ Set), with support from Luxxury and Sosh & Mosh. Set times TBA.`,
   },
   {
     q: "How do I get there?",
@@ -91,7 +87,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Is the venue accessible?",
-    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email ${"access@blockprint.com"} and we'll make it work.`,
+    a: `Yes. The site is on a flat outdoor stretch of Abbot Kinney with accessible viewing areas and restrooms. If you need a specific accommodation, email ${"info@blockprint.la"} and we'll make it work.`,
   },
   {
     q: "Re-entry?",
@@ -103,10 +99,10 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "I'm a vendor or brand — how do I get involved?",
-    a: `Email partnerships@blockprintla.com with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
+    a: `Email partners@blockprint.la with your pitch and any links. We're talking to local vendors, restaurants, and brand partners about activations and on-site presence. A formal application form will go up closer to the event.`,
   },
   {
     q: "Press / photo / media?",
-    a: `Email press@blockprint.com with outlet, dates of coverage, and any specific requests.`,
+    a: `Email press@blockprint.la with outlet, dates of coverage, and any specific requests.`,
   },
 ];
