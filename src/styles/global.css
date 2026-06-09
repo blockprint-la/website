@@ -121,6 +121,42 @@ main { position: relative; z-index: 2; }
 .tape-label--ink  { background: var(--color-ink);     color: var(--color-paper); box-shadow: -2px 2px 0 var(--color-bp-pink); }
 .tape-label--cream { background: var(--color-paper);  color: var(--color-ink);   box-shadow: -2px 2px 0 var(--color-bp-navy); } /* for dark/black sections */
 
+/* ---------- Corner frame ----------
+   Two thick, offset corner brackets (NOT a full border) with a torn/jagged
+   ink-distressed edge echoing the stamped buttons. Top-left = pink,
+   bottom-right = cyan; each sits in the wrapper's padding with a gap from
+   the image. Wrap an <img>. */
+.corner-frame {
+  position: relative;
+  display: block;
+  padding: 26px;
+}
+.corner-frame > img { display: block; width: 100%; }
+.corner-frame::before,
+.corner-frame::after {
+  content: "";
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  pointer-events: none;
+  filter: url(#edge-rough);
+}
+.corner-frame::before {            /* top-left bracket */
+  top: 0;
+  left: 0;
+  border-top: 12px solid var(--color-bp-pink);
+  border-left: 12px solid var(--color-bp-pink);
+}
+.corner-frame::after {             /* bottom-right bracket */
+  bottom: 0;
+  right: 0;
+  border-bottom: 12px solid var(--color-bp-cyan);
+  border-right: 12px solid var(--color-bp-cyan);
+}
+@media (min-width: 768px) {
+  .corner-frame { padding: 30px; }
+}
+
 /* ---------- Section markers ----------
    Tracked-out Helvetica caps per the brand book's small label treatment. */
 .section-marker {

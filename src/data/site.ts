@@ -9,7 +9,11 @@ export const site = {
   venueAddress: "Abbot Kinney Blvd, Venice, CA",
   mapsQuery: "Abbot Kinney Blvd, Venice, CA",
   agePolicy: "21+",
-  ticketUrl: "https://www.tixr.com/",  // placeholder Tixr landing — swap to real event URL when live
+  // Tixr promoter link: /pr/<referralID>/<eventID> logs sales under the
+  // referral ID in Tixr → Reports → Sales by Source (72h attribution).
+  // "website" = the owned-site channel (vs email=laylo-onsale, sms=laylo-sms).
+  // UTMs append after for GA4. Event 192184, group blockprint.
+  ticketUrl: "https://www.tixr.com/pr/website/192184?utm_source=blockprint.la&utm_medium=website&utm_campaign=onsale",
   newsletterAction: "#newsletter",     // legacy; Newsletter form is now Hive SDK direct, no endpoint needed
   contactEmail: "info@blockprint.la",       // alias of hello@ (team box)
   accessibilityEmail: "info@blockprint.la", // no dedicated access@ alias yet — routes through team box
