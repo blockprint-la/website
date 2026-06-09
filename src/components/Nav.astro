@@ -1,6 +1,7 @@
 ---
 import { site } from "../data/site";
-import BpMark from "./BpMark.astro";
+import { Image } from "astro:assets";
+import bpMark from "../assets/bp-mark.png";
 
 // Order mirrors the page top-to-bottom: Lineup → About → FAQ → Newsletter → Partners.
 const navLinks = [
@@ -18,7 +19,7 @@ const navLinks = [
 >
   <div class="flex items-center justify-between gap-3">
     <a href="#top" class="block leading-none" aria-label="Blockprint home">
-      <BpMark class="h-7 md:h-9 w-auto" />
+      <Image src={bpMark} alt="Blockprint" class="h-7 md:h-9 w-auto" />
     </a>
 
     <!-- Desktop links — collapse into the burger overlay below md -->
@@ -67,7 +68,7 @@ const navLinks = [
 >
   <!-- Top bar: bp mark + close button, mirroring the nav layout -->
   <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-ink/10">
-    <BpMark class="h-7 w-auto" />
+    <Image src={bpMark} alt="Blockprint" class="h-7 w-auto" />
     <button
       type="button"
       data-menu-close
