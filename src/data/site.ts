@@ -151,7 +151,7 @@ export const faqs: {
     ],
   },
   {
-    q: "What are the festival policies?",
+    q: "What are the Blockprint policies?",
     list: [
       `No re-entry`,
       `No refunds`,
