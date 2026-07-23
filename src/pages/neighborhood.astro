@@ -1,0 +1,168 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { weeklyEdition, events } from "../data/neighborhood";
+
+const featured = events.filter((e) => e.featured);
+const rest = events.filter((e) => !e.featured);
+
+const categoryColors: Record<string, string> = {
+  "Music":       "bg-bp-pink text-paper",
+  "Food + Drink": "bg-bp-cyan text-ink",
+  "Art":         "bg-bp-navy text-paper",
+  "Pop-Up":      "bg-bp-pink text-paper",
+  "Wellness":    "bg-paper-deep text-ink",
+  "Market":      "bg-bp-cyan text-ink",
+  "Film":        "bg-bp-navy text-paper",
+  "Community":   "bg-paper-deep text-ink",
+};
+---
+
+<Layout
+  title={`On the Block — ${weeklyEdition.week} · Blockprint`}
+  description={`What's happening on Abbot Kinney and around Venice this week. ${weeklyEdition.week}.`}
+>
+  <Nav />
+
+  <!-- Hero -->
+  <section class="pt-32 md:pt-40 pb-12 md:pb-16 px-5 md:px-10 border-b border-ink/10">
+    <div class="max-w-4xl mx-auto">
+      <p class="font-[var(--font-accent)] text-sm tracking-[0.2em] uppercase text-ink/50 mb-3">
+        {weeklyEdition.week}
+      </p>
+      <h1
+        class="block-print font-[var(--font-display)] font-black uppercase leading-[0.9] tracking-[-0.02em] text-[clamp(3.5rem,12vw,8rem)] mb-6"
+        data-ink="pink"
+        data-ghost
+        style="--ghost: var(--color-bp-cyan);"
+      >
+        On the<br />Block
+      </h1>
+      <p class="font-[var(--font-body)] text-base md:text-lg text-ink/70 max-w-xl leading-relaxed">
+        {weeklyEdition.intro}
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured picks -->
+  {featured.length > 0 && (
+    <section class="px-5 md:px-10 py-12 md:py-16 border-b border-ink/10">
+      <div class="max-w-4xl mx-auto">
+        <p class="text-xs uppercase tracking-[0.3em] font-bold text-ink/40 mb-8">
+          This week's picks
+        </p>
+        <div class="grid md:grid-cols-3 gap-5">
+          {featured.map((event) => (
+            <article class="bg-ink text-paper p-6 flex flex-col gap-4 relative group" data-reveal>
+              <div class="flex items-start justify-between gap-3">
+                <span
+                  class={`text-[10px] uppercase tracking-[0.25em] font-bold px-2 py-1 ${categoryColors[event.category] ?? "bg-paper-deep text-ink"}`}
+                >
+                  {event.category}
+                </span>
+              </div>
+
+              <div class="flex-1">
+                <h2 class="font-[var(--font-display)] font-black uppercase text-xl leading-tight mb-2">
+                  {event.business}
+                </h2>
+                <p class="text-paper/70 text-sm leading-relaxed mb-3">{event.what}</p>
+                <p class="font-[var(--font-accent)] text-bp-cyan text-sm italic leading-snug">
+                  "{event.vibe}"
+                </p>
+              </div>
+
+              <div class="border-t border-paper/10 pt-4 space-y-1">
+                <p class="text-xs text-paper/50 uppercase tracking-[0.15em]">{event.when}</p>
+                <p class="text-xs text-paper/40">{event.where}</p>
+              </div>
+
+              {event.link && (
+                <a
+                  href={event.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-1 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-bp-pink hover:text-bp-cyan transition-colors"
+                >
+                  More info <span aria-hidden="true">→</span>
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- All events list -->
+  {rest.length > 0 && (
+    <section class="px-5 md:px-10 py-12 md:py-16 border-b border-ink/10">
+      <div class="max-w-4xl mx-auto">
+        <p class="text-xs uppercase tracking-[0.3em] font-bold text-ink/40 mb-8">
+          Also this week
+        </p>
+        <div class="space-y-0 divide-y divide-ink/10">
+          {rest.map((event) => (
+            <article class="py-6 flex flex-col sm:flex-row sm:items-start gap-4 group" data-reveal>
+              <div class="sm:w-40 flex-shrink-0">
+                <span
+                  class={`text-[10px] uppercase tracking-[0.25em] font-bold px-2 py-1 ${categoryColors[event.category] ?? "bg-paper-deep text-ink"}`}
+                >
+                  {event.category}
+                </span>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <h2 class="font-[var(--font-display)] font-black uppercase text-lg leading-tight mb-1">
+                  {event.business}
+                </h2>
+                <p class="text-ink/60 text-sm leading-relaxed mb-2">{event.what}</p>
+                <p class="font-[var(--font-accent)] text-bp-pink text-sm italic">
+                  "{event.vibe}"
+                </p>
+              </div>
+
+              <div class="sm:text-right sm:w-48 flex-shrink-0 space-y-1">
+                <p class="text-xs text-ink/50 uppercase tracking-[0.12em] leading-snug">{event.when}</p>
+                <p class="text-xs text-ink/40">{event.where}</p>
+                {event.link && (
+                  <a
+                    href={event.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 text-xs uppercase tracking-[0.2em] font-bold text-bp-pink hover:text-bp-pink-deep transition-colors"
+                  >
+                    Info →
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Blockprint CTA -->
+  <section class="px-5 md:px-10 py-16 md:py-24">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      <div>
+        <p class="font-[var(--font-accent)] text-sm italic text-ink/50 mb-1">Coming up</p>
+        <h2 class="font-[var(--font-display)] font-black uppercase text-2xl md:text-3xl leading-tight">
+          Blockprint<br />
+          <span class="text-bp-pink block-print block-print--soft">Aug 22 on Abbot Kinney</span>
+        </h2>
+      </div>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 bg-bp-pink text-paper px-6 py-3 text-sm uppercase tracking-[0.2em] font-bold flex-shrink-0"
+        style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+      >
+        Get Tickets →
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

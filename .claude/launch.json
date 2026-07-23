@@ -5,7 +5,8 @@
       "name": "blockprint-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 4321
+      "port": 4321,
+      "cwd": "/Users/clavette/Desktop/Claude Code/Blockprint"
     }
   ]
 }
