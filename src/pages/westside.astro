@@ -52,24 +52,6 @@ const stops: Stop[] = [
   },
   {
     num: "02",
-    id: "cooks-garden",
-    name: "The Cook’s Garden",
-    img: "/guide/cooks-garden-v2.jpg",
-    imgAlt: "The Cook’s Garden entrance gate and sign on Abbot Kinney in Venice",
-    imgW: 1200,
-    imgH: 800,
-    paras: [
-      "Matcha in hand, head a few steps down the street to the west side’s only urban farm. Chickens, ducks, bunnies, herbs, and vegetables all live here among the garden paths.",
-      "Venice OGs might remember when DJs like Dillon Francis played pop-ups here years ago. This summer, we’re bringing music back to the block in a much bigger way.",
-    ],
-    calloutLast: true,
-    address: "1033 Abbot Kinney Blvd · Venice",
-    mapQuery: "The Cook’s Garden, 1033 Abbot Kinney Blvd, Venice, CA 90291",
-    instagram: "https://www.instagram.com/thecooksgardenvenice/",
-    igHandle: "@thecooksgardenvenice",
-  },
-  {
-    num: "03",
     id: "only-the-wild-ones",
     name: "Only The Wild Ones",
     img: "/guide/wild-ones-v2.jpg",
@@ -77,10 +59,10 @@ const stops: Stop[] = [
     imgW: 1200,
     imgH: 800,
     paras: [
-      "After spending time at the farm, it’s time for happy hour.",
-      "Next door you’ll find Only The Wild Ones, the newest concept from the team behind Venice institution The Butcher’s Daughter. Think listening bar meets wine bar: relaxed, unpretentious, and exactly the kind of place you end up staying longer than planned.",
-      "Expect natural wines, small-batch cocktails, and seasonal small plates, with some ingredients sourced directly from The Cook’s Garden next door.",
-      "Upstairs, Leena Culhane’s Force of Nature offers a more intimate experience, with softly lit corners and an outdoor bar overlooking the garden below.",
+      "Matcha in hand, head a few steps down the street — it’s time for happy hour.",
+      "You’ll find Only The Wild Ones, the newest concept from the team behind Venice institution The Butcher’s Daughter. Think listening bar meets wine bar: relaxed, unpretentious, and exactly the kind of place you end up staying longer than planned.",
+      "Expect natural wines, small-batch cocktails, and seasonal small plates built around whatever’s in season.",
+      "Upstairs, Leena Culhane’s Force of Nature offers a more intimate experience, with softly lit corners and an outdoor bar.",
     ],
     address: "1031 Abbot Kinney Blvd · Venice",
     mapQuery: "Only The Wild Ones, 1031 Abbot Kinney Blvd, Venice, CA 90291",
@@ -89,7 +71,7 @@ const stops: Stop[] = [
     reservation: "https://resy.com/cities/venice-los-angeles-ca/venues/only-the-wild-ones",
   },
   {
-    num: "04",
+    num: "03",
     id: "felix-trattoria",
     name: "Felix Trattoria",
     img: "/guide/felix.jpg",
@@ -109,7 +91,7 @@ const stops: Stop[] = [
     reservation: "https://resy.com/cities/los-angeles-ca/venues/felix-trattoria",
   },
   {
-    num: "05",
+    num: "04",
     id: "alisa-wine-and-friends",
     name: "Alisa Wine & Friends",
     img: "/guide/alisa.jpg",
@@ -139,7 +121,7 @@ const instagram = "https://www.instagram.com/blockprint.la/";
 
 const pageTitle = "The West Side of Abbot Kinney — A Blockprint Field Guide";
 const pageDesc =
-  "Team Blockprint’s ideal day on the west side of Abbot Kinney — five stops from matcha to a Greek nightcap. A field guide from the crew bringing the block party to Venice on August 22.";
+  "Team Blockprint’s ideal day on the west side of Abbot Kinney — four stops from matcha to a Greek nightcap. A field guide from the crew bringing the block party to Venice on August 22.";
 ---
 
 <Layout title={pageTitle} description={pageDesc}>
@@ -384,7 +366,7 @@ const pageDesc =
   </div>
 
   <!-- Completion reward: confetti + a shareable "Blockprint Explorer" badge,
-       fired once all five stops are stamped. Hidden moment of joy. -->
+       fired once all four stops are stamped. Hidden moment of joy. -->
   <canvas id="confetti-canvas" class="confetti-canvas" aria-hidden="true"></canvas>
   <div
     id="explorer-overlay"
@@ -401,7 +383,7 @@ const pageDesc =
         height="1350"
         class="badge-canvas"
         role="img"
-        aria-label="Blockprint Explorer badge — all five West Side stops complete"
+        aria-label="Blockprint Explorer badge — all four West Side stops complete"
       ></canvas>
       <div class="explorer-actions">
         <button id="badge-share" class="btn btn--pink" type="button">Save / share my badge ↗</button>
@@ -835,7 +817,7 @@ const pageDesc =
     chip.hidden = n === 0;
     if (n >= total) {
       chip.classList.add("is-complete");
-      chipText.textContent = "All 5 stamped — see you Aug 22 🎉";
+      chipText.textContent = `All ${total} stamped — see you Aug 22 🎉`;
     } else {
       chip.classList.remove("is-complete");
       chipText.textContent = `${n} / ${total} stamped`;
@@ -932,9 +914,11 @@ const pageDesc =
     stampText("EXPLORER", 492, 130, NAVY, PINK);
     ctx.fillStyle = INK; ctx.font = '500 36px Outfit, "Helvetica Neue", sans-serif';
     ctx.fillText("Walked the whole West Side", W / 2, 620);
-    ctx.fillText("of Abbot Kinney — all five stops.", W / 2, 670);
-    const yC = 808, r = 46, gap = 132, x0 = W / 2 - gap * 2;
-    for (let i = 0; i < 5; i++) {
+    ctx.fillText("of Abbot Kinney — all four stops.", W / 2, 670);
+    // Checkmark row is centered off the live stop count so it stays in sync
+    // if a stop is ever added or dropped.
+    const yC = 808, r = 46, gap = 132, x0 = W / 2 - (gap * (total - 1)) / 2;
+    for (let i = 0; i < total; i++) {
       const x = x0 + gap * i;
       ctx.beginPath(); ctx.arc(x, yC, r, 0, Math.PI * 2); ctx.fillStyle = PINK; ctx.fill();
       ctx.fillStyle = CREAM; ctx.font = '900 46px Outfit, sans-serif'; ctx.fillText("✓", x, yC + 17);
