@@ -130,9 +130,7 @@ export const faqs: {
       `Lighters`,
       `Physician-prescribed medication that is not expired`,
       `Unopened chewing gum`,
-      `Reusable water bottles (must be empty upon entry)`,
-      `Clear bags that do not exceed 12″ × 6″ × 12″`,
-      `Non-clear (and clear) small clutch bags not exceeding 6″ × 9″`,
+      `Bags up to 12″ × 12″ × 6″. All bags are subject to search.`,
     ],
     prohibit: [
       `Aerosol products / cans`,
