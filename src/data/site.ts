@@ -91,6 +91,17 @@ export const faqs: {
   prohibit?: string[];
 }[] = [
   {
+    q: "What are the set times?",
+    intro: `Doors open at 3:00 PM and the music starts right away. Curfew is 9:00 PM.`,
+    list: [
+      `3:00 – 4:15 Sosh & Mosh`,
+      `4:15 – 5:15 Luxxury`,
+      `5:15 – 6:30 Darius`,
+      `6:30 – 7:45 Eli & Fur`,
+      `7:45 – 9:00 Franc Moody (DJ set)`,
+    ],
+  },
+  {
     q: "Is re-entry allowed?",
     a: `No ins and outs.`,
   },
@@ -115,12 +126,34 @@ export const faqs: {
 Please keep it off the surrounding residential streets. This is a neighborhood, and we all want to be invited back.`,
   },
   {
+    q: "Is the event accessible?",
+    a: `Yes. Accessible viewing is on the south side of Abbot Kinney Blvd, just outside the beer garden, and it will be signed on site.
+
+If you have specific access needs, email <a href="mailto:info@blockprint.la">info@blockprint.la</a> before the event and we'll make sure someone is expecting you.`,
+  },
+  {
+    q: "Are the bars cashless?",
+    a: `Yes. Every bar on site is cashless, so bring a card or plan to tap.`,
+  },
+  {
+    q: "What do I get with VIP?",
+    intro: `Same block party, better seat. VIP includes:`,
+    list: [
+      `A private VIP bar, so you're not queuing behind the whole block`,
+      `Air-conditioned restroom trailers`,
+      `A private viewing area at the front of the stage`,
+      `A special menu from Alisa Wine & Friends, right on the VIP footprint`,
+      `Tables get stage access`,
+      `Table check-in is at the box office, and we walk you over`,
+    ],
+  },
+  {
     q: "Who should I contact for general event or ticketing info?",
     a: `For general questions and info, email <a href="mailto:info@blockprint.la">info@blockprint.la</a>. For ticketing help and information, email <a href="mailto:tickets@blockprint.la">tickets@blockprint.la</a>. We try to answer questions as quickly as possible — please allow 48 hours, Monday–Friday, for a response.`,
   },
   {
     q: "Will there be a lost & found?",
-    a: `Yes. Lost & found will be marked on the event map, and you can email <a href="mailto:info@blockprint.la">info@blockprint.la</a> to inquire about your lost items.`,
+    a: `Yes. During the event, come to the box office. After the event, email <a href="mailto:lost@blockprint.la">lost@blockprint.la</a> to claim anything that was turned in.`,
   },
   {
     q: "What can I bring?",
@@ -176,7 +209,9 @@ Event security and police officers will be working the event, and all laws will 
   },
   {
     q: "How do entry and security work?",
-    a: `All persons and items are subject to search upon entry by security and law enforcement. Security personnel reserve the right to prohibit items deemed harmful, dangerous, or not in the best interest of the event and its patrons.
+    a: `There is one main gate for the whole event and everyone comes in there. VIP has its own line at that gate for faster entry, but there is no separate entrance.
+
+All persons and items are subject to search upon entry by security and law enforcement. Security personnel reserve the right to prohibit items deemed harmful, dangerous, or not in the best interest of the event and its patrons.
 
 We reserve the right to refuse entry to anyone.`,
   },
