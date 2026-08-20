@@ -108,7 +108,11 @@ export const faqs: {
   },
   {
     q: "How do I get to Blockprint?",
-    a: `Transportation and parking information is coming soon. Check back closer to the event and follow us on <a href="https://instagram.com/blockprint.la" target="_blank" rel="noopener noreferrer">Instagram</a> for updates.`,
+    a: `<strong>Ride share.</strong> The easy way in, and highly encouraged. Uber, Waymo, Lyft, whatever you use. Drop-off and pickup is at Abbot Kinney Blvd and Santa Clara Ave, a short walk from the front gates. Everyone leaves at 9:00 PM, so give it a minute after the last set.
+
+<strong>Parking.</strong> If you have to. Public lots on Electric Avenue. There's no event lot, spots go early, and it's a longer walk in.
+
+Please keep it off the surrounding residential streets. This is a neighborhood, and we all want to be invited back.`,
   },
   {
     q: "Who should I contact for general event or ticketing info?",
