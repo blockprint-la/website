@@ -5,6 +5,10 @@ import { site } from "../data/site";
 // ---------------------------------------------------------------------------
 // Post-event fan survey — built off the 2026-08-25 Crowd Control sync.
 //
+// Year-scoped URL (/survey-2026) so future years get their own page and
+// sheet; /survey redirects here (astro.config redirects) until 2027's
+// survey takes the alias over.
+//
 // The question set is deliberately light-touch: one required rating up top,
 // everything else optional, big open text boxes in the middle (Kiersten's
 // direction: give people blank space to say whatever they want), and an
@@ -561,7 +565,7 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
     // Distribution attribution: blasts link with ?src=sms / ?src=email etc.
     const params = new URLSearchParams(window.location.search);
     const src = params.get("src") || params.get("utm_source") || "";
-    const source = "blockprint.la/survey" + (src ? "?src=" + src : "");
+    const source = "blockprint.la/survey-2026" + (src ? "?src=" + src : "");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();

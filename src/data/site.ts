@@ -25,7 +25,7 @@ export const site = {
   // 26.08.22 - Blockprint Venice / 03. PLANNING + LOGISTICS.
   partnersFormUrl: "https://script.google.com/macros/s/AKfycbyyJPa3T9Ou3AU1Mgau3kFtfxdgLwAsbtu-AyObxgF8osRxq90vU3NCVkIUF9HCN0k/exec",
   // Google Apps Script Web App endpoint for the post-event fan survey
-  // (/survey). Same pattern as partnersFormUrl: POSTs JSON as text/plain,
+  // (/survey-2026). Same pattern as partnersFormUrl: POSTs JSON as text/plain,
   // appends a row to "Website Submissions — 2026 Fan Survey" in the Stereo
   // Punks Drive at 26.08.22 - Blockprint Venice / 03. PLANNING + LOGISTICS.
   surveyFormUrl: "https://script.google.com/macros/s/AKfycbx-NX1x1Kvq6hCAWUq925EhT1Vg-y9klnSJ_OD_W9QiN1uozdS2-JNhqfjmJ7rtp7M/exec",
