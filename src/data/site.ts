@@ -28,7 +28,7 @@ export const site = {
   // (/survey). Same pattern as partnersFormUrl: POSTs JSON as text/plain,
   // appends a row to "Website Submissions — 2026 Fan Survey" in the Stereo
   // Punks Drive at 26.08.22 - Blockprint Venice / 03. PLANNING + LOGISTICS.
-  surveyFormUrl: "",
+  surveyFormUrl: "https://script.google.com/macros/s/AKfycbx-NX1x1Kvq6hCAWUq925EhT1Vg-y9klnSJ_OD_W9QiN1uozdS2-JNhqfjmJ7rtp7M/exec",
   domain: "blockprint.la",
   // Google Analytics 4 measurement ID. Public by design (visible in the
   // browser request to googletagmanager.com), so not a secret — kept in

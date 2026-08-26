@@ -70,7 +70,7 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
         />
       </a>
 
-      <header class="text-center mb-12 md:mb-16">
+      <header id="survey-header" class="text-center mb-12 md:mb-16">
         <h1
           class="block-print font-[var(--font-display)] uppercase font-black leading-[0.9] text-[clamp(2.4rem,9vw,4.5rem)]"
           data-ink="pink"
@@ -629,6 +629,7 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
 
         if (res.ok && data && data.ok) {
           form.hidden = true;
+          document.getElementById("survey-header").hidden = true;
           done.hidden = false;
           window.scrollTo({ top: 0, behavior: "smooth" });
           if (typeof gtag === "function") gtag("event", "survey_submit");
