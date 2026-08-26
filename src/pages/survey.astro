@@ -1,0 +1,647 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
+
+// ---------------------------------------------------------------------------
+// Post-event fan survey — built off the 2026-08-25 Crowd Control sync.
+//
+// The question set is deliberately light-touch: one required rating up top,
+// everything else optional, big open text boxes in the middle (Kiersten's
+// direction: give people blank space to say whatever they want), and an
+// email + waitlist capture at the end so the survey doubles as the 2027
+// waitlist funnel.
+//
+// Submits JSON to a Google Apps Script Web App (site.surveyFormUrl) which
+// appends a row to "Website Submissions — 2026 Fan Survey" in the Stereo
+// Punks Drive. Same transport as the Partners form: Content-Type text/plain
+// dodges the CORS preflight Apps Script Web Apps can't answer; the handler
+// does JSON.parse(e.postData.contents). Honeypot "website" field silently
+// 200s server-side without writing a row.
+//
+// Distribution attribution: ?src=sms / ?src=email etc. is folded into the
+// `source` column so blast performance is visible per channel in the sheet.
+// ---------------------------------------------------------------------------
+
+// The five quick-hit aspects. `key` doubles as the payload field name and
+// the sheet column header — keep them in sync with the Apps Script.
+const aspects = [
+  { key: "music", label: "Music & lineup" },
+  { key: "sound", label: "Sound" },
+  { key: "entry", label: "Entry & box office" },
+  { key: "food", label: "Food & drink" },
+  { key: "vip", label: "VIP", hint: "skip if you didn't have it" },
+];
+
+const timingOptions = [
+  "Early June",
+  "Late June",
+  "July",
+  "Late August again",
+  "No preference",
+];
+
+const heardOptions = [
+  "Instagram / TikTok",
+  "An ad",
+  "A friend",
+  "Walked by",
+  "An artist's post",
+  "Email or text",
+  "Somewhere else",
+];
+
+const returningOptions = ["Absolutely", "Probably", "Not sure"];
+---
+
+<Layout
+  title="How Was the Block? — Blockprint"
+  description="Blockprint year one is in the books. Tell us what worked, what didn't, and who you want on the block next year."
+>
+  <main class="px-5 md:px-10 py-14 md:py-20">
+    <div class="max-w-2xl mx-auto">
+      <!-- Wordmark links back home -->
+      <a href="/" class="block mb-12 md:mb-16" aria-label="Back to Blockprint home">
+        <img
+          src="/brand/wordmark.png"
+          alt="Blockprint"
+          width="1010"
+          height="152"
+          class="w-full max-w-[300px] mx-auto"
+        />
+      </a>
+
+      <header class="text-center mb-12 md:mb-16">
+        <h1
+          class="block-print font-[var(--font-display)] uppercase font-black leading-[0.9] text-[clamp(2.4rem,9vw,4.5rem)]"
+          data-ink="pink"
+          data-ghost
+        >
+          How Was<br />the Block?
+        </h1>
+        <p class="text-base md:text-lg leading-relaxed opacity-90 max-w-xl mx-auto mt-6">
+          Year one is in the books. Year two gets built off what you tell us
+          — the good, the bad, all of it. Takes two minutes, goes straight to
+          the team.
+        </p>
+      </header>
+
+      <form id="survey-form" class="survey-form" data-endpoint={site.surveyFormUrl} novalidate>
+        <!-- 01 · Overall -->
+        <section class="survey-block" aria-labelledby="q-overall">
+          <span class="tape-label text-sm">01</span>
+          <h2 id="q-overall" class="survey-q">Overall, how was Blockprint?</h2>
+          <div
+            class="rating-row rating-row--big"
+            role="radiogroup"
+            aria-labelledby="q-overall"
+            data-rating="overall"
+          >
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button type="button" class="rating-btn" role="radio" aria-checked="false" data-value={n}>
+                {n}
+              </button>
+            ))}
+          </div>
+          <div class="rating-anchors" aria-hidden="true">
+            <span>rough</span>
+            <span>unreal</span>
+          </div>
+        </section>
+
+        <!-- 02 · Quick hits -->
+        <section class="survey-block" aria-labelledby="q-aspects">
+          <span class="tape-label text-sm tape-label--cyan">02</span>
+          <h2 id="q-aspects" class="survey-q">Rate the day</h2>
+          <p class="survey-hint">Quick hits — skip anything you didn't touch.</p>
+          <div class="aspect-grid">
+            {aspects.map((a) => (
+              <div class="aspect-row">
+                <span class="aspect-label">
+                  {a.label}
+                  {a.hint && <em class="aspect-hint">{a.hint}</em>}
+                </span>
+                <div class="rating-row" role="radiogroup" aria-label={a.label} data-rating={a.key}>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button type="button" class="rating-btn" role="radio" aria-checked="false" data-value={n}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- 03 · Do differently -->
+        <section class="survey-block" aria-labelledby="q-improve">
+          <span class="tape-label text-sm tape-label--navy">03</span>
+          <h2 id="q-improve" class="survey-q">What should we do differently next year?</h2>
+          <textarea
+            id="survey-improve"
+            name="improve"
+            rows="5"
+            maxlength="2000"
+            class="survey-textarea"
+            placeholder="Be honest. This is the whole point."
+            aria-labelledby="q-improve"></textarea>
+        </section>
+
+        <!-- 04 · Loved -->
+        <section class="survey-block" aria-labelledby="q-loved">
+          <span class="tape-label text-sm">04</span>
+          <h2 id="q-loved" class="survey-q">What did you love?</h2>
+          <textarea
+            id="survey-loved"
+            name="loved"
+            rows="4"
+            maxlength="2000"
+            class="survey-textarea"
+            placeholder="Brag on us a little."
+            aria-labelledby="q-loved"></textarea>
+        </section>
+
+        <!-- 05 · Dream bookings -->
+        <section class="survey-block" aria-labelledby="q-lineup">
+          <span class="tape-label text-sm tape-label--cyan">05</span>
+          <h2 id="q-lineup" class="survey-q">Who should play next year?</h2>
+          <input
+            id="survey-lineup"
+            name="lineup"
+            type="text"
+            maxlength="300"
+            class="survey-input"
+            placeholder="Dream bookings. Go big."
+            aria-labelledby="q-lineup"
+          />
+        </section>
+
+        <!-- 06 · Timing -->
+        <section class="survey-block" aria-labelledby="q-timing">
+          <span class="tape-label text-sm tape-label--navy">06</span>
+          <h2 id="q-timing" class="survey-q">When should it happen next year?</h2>
+          <div class="chip-row" role="radiogroup" aria-labelledby="q-timing" data-chips="timing" data-mode="single">
+            {timingOptions.map((t) => (
+              <button type="button" class="chip" role="radio" aria-checked="false" data-value={t}>
+                {t}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <!-- 07 · Heard via -->
+        <section class="survey-block" aria-labelledby="q-heard">
+          <span class="tape-label text-sm">07</span>
+          <h2 id="q-heard" class="survey-q">How'd you hear about this year?</h2>
+          <p class="survey-hint">Pick as many as apply.</p>
+          <div class="chip-row" role="group" aria-labelledby="q-heard" data-chips="heard" data-mode="multi">
+            {heardOptions.map((h) => (
+              <button type="button" class="chip" role="checkbox" aria-checked="false" data-value={h}>
+                {h}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <!-- 08 · Coming back + waitlist -->
+        <section class="survey-block" aria-labelledby="q-returning">
+          <span class="tape-label text-sm tape-label--cyan">08</span>
+          <h2 id="q-returning" class="survey-q">Are you coming back?</h2>
+          <div class="chip-row" role="radiogroup" aria-labelledby="q-returning" data-chips="returning" data-mode="single">
+            {returningOptions.map((r) => (
+              <button type="button" class="chip" role="radio" aria-checked="false" data-value={r}>
+                {r}
+              </button>
+            ))}
+          </div>
+
+          <div class="survey-contact">
+            <label for="survey-email" class="sr-only">Email address</label>
+            <input
+              id="survey-email"
+              name="email"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              maxlength="200"
+              class="survey-input"
+              placeholder="Email address"
+            />
+            <label for="survey-phone" class="sr-only">Mobile number (optional)</label>
+            <input
+              id="survey-phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              maxlength="40"
+              class="survey-input"
+              placeholder="Mobile number (optional)"
+            />
+            <label class="waitlist-check">
+              <input id="survey-waitlist" type="checkbox" checked />
+              <span>Put me on the 2027 waitlist — first word when tickets drop</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Honeypot — bots fill it, humans never see it. Server writes
+             nothing when populated but still answers ok:true. -->
+        <div class="survey-trap" aria-hidden="true">
+          <label for="survey-website">Website</label>
+          <input id="survey-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="survey-actions">
+          <button
+            type="submit"
+            class="survey-btn bg-bp-pink text-paper px-10 py-4 text-sm uppercase tracking-[0.25em] font-bold"
+            style="filter: url(#ink-bleed-soft); box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+          >
+            <span data-label-idle>Send It</span>
+            <span data-label-loading hidden>Sending…</span>
+          </button>
+          <p data-status role="status" aria-live="polite" class="survey-status"></p>
+          <p class="survey-fine">
+            We read every response. Contact details are only used for Blockprint
+            updates — see our <a href="/privacy-policy">Privacy Policy</a>.
+          </p>
+        </div>
+      </form>
+
+      <!-- Success state — swapped in for the form after a good submit -->
+      <div id="survey-done" class="text-center py-16" hidden>
+        <h2
+          class="block-print font-[var(--font-display)] uppercase font-black leading-[0.9] text-[clamp(2rem,8vw,3.5rem)]"
+          data-ink="pink"
+          data-ghost
+        >
+          Thank You,<br />Venice
+        </h2>
+        <p class="text-base md:text-lg opacity-90 max-w-md mx-auto mt-6">
+          Got it — and we mean it, thank you. Year two gets built off this.
+          See you on the block.
+        </p>
+        <a href="/" class="inline-block mt-10 text-sm uppercase tracking-[0.25em] font-bold underline underline-offset-4 hover:text-bp-pink">
+          Back to Blockprint
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .survey-form { display: flex; flex-direction: column; gap: 3.5rem; }
+
+  .survey-block { display: flex; flex-direction: column; }
+  .survey-block .tape-label { align-self: flex-start; margin-bottom: 0.9rem; }
+
+  .survey-q {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 900;
+    line-height: 1.05;
+    font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+    margin-bottom: 0.75rem;
+  }
+  .survey-hint {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: -0.35rem 0 0.9rem;
+  }
+
+  /* ---------- Rating buttons ---------- */
+  .rating-row { display: flex; gap: 0.5rem; }
+  .rating-btn {
+    appearance: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 2px solid var(--color-ink);
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.08s ease;
+  }
+  .rating-btn:hover { transform: translateY(-2px); }
+  .rating-btn[aria-checked="true"] {
+    background: var(--color-bp-pink);
+    border-color: var(--color-bp-pink);
+    color: var(--color-paper);
+    box-shadow: -3px 3px 0 var(--color-bp-cyan);
+  }
+  .rating-row--big { gap: 0.65rem; }
+  .rating-row--big .rating-btn { width: 3.4rem; height: 3.4rem; font-size: 1.25rem; }
+  .rating-anchors {
+    display: flex;
+    justify-content: space-between;
+    width: calc(5 * 3.4rem + 4 * 0.65rem);
+    max-width: 100%;
+    margin-top: 0.4rem;
+    font-family: var(--font-accent);
+    font-size: 0.8rem;
+    opacity: 0.65;
+  }
+
+  /* ---------- Aspect grid ---------- */
+  .aspect-grid { display: flex; flex-direction: column; gap: 1.1rem; }
+  .aspect-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.25rem;
+    border-bottom: 1px solid rgba(21, 21, 21, 0.15);
+    padding-bottom: 1.1rem;
+  }
+  .aspect-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .aspect-hint {
+    font-style: normal;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+  .aspect-row .rating-btn { width: 2.4rem; height: 2.4rem; font-size: 0.9rem; }
+
+  /* ---------- Text inputs ---------- */
+  .survey-textarea,
+  .survey-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.45);
+    border: 2px solid var(--color-ink);
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    resize: vertical;
+  }
+  .survey-textarea:focus,
+  .survey-input:focus {
+    border-color: var(--color-bp-pink);
+    box-shadow: -3px 3px 0 var(--color-bp-cyan);
+  }
+  .survey-textarea::placeholder,
+  .survey-input::placeholder { color: rgba(21, 21, 21, 0.4); }
+
+  /* ---------- Choice chips ---------- */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    appearance: none;
+    background: transparent;
+    border: 2px solid var(--color-ink);
+    color: var(--color-ink);
+    padding: 0.55rem 1rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.08s ease;
+  }
+  .chip:hover { transform: translateY(-2px); }
+  .chip[aria-checked="true"] {
+    background: var(--color-bp-pink);
+    border-color: var(--color-bp-pink);
+    color: var(--color-paper);
+    box-shadow: -2px 2px 0 var(--color-bp-cyan);
+  }
+
+  /* ---------- Contact + waitlist ---------- */
+  .survey-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 1.5rem;
+  }
+  .waitlist-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .waitlist-check input {
+    appearance: none;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.1rem;
+    border: 2px solid var(--color-ink);
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+  }
+  .waitlist-check input:checked {
+    background: var(--color-bp-pink);
+    border-color: var(--color-bp-pink);
+    box-shadow: -2px 2px 0 var(--color-bp-cyan);
+  }
+  .waitlist-check input:checked::before {
+    content: "✕";
+    color: var(--color-paper);
+    font-weight: 900;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  /* ---------- Honeypot ---------- */
+  .survey-trap {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* ---------- Actions ---------- */
+  .survey-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  .survey-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .survey-status {
+    min-height: 1.1rem;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .survey-fine {
+    max-width: 44ch;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: rgba(21, 21, 21, 0.72);
+    text-align: center;
+  }
+  .survey-fine a { text-decoration: underline; text-underline-offset: 2px; }
+</style>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById("survey-form");
+    if (!form) return;
+
+    const endpoint = form.dataset.endpoint;
+    const done = document.getElementById("survey-done");
+    const button = form.querySelector("button[type=submit]");
+    const labelIdle = button.querySelector("[data-label-idle]");
+    const labelLoading = button.querySelector("[data-label-loading]");
+    const status = form.querySelector("[data-status]");
+    const emailInput = document.getElementById("survey-email");
+    const waitlistInput = document.getElementById("survey-waitlist");
+
+    const setLoading = (loading) => {
+      button.disabled = loading;
+      labelIdle.hidden = loading;
+      labelLoading.hidden = !loading;
+    };
+    const setStatus = (msg, tone) => {
+      status.textContent = msg;
+      status.style.color =
+        tone === "ok"
+          ? "var(--color-bp-navy)"
+          : tone === "err"
+            ? "var(--color-bp-pink-deep)"
+            : "";
+    };
+
+    // Rating groups + single-select chip groups behave like radios;
+    // multi-select chip groups toggle. State lives in the aria-checked
+    // attribute so the CSS and the payload read the same source of truth.
+    const wireGroup = (group, multi) => {
+      const buttons = group.querySelectorAll("[data-value]");
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (multi) {
+            const on = btn.getAttribute("aria-checked") === "true";
+            btn.setAttribute("aria-checked", String(!on));
+          } else {
+            const wasOn = btn.getAttribute("aria-checked") === "true";
+            buttons.forEach((b) => b.setAttribute("aria-checked", "false"));
+            // Clicking the selected value again clears it — everything
+            // except the overall rating is optional, so allow undo.
+            if (!wasOn) btn.setAttribute("aria-checked", "true");
+          }
+        });
+      });
+    };
+    form.querySelectorAll("[data-rating]").forEach((g) => wireGroup(g, false));
+    form.querySelectorAll('[data-chips][data-mode="single"]').forEach((g) => wireGroup(g, false));
+    form.querySelectorAll('[data-chips][data-mode="multi"]').forEach((g) => wireGroup(g, true));
+
+    const readSingle = (name) => {
+      const el = form.querySelector(
+        `[data-rating="${name}"] [aria-checked="true"], [data-chips="${name}"] [aria-checked="true"]`
+      );
+      return el ? el.dataset.value : "";
+    };
+    const readMulti = (name) => {
+      return Array.from(
+        form.querySelectorAll(`[data-chips="${name}"] [aria-checked="true"]`)
+      )
+        .map((el) => el.dataset.value)
+        .join(", ");
+    };
+
+    // Distribution attribution: blasts link with ?src=sms / ?src=email etc.
+    const params = new URLSearchParams(window.location.search);
+    const src = params.get("src") || params.get("utm_source") || "";
+    const source = "blockprint.la/survey" + (src ? "?src=" + src : "");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const overall = readSingle("overall");
+      if (!overall) {
+        setStatus("Give us the big one up top — how was it overall?", "err");
+        document.querySelector('[data-rating="overall"]').scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      if (email && email.indexOf("@") < 1) {
+        setStatus("That email doesn't look right — mind checking it?", "err");
+        emailInput.focus();
+        return;
+      }
+      if (waitlistInput.checked && !email) {
+        setStatus("Drop your email so we can actually put you on the list.", "err");
+        emailInput.focus();
+        return;
+      }
+
+      if (!endpoint) {
+        console.error("[survey] no endpoint configured");
+        setStatus("Survey isn't live yet — please try again later.", "err");
+        return;
+      }
+
+      const payload = {
+        overall: overall,
+        music: readSingle("music"),
+        sound: readSingle("sound"),
+        entry: readSingle("entry"),
+        food: readSingle("food"),
+        vip: readSingle("vip"),
+        improve: document.getElementById("survey-improve").value.trim(),
+        loved: document.getElementById("survey-loved").value.trim(),
+        lineup: document.getElementById("survey-lineup").value.trim(),
+        timing: readSingle("timing"),
+        heard: readMulti("heard"),
+        returning: readSingle("returning"),
+        email: email,
+        phone: document.getElementById("survey-phone").value.trim(),
+        waitlist: waitlistInput.checked ? "yes" : "",
+        website: document.getElementById("survey-website").value,
+        source: source,
+      };
+
+      setLoading(true);
+      setStatus("");
+
+      try {
+        // text/plain avoids the CORS preflight Apps Script can't answer.
+        // Body is still JSON — doPost does JSON.parse(e.postData.contents).
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) { /* non-JSON response */ }
+
+        if (res.ok && data && data.ok) {
+          form.hidden = true;
+          done.hidden = false;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          if (typeof gtag === "function") gtag("event", "survey_submit");
+        } else {
+          console.error("[survey] submit failed", { status: res.status, body: text });
+          setStatus("Could not submit — please try again, or email us directly.", "err");
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("[survey] network error", err);
+        setStatus("Network error — please try again, or email us directly.", "err");
+        setLoading(false);
+      }
+    });
+  })();
+</script>
