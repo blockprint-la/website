@@ -24,6 +24,14 @@ import { site } from "../data/site";
 //
 // Distribution attribution: ?src=sms / ?src=email etc. is folded into the
 // `source` column so blast performance is visible per channel in the sheet.
+//
+// Hive (brand 135484): submits that include an email also fire-and-forget
+// into Hive — emailSignup + "2026 Survey Respondents" static segment, plus
+// "2027 Waitlist" when the waitlist box is checked. The sheet write is the
+// critical path; Hive failures never block the success state (and the SDK
+// is domain-whitelisted, so localhost/preview submits silently skip Hive —
+// verify segment membership on the live domain, not in dev). The standalone
+// waitlist page should push into the same "2027 Waitlist" segment.
 // ---------------------------------------------------------------------------
 
 // The five quick-hit aspects. `key` doubles as the payload field name and
@@ -495,6 +503,37 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
   .survey-fine a { text-decoration: underline; text-underline-offset: 2px; }
 </style>
 
+<!-- Hive SDK loader (brand 135484) — same queueing-aware IIFE as the
+     Newsletter component: calls made before the SDK finishes loading are
+     buffered and replayed, and the __hiveInited guard keeps init single
+     if another component on the page also loads it. -->
+<script is:inline>
+  (function (h, i, v, e, s, d, k) {
+    h.HiveSDKObject = s;
+    h[s] =
+      h[s] ||
+      function () {
+        (h[s].q = h[s].q || []).push(arguments);
+      };
+    d = i.createElement(v);
+    k = i.getElementsByTagName(v)[0];
+    d.async = 1;
+    d.id = s;
+    d.src = e + "?r=" + parseInt(new Date() / 60000);
+    k.parentNode.insertBefore(d, k);
+  })(
+    window,
+    document,
+    "script",
+    "https://cdn-prod.hive.co/static/js/sdk-loader.js",
+    "HIVE_SDK"
+  );
+  if (!window.__hiveInited) {
+    HIVE_SDK("init", 135484);
+    window.__hiveInited = true;
+  }
+</script>
+
 <script is:inline>
   (function () {
     const form = document.getElementById("survey-form");
@@ -632,6 +671,29 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
         try { data = JSON.parse(text); } catch (_) { /* non-JSON response */ }
 
         if (res.ok && data && data.ok) {
+          // Fire-and-forget Hive adds — the sheet row is already saved, so
+          // Hive errors only log; they never block the thank-you state.
+          if (email && typeof window.HIVE_SDK === "function") {
+            try {
+              window.HIVE_SDK(
+                "emailSignup",
+                { email: email, didOptIn: true },
+                function () {
+                  window.HIVE_SDK("addToSegment", "2026 Survey Respondents",
+                    function () {},
+                    function (err) { console.error("[survey] hive respondents segment failed", err); });
+                  if (payload.waitlist === "yes") {
+                    window.HIVE_SDK("addToSegment", "2027 Waitlist",
+                      function () {},
+                      function (err) { console.error("[survey] hive waitlist segment failed", err); });
+                  }
+                },
+                function (err) { console.error("[survey] hive emailSignup failed", err); }
+              );
+            } catch (hiveErr) {
+              console.error("[survey] hive error", hiveErr);
+            }
+          }
           form.hidden = true;
           document.getElementById("survey-header").hidden = true;
           done.hidden = false;
