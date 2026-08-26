@@ -34,22 +34,20 @@ import { site } from "../data/site";
 // waitlist page should push into the same "2027 Waitlist" segment.
 // ---------------------------------------------------------------------------
 
-// The five quick-hit aspects. `key` doubles as the payload field name and
-// the sheet column header — keep them in sync with the Apps Script.
-const aspects = [
-  { key: "music", label: "Music & lineup" },
-  { key: "sound", label: "Sound" },
-  { key: "entry", label: "Entry & box office" },
-  { key: "food", label: "Food & drink" },
-  { key: "vip", label: "VIP", hint: "skip if you didn't have it" },
-];
+// Revised 8/26 off Evan's survey-methodology pass (Plaud recording):
+// neutral anchors on the overall rating, rating grid + timing question cut
+// (fatigue / unqualified-respondent), local-business spend range added,
+// "No" added to coming-back, and the contact/waitlist block only reveals
+// on Absolutely/Probably so asking for contact info doesn't suppress
+// negative feedback.
 
-const timingOptions = [
-  "Early June",
-  "Late June",
-  "July",
-  "Late August again",
-  "No preference",
+const spendOptions = [
+  "Nothing",
+  "Under $50",
+  "$50–$150",
+  "$150–$300",
+  "$300+",
+  "Can't remember",
 ];
 
 const heardOptions = [
@@ -62,7 +60,7 @@ const heardOptions = [
   "Somewhere else",
 ];
 
-const returningOptions = ["Absolutely", "Probably", "Not sure"];
+const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
 ---
 
 <Layout
@@ -115,38 +113,14 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
             ))}
           </div>
           <div class="rating-anchors" aria-hidden="true">
-            <span>rough</span>
-            <span>unreal</span>
+            <span>poor</span>
+            <span>excellent</span>
           </div>
         </section>
 
-        <!-- 02 · Quick hits -->
-        <section class="survey-block" aria-labelledby="q-aspects">
-          <span class="tape-label text-sm tape-label--cyan">02</span>
-          <h2 id="q-aspects" class="survey-q">Rate the day</h2>
-          <p class="survey-hint">Quick hits — skip anything you didn't touch.</p>
-          <div class="aspect-grid">
-            {aspects.map((a) => (
-              <div class="aspect-row">
-                <span class="aspect-label">
-                  {a.label}
-                  {a.hint && <em class="aspect-hint">{a.hint}</em>}
-                </span>
-                <div class="rating-row" role="radiogroup" aria-label={a.label} data-rating={a.key}>
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button type="button" class="rating-btn" role="radio" aria-checked="false" data-value={n}>
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <!-- 03 · Do differently -->
+        <!-- 02 · Do differently -->
         <section class="survey-block" aria-labelledby="q-improve">
-          <span class="tape-label text-sm tape-label--navy">03</span>
+          <span class="tape-label text-sm tape-label--cyan">02</span>
           <h2 id="q-improve" class="survey-q">What should we do differently next year?</h2>
           <textarea
             id="survey-improve"
@@ -158,9 +132,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
             aria-labelledby="q-improve"></textarea>
         </section>
 
-        <!-- 04 · Loved -->
+        <!-- 03 · Loved -->
         <section class="survey-block" aria-labelledby="q-loved">
-          <span class="tape-label text-sm">04</span>
+          <span class="tape-label text-sm tape-label--navy">03</span>
           <h2 id="q-loved" class="survey-q">What did you love?</h2>
           <textarea
             id="survey-loved"
@@ -172,9 +146,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
             aria-labelledby="q-loved"></textarea>
         </section>
 
-        <!-- 05 · Dream bookings -->
+        <!-- 04 · Dream bookings -->
         <section class="survey-block" aria-labelledby="q-lineup">
-          <span class="tape-label text-sm tape-label--cyan">05</span>
+          <span class="tape-label text-sm">04</span>
           <h2 id="q-lineup" class="survey-q">Who should play next year?</h2>
           <input
             id="survey-lineup"
@@ -187,22 +161,26 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
           />
         </section>
 
-        <!-- 06 · Timing -->
-        <section class="survey-block" aria-labelledby="q-timing">
-          <span class="tape-label text-sm tape-label--navy">06</span>
-          <h2 id="q-timing" class="survey-q">When should it happen next year?</h2>
-          <div class="chip-row" role="radiogroup" aria-labelledby="q-timing" data-chips="timing" data-mode="single">
-            {timingOptions.map((t) => (
-              <button type="button" class="chip" role="radio" aria-checked="false" data-value={t}>
-                {t}
+        <!-- 05 · Local spend — economic-impact data for the neighborhood case -->
+        <section class="survey-block" aria-labelledby="q-spend">
+          <span class="tape-label text-sm tape-label--cyan">05</span>
+          <h2 id="q-spend" class="survey-q">How much did you spend on the block?</h2>
+          <p class="survey-hint">
+            Outside the event — shops, restaurants, and bars in the neighborhood
+            that day. Rough guess is perfect.
+          </p>
+          <div class="chip-row" role="radiogroup" aria-labelledby="q-spend" data-chips="spend" data-mode="single">
+            {spendOptions.map((s) => (
+              <button type="button" class="chip" role="radio" aria-checked="false" data-value={s}>
+                {s}
               </button>
             ))}
           </div>
         </section>
 
-        <!-- 07 · Heard via -->
+        <!-- 06 · Heard via -->
         <section class="survey-block" aria-labelledby="q-heard">
-          <span class="tape-label text-sm">07</span>
+          <span class="tape-label text-sm tape-label--navy">06</span>
           <h2 id="q-heard" class="survey-q">How'd you hear about this year?</h2>
           <p class="survey-hint">Pick as many as apply.</p>
           <div class="chip-row" role="group" aria-labelledby="q-heard" data-chips="heard" data-mode="multi">
@@ -214,9 +192,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
           </div>
         </section>
 
-        <!-- 08 · Coming back + waitlist -->
+        <!-- 07 · Coming back + waitlist (contact only reveals on a yes-ish answer) -->
         <section class="survey-block" aria-labelledby="q-returning">
-          <span class="tape-label text-sm tape-label--cyan">08</span>
+          <span class="tape-label text-sm">07</span>
           <h2 id="q-returning" class="survey-q">Are you coming back?</h2>
           <div class="chip-row" role="radiogroup" aria-labelledby="q-returning" data-chips="returning" data-mode="single">
             {returningOptions.map((r) => (
@@ -226,7 +204,10 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
             ))}
           </div>
 
-          <div class="survey-contact">
+          <!-- Hidden until "Absolutely" or "Probably" — asking everyone for
+               contact info suppresses negative feedback (Evan, 8/26), and
+               the people who'd join a waitlist are the yes-ish ones anyway. -->
+          <div id="survey-contact" class="survey-contact" hidden>
             <label for="survey-email" class="sr-only">Email address</label>
             <input
               id="survey-email"
@@ -355,35 +336,6 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
     font-size: 0.8rem;
     opacity: 0.65;
   }
-
-  /* ---------- Aspect grid ---------- */
-  .aspect-grid { display: flex; flex-direction: column; gap: 1.1rem; }
-  .aspect-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1.25rem;
-    border-bottom: 1px solid rgba(21, 21, 21, 0.15);
-    padding-bottom: 1.1rem;
-  }
-  .aspect-label {
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.85rem;
-    display: flex;
-    flex-direction: column;
-  }
-  .aspect-hint {
-    font-style: normal;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0.02em;
-    font-size: 0.75rem;
-    opacity: 0.6;
-  }
-  .aspect-row .rating-btn { width: 2.4rem; height: 2.4rem; font-size: 0.9rem; }
 
   /* ---------- Text inputs ---------- */
   .survey-textarea,
@@ -587,6 +539,14 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
     form.querySelectorAll('[data-chips][data-mode="single"]').forEach((g) => wireGroup(g, false));
     form.querySelectorAll('[data-chips][data-mode="multi"]').forEach((g) => wireGroup(g, true));
 
+    // Contact + waitlist only reveal on a yes-ish "coming back" answer.
+    // Runs on bubble after wireGroup's own click handler has updated state.
+    const contactBlock = document.getElementById("survey-contact");
+    form.querySelector('[data-chips="returning"]').addEventListener("click", () => {
+      const picked = readSingle("returning");
+      contactBlock.hidden = picked !== "Absolutely" && picked !== "Probably";
+    });
+
     const readSingle = (name) => {
       const el = form.querySelector(
         `[data-rating="${name}"] [aria-checked="true"], [data-chips="${name}"] [aria-checked="true"]`
@@ -616,16 +576,20 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
         return;
       }
 
-      const email = emailInput.value.trim();
-      if (email && email.indexOf("@") < 1) {
-        setStatus("That email doesn't look right — mind checking it?", "err");
-        emailInput.focus();
-        return;
-      }
-      if (waitlistInput.checked && !email) {
-        setStatus("Drop your email so we can actually put you on the list.", "err");
-        emailInput.focus();
-        return;
+      // Contact fields only count when the block is revealed (yes-ish answer).
+      const contactOpen = !document.getElementById("survey-contact").hidden;
+      const email = contactOpen ? emailInput.value.trim() : "";
+      if (contactOpen) {
+        if (email && email.indexOf("@") < 1) {
+          setStatus("That email doesn't look right — mind checking it?", "err");
+          emailInput.focus();
+          return;
+        }
+        if (waitlistInput.checked && !email) {
+          setStatus("Drop your email so we can actually put you on the list.", "err");
+          emailInput.focus();
+          return;
+        }
       }
 
       if (!endpoint) {
@@ -636,20 +600,15 @@ const returningOptions = ["Absolutely", "Probably", "Not sure"];
 
       const payload = {
         overall: overall,
-        music: readSingle("music"),
-        sound: readSingle("sound"),
-        entry: readSingle("entry"),
-        food: readSingle("food"),
-        vip: readSingle("vip"),
         improve: document.getElementById("survey-improve").value.trim(),
         loved: document.getElementById("survey-loved").value.trim(),
         lineup: document.getElementById("survey-lineup").value.trim(),
-        timing: readSingle("timing"),
+        spend: readSingle("spend"),
         heard: readMulti("heard"),
         returning: readSingle("returning"),
         email: email,
-        phone: document.getElementById("survey-phone").value.trim(),
-        waitlist: waitlistInput.checked ? "yes" : "",
+        phone: contactOpen ? document.getElementById("survey-phone").value.trim() : "",
+        waitlist: contactOpen && waitlistInput.checked ? "yes" : "",
         website: document.getElementById("survey-website").value,
         source: source,
       };
