@@ -14,9 +14,10 @@
  *  - Response body is JSON: { ok: true } or { ok: false, error: "…" }.
  *
  * Column order MUST match the header row in the Responses tab:
- * timestamp | overall | improve | loved | lineup | spend | heard | returning
+ * timestamp | improve | loved | lineup | spend | heard | returning
  * | email | phone | waitlist | source
- * (v2, 8/26: rating grid + timing cut, spend added — Evan's survey pass.)
+ * (v3, 8/26: overall rating cut too — fully qualitative. v2 same day had
+ * cut the rating grid + timing and added spend, per Evan's survey pass.)
  *
  * This file is the canonical source — if you edit the script in the Apps
  * Script editor, copy the change back here. (The Partners form's backend
@@ -38,7 +39,6 @@ function doPost(e) {
 
     var row = [
       new Date().toISOString(),
-      clean(data.overall, 5),
       clean(data.improve, 5000),
       clean(data.loved, 5000),
       clean(data.lineup, 500),
