@@ -9,11 +9,11 @@ import { site } from "../data/site";
 // sheet; /survey redirects here (astro.config redirects) until 2027's
 // survey takes the alias over.
 //
-// The question set is deliberately light-touch: one required rating up top,
-// everything else optional, big open text boxes in the middle (Kiersten's
-// direction: give people blank space to say whatever they want), and an
-// email + waitlist capture at the end so the survey doubles as the 2027
-// waitlist funnel.
+// The question set is deliberately light-touch and fully qualitative: every
+// question optional (a submit just needs at least one answer), big open text
+// boxes up top (Kiersten's direction: give people blank space to say
+// whatever they want), and an email + waitlist capture at the end so the
+// survey doubles as the 2027 waitlist funnel.
 //
 // Submits JSON to a Google Apps Script Web App (site.surveyFormUrl) which
 // appends a row to "Website Submissions — 2026 Fan Survey" in the Stereo
@@ -96,31 +96,10 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
       </header>
 
       <form id="survey-form" class="survey-form" data-endpoint={site.surveyFormUrl} novalidate>
-        <!-- 01 · Overall -->
-        <section class="survey-block" aria-labelledby="q-overall">
-          <span class="tape-label text-sm">01</span>
-          <h2 id="q-overall" class="survey-q">Overall, how was Blockprint?</h2>
-          <div
-            class="rating-row rating-row--big"
-            role="radiogroup"
-            aria-labelledby="q-overall"
-            data-rating="overall"
-          >
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button type="button" class="rating-btn" role="radio" aria-checked="false" data-value={n}>
-                {n}
-              </button>
-            ))}
-          </div>
-          <div class="rating-anchors" aria-hidden="true">
-            <span>poor</span>
-            <span>excellent</span>
-          </div>
-        </section>
-
-        <!-- 02 · Do differently -->
+        <!-- 01 · Do differently — straight into the open-ended (the overall
+             rating was cut 8/26: fully qualitative, per Evan/Jake) -->
         <section class="survey-block" aria-labelledby="q-improve">
-          <span class="tape-label text-sm tape-label--cyan">02</span>
+          <span class="tape-label text-sm">01</span>
           <h2 id="q-improve" class="survey-q">What should we do differently next year?</h2>
           <textarea
             id="survey-improve"
@@ -132,9 +111,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
             aria-labelledby="q-improve"></textarea>
         </section>
 
-        <!-- 03 · Loved -->
+        <!-- 02 · Loved -->
         <section class="survey-block" aria-labelledby="q-loved">
-          <span class="tape-label text-sm tape-label--navy">03</span>
+          <span class="tape-label text-sm tape-label--cyan">02</span>
           <h2 id="q-loved" class="survey-q">What did you love?</h2>
           <textarea
             id="survey-loved"
@@ -146,9 +125,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
             aria-labelledby="q-loved"></textarea>
         </section>
 
-        <!-- 04 · Dream bookings -->
+        <!-- 03 · Dream bookings -->
         <section class="survey-block" aria-labelledby="q-lineup">
-          <span class="tape-label text-sm">04</span>
+          <span class="tape-label text-sm tape-label--navy">03</span>
           <h2 id="q-lineup" class="survey-q">Who should play next year?</h2>
           <input
             id="survey-lineup"
@@ -161,9 +140,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
           />
         </section>
 
-        <!-- 05 · Local spend — economic-impact data for the neighborhood case -->
+        <!-- 04 · Local spend — economic-impact data for the neighborhood case -->
         <section class="survey-block" aria-labelledby="q-spend">
-          <span class="tape-label text-sm tape-label--cyan">05</span>
+          <span class="tape-label text-sm">04</span>
           <h2 id="q-spend" class="survey-q">How much did you spend on the block?</h2>
           <p class="survey-hint">
             Outside the event — shops, restaurants, and bars in the neighborhood
@@ -178,9 +157,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
           </div>
         </section>
 
-        <!-- 06 · Heard via -->
+        <!-- 05 · Heard via -->
         <section class="survey-block" aria-labelledby="q-heard">
-          <span class="tape-label text-sm tape-label--navy">06</span>
+          <span class="tape-label text-sm tape-label--cyan">05</span>
           <h2 id="q-heard" class="survey-q">How'd you hear about this year?</h2>
           <p class="survey-hint">Pick as many as apply.</p>
           <div class="chip-row" role="group" aria-labelledby="q-heard" data-chips="heard" data-mode="multi">
@@ -192,9 +171,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
           </div>
         </section>
 
-        <!-- 07 · Coming back + waitlist (contact only reveals on a yes-ish answer) -->
+        <!-- 06 · Coming back + waitlist (contact only reveals on a yes-ish answer) -->
         <section class="survey-block" aria-labelledby="q-returning">
-          <span class="tape-label text-sm">07</span>
+          <span class="tape-label text-sm tape-label--navy">06</span>
           <h2 id="q-returning" class="survey-q">Are you coming back?</h2>
           <div class="chip-row" role="radiogroup" aria-labelledby="q-returning" data-chips="returning" data-mode="single">
             {returningOptions.map((r) => (
@@ -300,41 +279,6 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
     font-size: 0.85rem;
     opacity: 0.7;
     margin: -0.35rem 0 0.9rem;
-  }
-
-  /* ---------- Rating buttons ---------- */
-  .rating-row { display: flex; gap: 0.5rem; }
-  .rating-btn {
-    appearance: none;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 2px solid var(--color-ink);
-    background: transparent;
-    color: var(--color-ink);
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.08s ease;
-  }
-  .rating-btn:hover { transform: translateY(-2px); }
-  .rating-btn[aria-checked="true"] {
-    background: var(--color-bp-pink);
-    border-color: var(--color-bp-pink);
-    color: var(--color-paper);
-    box-shadow: -3px 3px 0 var(--color-bp-cyan);
-  }
-  .rating-row--big { gap: 0.65rem; }
-  .rating-row--big .rating-btn { width: 3.4rem; height: 3.4rem; font-size: 1.25rem; }
-  .rating-anchors {
-    display: flex;
-    justify-content: space-between;
-    width: calc(5 * 3.4rem + 4 * 0.65rem);
-    max-width: 100%;
-    margin-top: 0.4rem;
-    font-family: var(--font-accent);
-    font-size: 0.8rem;
-    opacity: 0.65;
   }
 
   /* ---------- Text inputs ---------- */
@@ -535,7 +479,6 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
         });
       });
     };
-    form.querySelectorAll("[data-rating]").forEach((g) => wireGroup(g, false));
     form.querySelectorAll('[data-chips][data-mode="single"]').forEach((g) => wireGroup(g, false));
     form.querySelectorAll('[data-chips][data-mode="multi"]').forEach((g) => wireGroup(g, true));
 
@@ -569,10 +512,15 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const overall = readSingle("overall");
-      if (!overall) {
-        setStatus("Give us the big one up top — how was it overall?", "err");
-        document.querySelector('[data-rating="overall"]').scrollIntoView({ behavior: "smooth", block: "center" });
+      // Everything is optional, but an entirely blank submit is noise.
+      const improve = document.getElementById("survey-improve").value.trim();
+      const loved = document.getElementById("survey-loved").value.trim();
+      const lineup = document.getElementById("survey-lineup").value.trim();
+      const anyAnswer =
+        improve || loved || lineup ||
+        readSingle("spend") || readMulti("heard") || readSingle("returning");
+      if (!anyAnswer) {
+        setStatus("Give us at least one answer first.", "err");
         return;
       }
 
@@ -599,10 +547,9 @@ const returningOptions = ["Absolutely", "Probably", "Not sure", "No"];
       }
 
       const payload = {
-        overall: overall,
-        improve: document.getElementById("survey-improve").value.trim(),
-        loved: document.getElementById("survey-loved").value.trim(),
-        lineup: document.getElementById("survey-lineup").value.trim(),
+        improve: improve,
+        loved: loved,
+        lineup: lineup,
         spend: readSingle("spend"),
         heard: readMulti("heard"),
         returning: readSingle("returning"),
