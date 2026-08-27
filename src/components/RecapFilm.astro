@@ -69,15 +69,31 @@
     --p: 0;
     /* Start size of the print. --h0 keeps the video's native 3:2. */
     --w0: min(86vw, 560px);
+    --h0: calc(var(--w0) * 0.6667);
   }
   @media (min-width: 768px) {
     .recap { --w0: min(58vw, 900px); }
   }
+  /* Head and frame are BOTH absolutely centered in the sticky viewport.
+     The head must not occupy flex layout space: it fades out but would
+     otherwise keep pushing the frame down by half its height, leaving a
+     bar of paper above the video at full takeover. Absolute frame
+     centering means p=1 is exactly 100vw x 100svh at the viewport
+     center — filled edge to edge at every screen size. */
+  .recap-head {
+    position: absolute;
+    left: 50%;
+    bottom: calc(50% + var(--h0) / 2 + 1.5rem);
+    width: 100%;
+    transform: translate(-50%, calc(var(--p) * -40px));
+  }
   .recap-frame {
-    --h0: calc(var(--w0) * 0.6667);
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: calc(var(--w0) + (100vw - var(--w0)) * var(--p));
     height: calc(var(--h0) + (100svh - var(--h0)) * var(--p));
-    transform: rotate(calc(-2deg * (1 - var(--p))));
+    transform: translate(-50%, -50%) rotate(calc(-2deg * (1 - var(--p))));
     background: var(--color-ink);
   }
   /* Cyan offset backing — the stamped-button shadow, fading as it grows */
@@ -92,16 +108,23 @@
   }
   .recap-head {
     opacity: calc(1 - var(--p) * 2.2);
-    transform: translateY(calc(var(--p) * -40px));
   }
   @media (prefers-reduced-motion: reduce) {
     .recap { height: auto; }
     .recap-sticky { position: static; height: auto; padding: 6rem 0; }
+    .recap-head {
+      position: static;
+      transform: none;
+      opacity: 1;
+      margin-bottom: 2rem;
+    }
     .recap-frame {
+      position: static;
       width: min(92vw, 1100px);
       height: auto;
       aspect-ratio: 3 / 2;
       transform: none;
+      margin: 0 auto;
     }
   }
 </style>
