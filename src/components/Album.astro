@@ -19,11 +19,12 @@ const photos: Photo[] = [
   { file: "recap-02.jpg", w: 1600, h: 1067, alt: "Friends walking through the pink arch onto the block" },
   { file: "recap-03.jpg", w: 1067, h: 1600, alt: "Abbot Kinney street sign with Blockprint wayfinding" },
   { file: "recap-04.jpg", w: 1600, h: 1067, alt: "The daytime crowd stretching down the block" },
-  { file: "recap-05.jpg", w: 1064, h: 1600, alt: "A moving-head light rigged to a palm tree" },
+  { file: "recap-05.jpg", w: 1067, h: 1600, alt: "Luxxury on the decks in the afternoon sun" },
   { file: "recap-12.jpg", w: 1064, h: 1600, alt: "Darius on the decks in the afternoon sun" },
   { file: "recap-06.jpg", w: 1600, h: 1067, alt: "Hands up at the decks as the sun drops" },
   { file: "recap-07.jpg", w: 1600, h: 1067, alt: "Golden hour over the crowd" },
   { file: "recap-08.jpg", w: 1280, h: 1600, alt: "Sunset down the block, palms and haze" },
+  { file: "recap-17.jpg", w: 1064, h: 1600, alt: "Darius in profile at golden hour" },
   { file: "recap-09.jpg", w: 1600, h: 1280, alt: "Eli & Fur waving under the Blockprint arch at dusk" },
   { file: "recap-10.jpg", w: 1280, h: 1600, alt: "The Blockprint truss arch against the dusk sky" },
   { file: "recap-11.jpg", w: 1600, h: 1067, alt: "The arch lit up at night" },
@@ -64,6 +65,17 @@ const photos: Photo[] = [
           />
         </figure>
       ))}
+    </div>
+
+    <div class="text-center mt-12 md:mt-16" data-reveal>
+      <a
+        href="/gallery"
+        class="group inline-flex items-center gap-3 bg-bp-pink text-paper px-8 py-4 text-sm md:text-base uppercase tracking-[0.25em] font-bold"
+        style="filter: url(#ink-bleed-soft); box-shadow: -4px 4px 0 var(--color-bp-cyan);"
+      >
+        View the Full Gallery
+        <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+      </a>
     </div>
   </div>
 </section>
