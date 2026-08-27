@@ -1,0 +1,93 @@
+---
+// Post-event photo album — 16 selects from the two day-of shooters,
+// sequenced as the day ran: gates → daytime block → golden hour → dusk →
+// night sets. Sources: Rachel Kupfer's Dropbox delivery (mirrored to
+// Drive: MEDIA RECAP / Photos) and Dylan Baron's "Web Photos" selects
+// (Drive: PHOTOS / Day of Show / Web Photos). Web copies live in
+// /public/photos/recap at 1600px.
+//
+// Layout is CSS-columns masonry; every photo sits in a paper "print"
+// frame with alternating tilt and cyan/pink offset, echoing the site's
+// stamped-print language. Warm beige section (--color-paper-deep) so the
+// album reads as its own spread between the navy survey and cream
+// waitlist.
+
+type Photo = { file: string; w: number; h: number; alt: string };
+
+const photos: Photo[] = [
+  { file: "recap-01.jpg", w: 1600, h: 1067, alt: "The Welcome to Blockprint arch over Abbot Kinney Blvd" },
+  { file: "recap-02.jpg", w: 1600, h: 1067, alt: "Friends walking through the pink arch onto the block" },
+  { file: "recap-03.jpg", w: 1067, h: 1600, alt: "Abbot Kinney street sign with Blockprint wayfinding" },
+  { file: "recap-04.jpg", w: 1600, h: 1067, alt: "The daytime crowd stretching down the block" },
+  { file: "recap-05.jpg", w: 1064, h: 1600, alt: "A moving-head light rigged to a palm tree" },
+  { file: "recap-12.jpg", w: 1064, h: 1600, alt: "Darius on the decks in the afternoon sun" },
+  { file: "recap-06.jpg", w: 1600, h: 1067, alt: "Hands up at the decks as the sun drops" },
+  { file: "recap-07.jpg", w: 1600, h: 1067, alt: "Golden hour over the crowd" },
+  { file: "recap-08.jpg", w: 1280, h: 1600, alt: "Sunset down the block, palms and haze" },
+  { file: "recap-09.jpg", w: 1600, h: 1280, alt: "Eli & Fur waving under the Blockprint arch at dusk" },
+  { file: "recap-10.jpg", w: 1280, h: 1600, alt: "The Blockprint truss arch against the dusk sky" },
+  { file: "recap-11.jpg", w: 1600, h: 1067, alt: "The arch lit up at night" },
+  { file: "recap-13.jpg", w: 1064, h: 1600, alt: "Franc Moody's blue mohawk in profile at the decks" },
+  { file: "recap-14.jpg", w: 1064, h: 1600, alt: "Red smoke over the night crowd" },
+  { file: "recap-15.jpg", w: 1280, h: 1600, alt: "A hug on stage over the crowd" },
+  { file: "recap-16.jpg", w: 1064, h: 1600, alt: "The Blockprint sign glowing over the last set" },
+];
+---
+
+<section id="album" class="relative px-5 md:px-10 py-24 md:py-32" style="background: var(--color-paper-deep);">
+  <div class="max-w-6xl mx-auto">
+    <header class="text-center mb-12 md:mb-16" data-reveal>
+      <h2
+        class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-5"
+        data-ink="navy"
+        data-ghost
+        style="--ghost: var(--color-bp-pink);"
+      >
+        The Block, In Print
+      </h2>
+      <p class="text-sm md:text-base uppercase tracking-[0.25em] opacity-80">
+        August 22, 2026 · Abbot Kinney Blvd
+      </p>
+    </header>
+
+    <div class="album-grid">
+      {photos.map((p, i) => (
+        <figure class="album-print" data-reveal data-tilt={i % 3 === 0 ? "l" : i % 3 === 1 ? "r" : "n"} data-shadow={i % 2 === 0 ? "cyan" : "pink"}>
+          <img
+            src={`/photos/recap/${p.file}`}
+            width={p.w}
+            height={p.h}
+            alt={p.alt}
+            loading="lazy"
+            decoding="async"
+            class="block w-full h-auto"
+          />
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .album-grid {
+    columns: 2;
+    column-gap: 1rem;
+  }
+  @media (min-width: 768px) {
+    .album-grid { columns: 3; column-gap: 1.75rem; }
+  }
+  .album-print {
+    break-inside: avoid;
+    margin: 0 0 1.25rem;
+    background: var(--color-paper);
+    padding: 8px;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .album-print { padding: 12px; margin-bottom: 2rem; }
+  }
+  .album-print[data-tilt="l"] { transform: rotate(-0.8deg); }
+  .album-print[data-tilt="r"] { transform: rotate(0.8deg); }
+  .album-print[data-shadow="cyan"] { box-shadow: -5px 5px 0 var(--color-bp-cyan); }
+  .album-print[data-shadow="pink"] { box-shadow: -5px 5px 0 var(--color-bp-pink); }
+</style>

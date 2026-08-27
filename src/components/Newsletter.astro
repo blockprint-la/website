@@ -1,20 +1,23 @@
 ---
 // Hive Text/Email signup — ported from the /westside page pattern.
-// Same Hive brand (135484) → "Website Signup" segment, so newsletter
-// signups land in the same cohort as holding-page + westside captures.
-// User picks one channel (Laylo-style toggle) — no dual entry, no
-// pretend "both" path. SDK loader sits below the form; the SDK is
-// queueing-aware so any call before load is captured and replayed.
+// Same Hive brand (135484). Post-event this form is the 2027 waitlist:
+// signups land in "Website Signup" (the evergreen owned-channel cohort,
+// same as holding-page + westside captures) AND "2027 Waitlist" (the
+// year cohort the survey's waitlist checkbox also feeds — exact segment
+// name, created by Jake in Hive 8/26). User picks one channel
+// (Laylo-style toggle) — no dual entry, no pretend "both" path. SDK
+// loader sits below the form; the SDK is queueing-aware so any call
+// before load is captured and replayed.
 ---
 
 <section id="newsletter" class="relative px-5 md:px-10 py-24 md:py-32 bg-paper">
   <div class="max-w-3xl mx-auto text-center">
     <h2 class="font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] ink-stamp mb-6">
-      Get on the List
+      Join the Waitlist
     </h2>
     <p class="text-base md:text-lg opacity-90 max-w-xl mx-auto mb-10">
-      First word on set times, ticket drops, and event updates. Pick text
-      or email — we won't spam either.
+      Be first to hear about the next Blockprint — the date, the lineup,
+      and when tickets drop. Pick text or email — we won't spam either.
     </p>
 
     <form id="hive-newsletter" class="signup-form mt-2 max-w-xl mx-auto" novalidate>
@@ -209,7 +212,7 @@
       input.disabled = true;
       tabs.forEach((t) => (t.disabled = true));
       button.hidden = true;
-      setStatus("You're on the list — we'll be in touch when tickets drop.", "ok");
+      setStatus("You're on the waitlist — you'll hear from us first.", "ok");
     };
 
     // The Hive SDK sometimes resolves NEITHER callback — e.g. a number already
@@ -235,16 +238,19 @@
         });
       };
 
-    const onSegment = () =>
-      window.HIVE_SDK(
-        "addToSegment",
-        "Website Signup",
-        succeed,
-        function (err) {
-          console.error("[hive] addToSegment failed", err);
-          succeed();
-        }
-      );
+    // Segment tagging is best-effort: the signup itself is the source of
+    // truth, so a failed tag logs and moves on rather than failing the form.
+    const tagSegment = (segment, next) =>
+      function () {
+        window.HIVE_SDK("addToSegment", segment, next, function (err) {
+          console.error('[hive] addToSegment "' + segment + '" failed', err);
+          next();
+        });
+      };
+    const onSegment = tagSegment(
+      "Website Signup",
+      tagSegment("2027 Waitlist", succeed)
+    );
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();

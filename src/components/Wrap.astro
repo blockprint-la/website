@@ -1,0 +1,170 @@
+---
+import { site } from "../data/site";
+
+// Post-event hero for the dormant site. The full flyer-poster canvas from
+// the live-site Hero stays intact (Jake wants the lineup still visible),
+// with one swap: the Buy Tickets CTA below the collage is replaced by the
+// "Thank You, Venice" stamp + date line. Everything else — poster geometry,
+// birds, parallax, entrance animations — mirrors Hero.astro so the page
+// still feels like the live site did.
+---
+
+<section
+  id="top"
+  class="hero relative flex flex-col items-center px-5 md:px-10 pt-16 md:pt-24 pb-16 overflow-hidden"
+>
+  <!-- Marginalia: pink seagulls drifting in opposite margins of the hero.
+       Anchored at fixed pixel distances from viewport center, so they fly
+       out of frame on smaller screens, clipped by overflow-hidden. -->
+  <img
+    src="/brand/bird-left.png"
+    alt=""
+    width="156"
+    height="74"
+    class="hero-bird-l pointer-events-none select-none absolute top-[32%] left-[calc(50%-770px)] w-[150px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/bird-right.png"
+    alt=""
+    width="185"
+    height="81"
+    class="hero-bird-r pointer-events-none select-none absolute top-[46%] right-[calc(50%-770px)] w-[180px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/BIRDS - ALT.png"
+    alt=""
+    width="189"
+    height="129"
+    class="hero-bird-l pointer-events-none select-none absolute top-[18%] right-[calc(50%-720px)] w-[120px] z-0 opacity-90 will-change-transform"
+    aria-hidden="true"
+  />
+  <img
+    src="/brand/BIRDS - ALT 3.png"
+    alt=""
+    width="255"
+    height="51"
+    class="hero-bird-r pointer-events-none select-none absolute top-[62%] left-[calc(50%-700px)] w-[90px] z-0 opacity-80 will-change-transform"
+    aria-hidden="true"
+  />
+
+  <h1 class="sr-only">Blockprint — Thank you, Venice</h1>
+
+  <!-- POSTER CANVAS — 1:1 proportional reproduction of the approved flyer,
+       unchanged from the live-site Hero. Absolute percentage coordinates
+       inside a fixed-aspect-ratio box that scales as one unit. -->
+  <div class="relative z-10 w-full max-w-[1100px] mx-auto aspect-[1080/751]">
+    <!-- BLOCKPRINT wordmark -->
+    <img
+      src="/brand/wordmark-2026.png"
+      alt=""
+      width="1016"
+      height="148"
+      class="hero-stamp absolute z-10 left-[3.7%] top-0 w-[92.6%]"
+      aria-hidden="true"
+    />
+
+    <!-- A BLOCK PARTY / ABBOT KINNEY BLVD -->
+    <img
+      src="/brand/block-party-lockup.png"
+      alt="A block party on Abbot Kinney Blvd"
+      width="545"
+      height="73"
+      class="hero-print absolute z-10 left-[22%] top-[21.6%] w-[56%]"
+      style="animation-delay: 0.25s;"
+    />
+
+    <!-- A — Z tracker -->
+    <img
+      src="/brand/az-tracker.png"
+      alt=""
+      width="130"
+      height="21"
+      class="hero-print absolute z-10 left-[43.75%] top-[35%] w-[12.5%]"
+      style="animation-delay: 0.4s;"
+      aria-hidden="true"
+    />
+
+    <!-- Lineup -->
+    <img
+      src="/brand/lineup-2026.png"
+      alt="Darius, Eli & Fur, Franc Moody (DJ Set), Luxxury, Sosh & Mosh"
+      width="959"
+      height="481"
+      class="hero-line absolute z-10 left-[11.35%] top-[40.4%] w-[77.3%]"
+      style="animation-delay: 0.35s;"
+    />
+
+    <!-- MUSIC · ARTS · EATS — left-margin stamp (rotation baked into PNG) -->
+    <img
+      src="/brand/music-arts-eats.png"
+      alt="Music · Arts · Eats"
+      width="187"
+      height="178"
+      class="hero-print absolute z-20 left-[2.8%] top-[39.6%] w-[16.2%]"
+      style="animation-delay: 0.7s;"
+    />
+
+    <!-- AUG 22 — right-margin stamp (rotation baked into PNG) -->
+    <img
+      src="/brand/aug-22.png"
+      alt="August 22"
+      width="134"
+      height="107"
+      class="hero-print absolute z-20 right-[7%] top-[49%] w-[13.4%]"
+      style="animation-delay: 0.85s;"
+    />
+  </div>
+
+  <!-- Date / venue (text-only, sr-only — image alts cover the visual) -->
+  <p class="sr-only">{site.date} · {site.venue}, {site.city}</p>
+
+  <!-- Venue collage — full-bleed at ALL sizes, outside the capped poster
+       canvas. Negative margins cancel the section's padding. -->
+  <img
+    src="/brand/collage.png"
+    alt=""
+    width="1008"
+    height="439"
+    class="hero-print relative z-10 block mt-0 w-screen max-w-none -mx-5 md:-mx-10"
+    style="animation-delay: 1s;"
+    aria-hidden="true"
+  />
+
+  <!-- Thank-you stamp — sits in the slot the Buy Tickets CTA occupied on
+       the live site. -->
+  <div class="hero-print relative z-10 mt-10 md:mt-12 text-center" style="animation-delay: 1.15s;">
+    <p
+      class="block-print font-[var(--font-display)] uppercase font-black leading-[0.95] tracking-[-0.01em] text-[clamp(2.5rem,7vw,4.5rem)]"
+      data-ink="pink"
+      data-ghost
+      style="--ghost: var(--color-bp-cyan);"
+    >
+      Thank You, Venice
+    </p>
+    <p class="mt-4 text-xs uppercase tracking-[0.3em] text-center opacity-90">
+      {site.date} · Year one is in the books
+    </p>
+  </div>
+</section>
+
+<script>
+  // Parallax lift for the hero birds — mirrors Hero.astro. Lenis smooth
+  // scroll suppresses native `scroll` events, but `window.scrollY` updates
+  // each Lenis frame, so an rAF poll picks up changes. The value feeds
+  // --bird-y, consumed by the drift keyframes so parallax composes with
+  // the existing drift instead of overriding its transform.
+  const BIRD_FACTOR = 0.3;
+  const root = document.documentElement;
+  let lastY = -1;
+  const tick = () => {
+    const y = window.scrollY;
+    if (y !== lastY) {
+      root.style.setProperty("--bird-y", `${-y * BIRD_FACTOR}px`);
+      lastY = y;
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+</script>

@@ -1,0 +1,35 @@
+---
+// Post-event survey callout — first on-site link to the live /survey-2026
+// page (previously reachable only via blast links). ?src=site feeds the
+// survey's `source` column so site-driven responses stay separable from
+// the sms/email blasts.
+//
+// Navy section for contrast against the cream hero above and cream
+// waitlist below — navy was the lineup section's color on the live site,
+// so it reads as the same design system.
+---
+
+<section id="survey" class="relative bg-bp-navy text-paper px-5 md:px-10 py-24 md:py-32">
+  <div class="max-w-3xl mx-auto text-center" data-reveal>
+    <h2
+      class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-6"
+      data-ink="cream"
+      data-ghost
+      style="--ghost: var(--color-bp-cyan);"
+    >
+      How Was the Block?
+    </h2>
+    <p class="text-base md:text-lg opacity-90 max-w-xl mx-auto mb-10">
+      Tell us what you liked, what you didn't, and who you want on the block
+      next year. It takes about two minutes, and we read every one.
+    </p>
+    <a
+      href="/survey-2026?src=site"
+      class="group inline-flex items-center gap-3 bg-bp-pink text-paper px-8 py-4 text-sm md:text-base uppercase tracking-[0.25em] font-bold"
+      style="filter: url(#ink-bleed-soft); box-shadow: -4px 4px 0 var(--color-bp-cyan);"
+    >
+      Take the Survey
+      <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,150 @@
+---
+// Scroll-scrub recap film takeover (the halfdozen.co / ssbdfest.com move,
+// in Blockprint's print language). A 260vh section pins a centered video
+// "print" — small, slightly rotated, cyan offset behind it like the site's
+// stamped buttons — and scrubs it up to a full-viewport takeover as you
+// scroll, squaring up and shedding the offset as it grows. Fullscreen holds
+// for the back stretch of the scroll so there's a beat of just film before
+// the navy survey section arrives.
+//
+// No GSAP: progress is a scrollY-derived 0→1 written to --p on the section
+// (same rAF-poll idiom as Nav / the hero birds — Lenis suppresses native
+// scroll events, so listeners are unreliable but scrollY polling isn't).
+// All interpolation happens in CSS calc() off that one custom property.
+//
+// Video: /media/recap-2026.mp4, a web re-encode of the 191MB master (the
+// master lives in Drive: 02. ARTWORK + MEDIA / MEDIA RECAP). Muted autoplay
+// loop, play/paused by an IntersectionObserver so it only runs on screen;
+// the SOUND button un-mutes on tap.
+---
+
+<section id="recap" class="recap relative">
+  <div class="recap-sticky sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center">
+    <!-- Fades + slides out as the film takes over -->
+    <div class="recap-head text-center mb-8 md:mb-10">
+      <p class="text-[11px] md:text-xs uppercase tracking-[0.35em] opacity-70 mb-3">
+        Blockprint 2026 — The Recap
+      </p>
+      <h2
+        class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,7vw,5rem)]"
+        data-ink="pink"
+        data-ghost
+        style="--ghost: var(--color-bp-cyan);"
+      >
+        Run It Back
+      </h2>
+    </div>
+
+    <div class="recap-frame relative z-10">
+      <video
+        src="/media/recap-2026.mp4"
+        poster="/media/recap-2026-poster.jpg"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        class="block w-full h-full object-cover"
+        aria-label="Blockprint 2026 recap film"
+      ></video>
+
+      <button
+        type="button"
+        data-sound-toggle
+        class="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-20 bg-paper text-ink px-4 py-2 text-[10px] md:text-xs uppercase tracking-[0.25em] font-bold cursor-pointer"
+        style="box-shadow: -2px 2px 0 var(--color-bp-pink);"
+        aria-pressed="false"
+      >
+        <span data-sound-on hidden>Sound Off</span>
+        <span data-sound-off>Sound On</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .recap {
+    /* 260vh total: the takeover completes across the first ~55% of the
+       160vh scroll range, then holds fullscreen for the rest. */
+    height: 260vh;
+    --p: 0;
+    /* Start size of the print. --h0 keeps the video's native 3:2. */
+    --w0: min(86vw, 560px);
+  }
+  @media (min-width: 768px) {
+    .recap { --w0: min(58vw, 900px); }
+  }
+  .recap-frame {
+    --h0: calc(var(--w0) * 0.6667);
+    width: calc(var(--w0) + (100vw - var(--w0)) * var(--p));
+    height: calc(var(--h0) + (100svh - var(--h0)) * var(--p));
+    transform: rotate(calc(-2deg * (1 - var(--p))));
+    background: var(--color-ink);
+  }
+  /* Cyan offset backing — the stamped-button shadow, fading as it grows */
+  .recap-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translate(-10px, 10px);
+    background: var(--color-bp-cyan);
+    opacity: calc(1 - var(--p) * 1.4);
+    z-index: -1;
+  }
+  .recap-head {
+    opacity: calc(1 - var(--p) * 2.2);
+    transform: translateY(calc(var(--p) * -40px));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .recap { height: auto; }
+    .recap-sticky { position: static; height: auto; padding: 6rem 0; }
+    .recap-frame {
+      width: min(92vw, 1100px);
+      height: auto;
+      aspect-ratio: 3 / 2;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.getElementById("recap");
+  if (section) {
+    const video = section.querySelector<HTMLVideoElement>("video");
+    const toggle = section.querySelector<HTMLButtonElement>("[data-sound-toggle]");
+
+    // Scrub progress: 0 when the section top hits the viewport top, 1 at
+    // ~55% of the pinned range so fullscreen holds for the back stretch.
+    // rAF poll (not a scroll listener) — see component comment re: Lenis.
+    let last = -1;
+    const tick = () => {
+      const range = (section.offsetHeight - window.innerHeight) * 0.55;
+      const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / range));
+      if (p !== last) {
+        section.style.setProperty("--p", String(p));
+        last = p;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+
+    // Only run the film while it's on screen.
+    if (video) {
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) video.play().catch(() => {});
+          else video.pause();
+        },
+        { threshold: 0.15 }
+      );
+      io.observe(video);
+
+      toggle?.addEventListener("click", () => {
+        video.muted = !video.muted;
+        const on = !video.muted;
+        toggle.setAttribute("aria-pressed", String(on));
+        toggle.querySelector<HTMLElement>("[data-sound-on]")!.hidden = !on;
+        toggle.querySelector<HTMLElement>("[data-sound-off]")!.hidden = on;
+      });
+    }
+  }
+</script>
