@@ -1,0 +1,83 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+
+// Standalone recap-film page. The homepage plays the same film as a
+// muted scroll-scrub takeover; this page exists for the places we link
+// the film from directly (the Stereo Punks agent deck, DMs, press) where
+// someone taps a still and expects a normal click-to-play player with
+// sound. Same asset as RecapFilm.astro: /media/recap-2026.mp4 (19MB web
+// re-encode of FYM's 191MB master) and its poster frame. No libraries —
+// the native <video> element with controls is the whole player.
+---
+
+<Layout
+  title="Blockprint — The Recap Film"
+  description="The recap film from Blockprint year one. August 22, 2026, Abbot Kinney Blvd, Venice, California."
+>
+  <main class="px-5 md:px-10 py-12 md:py-16">
+    <div class="max-w-6xl mx-auto">
+      <!-- Wordmark links back home -->
+      <a href="/" class="block w-fit mx-auto mb-10 md:mb-12" aria-label="Back to Blockprint home">
+        <img src="/brand/wordmark.png" alt="Blockprint" width="1010" height="152" class="w-full max-w-[420px]" />
+      </a>
+
+      <header class="text-center mb-8 md:mb-12">
+        <h1
+          class="block-print font-[var(--font-display)] uppercase font-black leading-[0.85] text-[clamp(2.5rem,8vw,6rem)] mb-4"
+          data-ink="pink"
+          data-ghost
+          style="--ghost: var(--color-bp-cyan);"
+        >
+          The Recap Film
+        </h1>
+        <p class="text-xs md:text-sm uppercase tracking-[0.3em] opacity-80">
+          August 22, 2026 · Abbot Kinney Blvd · 47 seconds
+        </p>
+      </header>
+
+      <!-- The film, framed like one of the site's prints: paper border, cyan offset -->
+      <div
+        class="recap-print relative mx-auto w-full bg-paper p-2 md:p-3"
+        style="box-shadow: -6px 6px 0 var(--color-bp-cyan);"
+      >
+        <video
+          src="/media/recap-2026.mp4"
+          poster="/media/recap-2026-poster.jpg"
+          controls
+          playsinline
+          preload="metadata"
+          class="block w-full h-auto bg-ink"
+          aria-label="Blockprint 2026 recap film"
+        ></video>
+      </div>
+
+      <div class="mt-10 md:mt-14 flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="/gallery"
+          class="inline-block bg-ink text-paper px-6 py-3 text-[11px] md:text-xs uppercase tracking-[0.25em] font-bold"
+          style="box-shadow: -3px 3px 0 var(--color-bp-pink);"
+        >
+          View the Full Gallery
+        </a>
+        <a
+          href="/"
+          class="inline-block bg-paper text-ink px-6 py-3 text-[11px] md:text-xs uppercase tracking-[0.25em] font-bold border border-ink"
+          style="box-shadow: -3px 3px 0 var(--color-bp-cyan);"
+        >
+          Back to Blockprint
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Keep the print from growing past a comfortable cinema width on large
+     screens; the video itself is 16:9 and scales inside the border. */
+  .recap-print {
+    max-width: 1100px;
+  }
+</style>
