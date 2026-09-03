@@ -3,6 +3,11 @@ import "../styles/global.css";
 import SvgFilters from "../components/SvgFilters.astro";
 import { site } from "../data/site";
 
+// Only load analytics + pixel on the production deploy. Vercel sets VERCEL_ENV at
+// build time ("production" | "preview" | "development"); local builds leave it unset.
+// Keeps localhost and preview-URL hits out of GA4 and Meta.
+const isProd = process.env.VERCEL_ENV === "production";
+
 interface Props {
   title?: string;
   description?: string;
@@ -58,6 +63,8 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
 
+    {isProd && (
+      <>
     <!-- Google Analytics 4. Loaded async so it never blocks render.
          is:inline preserves the gtag queueing pattern (calls before the
          remote script finishes loading buffer into dataLayer). -->
@@ -113,6 +120,8 @@ const {
         style="display:none"
         src={`https://www.facebook.com/tr?id=${site.metaPixelId}&ev=PageView&noscript=1`}
       /></noscript>
+      </>
+    )}
   </head>
 
   <body>
